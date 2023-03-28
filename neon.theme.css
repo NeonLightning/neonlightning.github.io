@@ -827,6 +827,17 @@ html {
 	color: var(--header-primary);
 }
 
+.button-ejjZWC.lookFilled-1H2Jvj.colorBrand-2M3O3N.sizeMin-3Yqxk5.grow-2T4nbg {
+    font-size: 14px;
+    background-color: #000;
+    color: tomato;
+    margin-left: -3px !important;
+    text-transform: lowercase;
+}
+
+.contents-3NembX {
+    padding: 0 0 0 0;
+}
 
 /* ~~~~		0.		TABLE OF CONTENTS				~~~~ */
 /*
