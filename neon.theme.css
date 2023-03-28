@@ -638,6 +638,15 @@ body.foldercontentopened .base-2jDfDU {
 
 /* end of surround status */
 
+/* readall plugin modification */
+.button-ejjZWC.lookFilled-1H2Jvj.colorBrand-2M3O3N.sizeMin-3Yqxk5.grow-2T4nbg {
+    font-size: 14px;
+	background-color: #000;
+    margin-left: -2px !important;
+    text-transform: lowercase;
+}
+/* end of readall plugin modification */
+
 /* recolour */
 
 .theme-light:not(.userProfileOuterThemed-3EfHmv),
