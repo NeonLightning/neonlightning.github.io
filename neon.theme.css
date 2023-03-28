@@ -23,9 +23,9 @@
 
 
 :root {
---font-primary: "Flexi IBM VGA True", "Courier Prime" !important;
---font-display: "Courier Prime", "gg sans" !important;
---font-headline: "Courier Prime", "gg sans" !important;
+--font-primary: "Courier Prime Code" !important;
+--font-display: "Courier Prime" !important;
+--font-headline: "Courier Prime"!important;
 
 --successcolor: 59,165,92;
 --warningcolor: 250,166,26;
@@ -80,6 +80,14 @@
   unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
+@font-face {
+  font-family: 'Courier Prime Code';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://neonlightning.github.io/Courier_Prime_Code.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 @font-face {
   font-family: 'Courier Prime';
   font-style: normal;
@@ -568,7 +576,8 @@ body.foldercontentopened .base-2jDfDU {
 
     /* only set the chat width in actual channels */
     main.chatContent-3KubbW:not([aria-label=" (channel)"]) {
-        max-width: calc(100% - 60px);
+        max-width: calc(100% - 20px);
+		font-size: 16px;
     }
 
     /* this button just breaks how the theme looks when used and the bar is collapsed */
@@ -642,10 +651,33 @@ body.foldercontentopened .base-2jDfDU {
 .button-ejjZWC.lookFilled-1H2Jvj.colorBrand-2M3O3N.sizeMin-3Yqxk5.grow-2T4nbg {
     font-size: 14px;
 	background-color: #000;
-    margin-left: -2px !important;
+	color: red;
+    margin-left: -4px !important;
     text-transform: lowercase;
 }
 /* end of readall plugin modification */
+
+
+/*chatcontent username edit*/
+#app-mount .headerText-2z4IhQ span[class="username-h_Y3Us desaturateUserColors-1O-G89 clickable-31pE3P"]{
+	font-size: 14px;
+	font-family: "Courier Prime Code";
+	font-weight: 700;
+	text-shadow:
+	-0.5px -0.5px 0 black,
+     0.5px  0.5px 0 black,
+	 -1px -1px 0 purple,
+	 1px 1px 0 purple;
+	-webkit-font-smoothing: antialiased;
+}
+/*end of chatcontent username edit*/
+
+/* chatroom text size */
+#app-mount div[class="markup-eYLPri messageContent-2t3eCI"]{
+	font-size: 12px;
+}
+/*end of chatroom text size */
+
 
 /* recolour */
 
@@ -827,13 +859,6 @@ html {
 	color: var(--header-primary);
 }
 
-.button-ejjZWC.lookFilled-1H2Jvj.colorBrand-2M3O3N.sizeMin-3Yqxk5.grow-2T4nbg {
-    font-size: 14px;
-    background-color: #000;
-    color: tomato;
-    margin-left: -3px !important;
-    text-transform: lowercase;
-}
 
 .contents-3NembX {
     padding: 0 0 0 0;
