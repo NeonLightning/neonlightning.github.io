@@ -1,0 +1,770 @@
+/**
+ * @name Neon
+ * @description horrible theme extra code code from discordstyles and greenman36
+ * @author Neon
+ * @version 1.0.0
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
+@import url("https://mwittrien.github.io/BetterDiscordAddons/Themes/_res/SettingsIcons.css");
+
+@import url("https://greenman36.github.io/files/discord-mods/themes/snippets/channel-icons.css");
+
+@import url("https://greenman36.github.io/files/discord-mods/themes/snippets/outline-dark-emojis.css");
+
+@import url('https://raw.githubusercontent.com/GreenMan36/GreenMan36.github.io/main/files/discord-mods/themes/snippets/better-context-menu.css');
+
+@import url("https://greenman36.github.io/files/discord-mods/themes/snippets/better-image-embeds.css");
+
+:root {
+--background-mentioned-before: #faa61a;
+--modal-background: yellow;
+--background-primary:#020;
+--background-secondary-alt:#020;
+--background-secondary:#000800;
+--background-tertiary: #000800;
+--font-primary: "Courier Prime Code" !important;
+--font-display: "Courier Prime" !important;
+--font-headline: "Courier Prime"!important;
+
+--successcolor: 59,165,92;
+--warningcolor: 250,166,26;
+--dangercolor: 237,66,69;
+
+--squared-green: hsl(145.38,65%,39.22%);
+--squared-yellow: hsl(40.42,86.36%,56.86%);
+--squared-red: hsl(358.66,87.32%,59.8%);
+--squared-grey: hsl(226.15,5.49%,53.53%);
+--squared-border-width: 4px;
+--squared-real-border-width: clamp(1px, var(--squared-border-width), 16px);
+
+--green-inset-thickness: 3px;
+
+ --outline-dark-emojis: drop-shadow(0px 0px .5px rgb(204, 0, 255)) drop-shadow(0px 0px 1px green);
+ --accentcolor: 16,0,0;
+ --accentcolor2: 80,0,77;
+ --linkcolor: 2,112,126;
+ --mentioncolor: 228,171,0;
+ --textbrightest: 85,159,0;
+ --textbrighter: 0,150,136;
+ --textbright: 177,0,0;
+ --textdark: 203,182,0;
+ --textdarker: 76,175,80;
+ --textdarkest: 68,0,189;
+ --backgroundaccent: 0,0,0;
+ --backgroundprimary: 0,0,0;
+ --backgroundsecondary: 0,2,12;
+ --backgroundsecondaryalt: 25,0,0;
+ --backgroundtertiary: 0,0,0;
+ --backgroundfloating: 0,0,0;
+ --settingsicons: 1;
+ --sidebars-animation: var(--sidebar-animation-speed) ease-out 0.1s;
+ --member-bar-top-offset: 0px;
+ --sidebar-animation-speed: 0.2s;
+ --resizeEmojiSize: 1.25;
+ --server-size: var(--HSL-server-icon-size, var(--HSL-size, 30px));
+ --server-spacing: var(--HSL-server-spacing, var(--HSL-spacing, 3px));
+ --server-container: calc(var(--server-size) + 20px);
+ --server-direction: var(--HSL-server-direction, column);
+ --server-alignment: var(--HSL-server-alignment, flex-start);
+}
+
+/*start of set font*/
+/* latin-ext */
+@font-face {
+  font-family: 'Courier Prime';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/courierprime/v7/u-450q2lgwslOqpF_6gQ8kELaw9pWt_-.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Courier Prime Code';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://neonlightning.github.io/Courier_Prime_Code.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Courier Prime';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/courierprime/v7/u-450q2lgwslOqpF_6gQ8kELawFpWg.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin */
+@font-face {
+  font-family: 'Flexi IBM VGA True';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://neonlightning.github.io/Flexi_IBM_VGA_True.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Courier Prime';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/courierprime/v7/u-4k0q2lgwslOqpF_6gQ8kELY7pMT-7fq8Ho.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Courier Prime';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/courierprime/v7/u-4k0q2lgwslOqpF_6gQ8kELY7pMT-Dfqw.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/*end of set font*/
+
+.mentioned-Tre-dv:before /* Thin line in front of the mention */{
+    background-color: green;
+	width: 8px;
+}
+
+/*fix pinned msgs*/
+#app-mount div[class="messagesPopoutWrap-3zryHW"]{
+	background-color:darkgreen;
+	bottom: 0px;
+	height: 700px;
+	top: 0px;
+	right: -236px;
+}
+/*end of fix pinned msgs*/
+
+/* full titlebar drag area */
+.withFrame-2dL45i {
+    margin-top: 0;
+    padding-top: 4px;
+}
+/*end of full titlebar drag area */
+
+/**
+ * @name Greens SquareCord
+ * @author GreenMan36#0633
+ * @authorLink https://github.com/GreenMan36
+ * @version 26.03.23a
+ * @description This theme makes the Discord client look squared AF.
+*/
+
+.wrapper-3Un6-K svg foreignobject,
+.avatarUploader-CHGwK7 {
+    border: var(--squared-real-border-width) solid transparent;
+    mask: none;
+    transform: scale(1.1);
+}
+
+[aria-label*=", Online"] svg foreignobject,
+.avatarUploader-CHGwK7:has(div svg rect[fill="hsl(145.38,65%,39.22%)"]){
+   border: var(--squared-real-border-width) solid var(--squared-green);
+}
+
+[aria-label*=", Idle"] svg foreignobject,
+.avatarUploader-CHGwK7:has(div svg rect[fill="hsl(40.42,86.36%,56.86%)"]){
+   border: var(--squared-real-border-width) solid var(--squared-yellow);
+}
+
+[aria-label*=", Do Not Disturb"] svg foreignobject,
+.avatarUploader-CHGwK7:has(div svg rect[fill="hsl(358.66,87.32%,59.8%)"]){
+   border: var(--squared-real-border-width) solid var(--squared-red);
+}
+
+:is([aria-label*=", Invisible"], [aria-label*=", Offline"]) svg foreignobject,
+.avatarUploader-CHGwK7:has(div svg rect[fill="hsl(226.15,5.49%,53.53%)"]){
+   border: var(--squared-real-border-width) solid var(--squared-grey);
+}
+
+:is(
+    [aria-label*=", Online"],
+    [aria-label*=", Idle"],
+    [aria-label*=", Do Not Disturb"],
+    [aria-label*=", Invisible"],
+    [aria-label*=", Offline"]
+   ) svg :is(rect, mask, circle),
+.status-b9jLr4,
+.blobContainer-ikKyFs .svg-2ifYOU mask,
+.bannerSVGWrapper-qc0szY mask {
+    display: none;
+}
+
+* {
+    border-radius: 0 !important;
+}
+
+/* call controlls and more */
+:is(.wrapper-2PSQCG, .controlButton-2PMNom) svg foreignobject {
+    mask:none;
+}
+
+/* avatar view profile */
+.avatarHint-2g3Mcd {
+   overflow: visible;
+}
+.avatarWrapper-3y0KZ1 svg foreignObject:has(.avatarHintInner-3gk_Yx) {
+    mask: none;
+    transform: scale(1.1);
+}
+
+/* radio buttons will take more work and I won't because a box indicates a checkbox, not a radio button */
+
+/* end of square */
+
+/* start of reaction sizes */
+/* on messages */
+.reaction-3vwAF2 img.emoji {
+    width: clamp(12px, calc(var(--resizeEmojiSize) * 1rem), 32px);
+    height: clamp(12px, calc(var(--resizeEmojiSize) * 1rem), 32px);
+}
+
+/* on forum threads, limited to 1.25x for overflow reasons */
+.reaction-102jx9 .emoji {
+    width: clamp(12px, calc(var(--resizeEmojiSize) * 1rem), 20px);
+    height: clamp(12px, calc(var(--resizeEmojiSize) * 1rem), 20px);
+}
+/* end of reaction sizes */
+
+/* Server Topbar code */
+#app-mount .app-3xd6d0 .base-2jDfDU {
+ top: var(--server-container) !important;
+ position: absolute !important;
+ left: 0 !important;
+ right: 0;
+ bottom: 0;
+ max-width: 100%;
+}
+#app-mount .sidebar-1tnWFu {
+ border-radius: 0;
+}
+#app-mount [class*=unreadMentionsIndicator] {
+ width: var(--server-size);
+ padding: 0;
+ left: 50%;
+ transform: translateX(-50%);
+ height: auto;
+}
+#app-mount .guilds-2JjMmN {
+ transform-origin: top left;
+ transform: rotate(-90deg);
+ height: 100vw !important;
+ width: var(--server-container);
+ top: var(--server-container);
+ bottom: unset;
+ position: absolute !important;
+ left: 0;
+}
+#app-mount .guilds-2JjMmN > [data-list-id=guildsnav] {
+ margin-bottom: 0 !important;
+}
+#app-mount .guilds-2JjMmN .scrollerWrap-1IAIlv {
+ width: calc(100% + 30px);
+}
+#app-mount .guilds-2JjMmN .scrollerBase-1Pkza4 {
+ padding: var(--server-spacing) 0 !important;
+ display: flex;
+ flex-direction: var(--server-direction);
+ gap: var(--server-spacing);
+ align-items: var(--server-alignment);
+ justify-content: var(--server-alignment);
+}
+#app-mount .guilds-2JjMmN .scrollerBase-1Pkza4 > div[style]:not(.listItem-2P_4kh) {
+ height: auto !important;
+}
+#app-mount .guilds-2JjMmN .scrollerBase-1Pkza4 > div[style]:not(.listItem-2P_4kh)[style*="height: 0px"] {
+ padding-top: 1px;
+}
+#app-mount .guilds-2JjMmN .scrollerBase-1Pkza4 > div[aria-label] {
+ display: flex;
+ flex-direction: var(--server-direction);
+ gap: 3px;
+}
+#app-mount .guilds-2JjMmN .svg-2ifYOU,
+#app-mount .guilds-2JjMmN .wrapper-2PSQCG,
+#app-mount .guilds-2JjMmN .guildsError-b7zR5H,
+#app-mount .guilds-2JjMmN .placeholderMask-2FHNZU {
+ width: var(--server-size);
+ height: var(--server-size);
+}
+#app-mount .guilds-2JjMmN [role=group] {
+ height: auto !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] {
+ transform: rotate(0deg) translateX(0%);
+ height: var(--server-size);
+ width: 100%;
+ top: -90% !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span {
+ height: 35% !important;
+ width: 70% !important;
+ transform: scale(0, 1) !important;
+ transition: 0.15s ease !important;
+ margin-left: 1px;
+ background-color:Tomato;
+ border: 4px solid #224422;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 0"] {
+ transform: scale(1, 0.24) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 1"] {
+ transform: scale(1, 0.24) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 2"] {
+ transform: scale(1, 0.24) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 3"] {
+ transform: scale(1, 0.24) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 4"] {
+ transform: scale(1, 0.24) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 5"] {
+ transform: scale(1, 0.24) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 6"] {
+ transform: scale(1, 0.24) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 7"] {
+ transform: scale(1, 0.24) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 8"] {
+ transform: scale(1, 0.24) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 9"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 10"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 11"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 12"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 13"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 14"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 15"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 16"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 17"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 18"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 19"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 20"] {
+ transform: scale(1, 0.7) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 21"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 22"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 23"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 24"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 25"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 26"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 27"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 28"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 29"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 30"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 31"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 32"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 33"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 34"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 35"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 36"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 37"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 38"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 39"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 40"] {
+ transform: scale(1, 1) !important;
+}
+#app-mount .guilds-2JjMmN .wrapper-z5ab_q {
+ height: var(--server-size) !important;
+ padding-bottom: 9px;
+}
+#app-mount .guilds-2JjMmN .wrapper-38slSD {
+ width: var(--server-container);
+ display: flex;
+ flex-direction: var(--server-direction);
+ gap: var(--server-spacing);
+}
+#app-mount .guilds-2JjMmN .wrapper-38slSD ul[role=group] {
+ display: flex;
+ flex-direction: var(--server-direction);
+ gap: var(--server-spacing);
+}
+#app-mount .guilds-2JjMmN [class*=listItem]:not([class*=listItemWrapper]) {
+ width: var(--server-size);
+ transform: rotate(90deg);
+ margin: 0 1%;
+ position: unset;
+}
+#app-mount .guilds-2JjMmN [class*=guildSeparator] {
+ transform: rotate(90deg);
+ width: var(--server-size);
+}
+#app-mount .guilds-2JjMmN [class*=expandedFolderBackground] {
+ width: var(--server-size);
+ left: 50%;
+ border-radius: 0;
+ transform: translateX(-50%);
+ height: 100%;
+}
+#app-mount .guilds-2JjMmN .folder-241Joy {
+ background: transparent;
+}
+#app-mount .guilds-2JjMmN .wrapper-3XVBev {
+ top: 0;
+ bottom: 0;
+}
+#app-mount .guilds-2JjMmN .target-1eRTCg::before {
+ top: 0;
+ height: var(--server-size);
+ width: 4px;
+ left: -6px;
+}
+#app-mount .guilds-2JjMmN.hidden-10MsGQ + .base-2jDfDU {
+ top: 0 !important;
+}
+#app-mount [class*=listItemTooltip] {
+ position: absolute;
+ max-width: unset;
+ white-space: nowrap;
+ margin-left: calc(var(--server-size) / -1 - 20px);
+ top: calc(var(--server-size) - 10px);
+}
+#app-mount [class*=listItemTooltip] [class*=tooltipPointer] {
+ transform: rotate(180deg);
+ top: -5px !important;
+ right: unset;
+ left: 13px;
+ z-index: 1;
+}
+#app-mount .friendsOnline-2JkivW {
+ position: absolute;
+ transform: translate(-50%, 50%);
+ top: calc(-50% + var(--server-spacing));
+ left: -50%;
+ width: calc(var(--server-size) + var(--server-spacing));
+ display: flex;
+ justify-content: center;
+}
+#app-mount .guilds-2JjMmN.content-Pph8t6,
+#app-mount .BF-folderSidebar {
+ position: absolute !important;
+ top: calc(var(--server-container) * 2) !important;
+}
+#app-mount .guilds-2JjMmN.content-Pph8t6:not(.closed-j55_T-) + .base-2jDfDU,
+#app-mount .BF-folderSidebar:not(.closed-j55_T-) + .base-2jDfDU {
+ top: calc(var(--server-container) * 2.5) !important;
+}
+#app-mount .guilds-2JjMmN .frame-oXWS21[class*=listItem] {
+ height: var(--server-size) !important;
+}
+#app-mount .guilds-2JjMmN .frame-oXWS21[class*=listItem] .wrapper-3kah-n {
+ height: 100% !important;
+}
+#app-mount .guilds-2JjMmN .frame-oXWS21[class*=listItem] .button-Jt-tIg {
+ width: 100%;
+ height: 100% !important;
+ border-radius: 0;
+ padding: 2px;
+ font-size: 10px;
+ box-sizing: border-box;
+ text-align: center;
+}
+#app-mount .BF-folderSidebar {
+ top: calc(var(--server-container)) !important;
+}
+#app-mount .serverCountWrap-k8F5De {
+ height: var(--server-size);
+}
+#app-mount .serverCount-FsTTs1 {
+ white-space: pre-line;
+ font-size: 12px;
+ display: flex;
+ align-items: center;
+}
+
+html.platform-osx #app-mount .typeMacOS-3V4xXE {
+ width: 100%;
+}
+html.platform-osx #app-mount .base-2jDfDU {
+ top: calc(var(--server-container) + 30px) !important;
+}
+html.platform-osx #app-mount #pluginNotice {
+ top: 32px;
+ z-index: 100000 !important;
+}
+
+body.foldercontentopened .base-2jDfDU {
+ transition: 0.2s ease !important;
+}
+
+.accountProfilePopoutWrapper-3GskID {
+ left: 0;
+}
+/*end of server topbar code */
+
+
+/*start of memberlist autohide */
+/* only enable colapsing member bar when below this window size */
+@media only screen and (max-width: 1920px) {
+    
+    
+    .container-2o3qEW {
+        max-width: 60px;
+        position: absolute;
+        top: var(--member-bar-top-offset);
+        bottom: 0;
+        right: 0;
+        /* fixes a weird bug that sometimes happens when doing a big paste in the textbox */
+        height: calc(100% - var(--member-bar-top-offset));
+    }
+
+    /* fixes the layering of the sidebar */
+    .sidebar-1tnWFu {
+    z-index: 101;
+    /* optional, might be useful in the future */
+    top: var(--channel-bar-top-offset);
+    }
+
+    /* only set the chat width in actual channels */
+    main.chatContent-3KubbW:not([aria-label=" (channel)"]) {
+        max-width: calc(100% - 32px);
+		font-size: 16px;
+    }
+
+    /* this button just breaks how the theme looks when used and the bar is collapsed */
+    [aria-label="Hide Member List"] {
+        display: none !important;
+    }
+
+    /* expand memberlist on hover */
+    .container-2o3qEW:hover {
+        transition: max-width 0s;
+        max-width: 240px;
+    }
+    
+    div:not(.threadSidebarOpen-1LSXvU) > div > .container-3wLKDe {
+        padding-right: 60px;
+    }
+}
+
+@media only screen and (max-width: 1290) {
+    /* fix forum */
+    .container-3XgAHv /*:not(.chatTarget-3H6mpC)*/ {
+        position: absolute;
+        right: -440px;
+        bottom: 0;
+        top: 0;
+        transition: right var(--sidebars-animation);
+        transition-delay: .5s;
+        width: 500px !important
+    }
+    
+    .chatLayerWrapper-2mgEK- > .container-3XgAHv:hover {
+        right: 0;
+        transition: right var(--sidebars-animation);
+        transition-duration: .05s;
+    }
+
+    .threadSidebarOpen-1LSXvU ~ .resizeHandle-PBRzPC {
+        display: none;
+    }
+
+    .threadSidebarOpen-1LSXvU > .title-31SJ6t.container-ZMc96U.themed-Hp1KC_ > .toolbar-3_r2xA {
+        padding-right: 60px;
+    }
+
+    div.threadSidebarOpen-1LSXvU > div > .container-3wLKDe {
+        padding-right: 60px;
+    }
+}
+/* end of autohide */
+
+/* start of surround status */
+.wrapper-3Un6-K svg foreignobject {
+    --border-width: 2px;
+    border: var(--border-width) solid brown;
+    mask: none;
+}
+[aria-label*=", Online"] svg foreignobject {border: var(--border-width) solid green}
+[aria-label*=", Idle"] svg foreignobject {border: var(--border-width) solid yellow}
+[aria-label*=", Do Not Disturb"] svg foreignobject {border: var(--border-width) solid red}
+[aria-label*=", Invisible"] svg foreignobject {border: var(--border-width) solid grey}
+
+:is(
+    [aria-label*=", Online"], [aria-label*=", Idle"], [aria-label*=", Do Not Disturb"], [aria-label*=", Invisible"]
+   ) svg :is(rect, mask) {
+    display: none;
+}
+
+/* end of surround status */
+
+/* readall plugin modification */
+
+.button-ejjZWC.lookFilled-1H2Jvj.colorBrand-2M3O3N.sizeMin-3Yqxk5.grow-2T4nbg {
+    font-size: 18px;
+	background-color: #000;
+	color: green;
+    margin-left: 0px !important;
+    text-transform: uppercase;
+	padding-left: 5px;
+}
+/* end of readall plugin modification */
+
+
+/*chatcontent username edit*/
+#app-mount .headerText-2z4IhQ span[class="username-h_Y3Us desaturateUserColors-1O-G89 clickable-31pE3P"]{
+	font-size: 14px;
+	font-family: "Courier Prime Code";
+	font-weight: 700;
+	color: #090;
+	text-shadow:
+	-0.5px -0.5px 0 black,
+     0.5px  0.5px 0 black,
+	 -1px -1px 0 purple,
+	 1px 1px 0 purple;
+	text-decoration-line: underline overline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 4px;
+}
+/*end of chatcontent username edit*/
+
+/* chatroom text size */
+#app-mount div[class="markup-eYLPri messageContent-2t3eCI"]{
+	color:#090;
+	font-size: 12px;
+}
+/* alternating text colors */
+#app-mount li[class="messageListItem-ZZ7v6g"]:nth-of-type(odd){
+  background-color: #000400;
+}
+#app-mount li[class="messageListItem-ZZ7v6g"]:nth-of-type(even){
+  background-color: #000800;
+}
+/*end of chatroom text size */
+/*channel list text*/
+#app-mount li[class=containerDefault-3TQ5YN]{
+	text-decoration-line: underline;
+	text-decoration-color: yellow;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 5px;
+	text-align: center;
+}
+#app-mount div[class="iconVisibility-3pLDEs wrapper-1S43wv wrapperCommon-I1TMDb clickable-2AoIYN"]{
+	background-color: #001000;
+}
+#app-mount li[class="containerDefault-YUSmu3 selected-2TbFuo"]{
+	background-color: #211;
+}
+#app-mount div[class="iconVisibility-vptxma wrapper-NhbLHG modeUnread-3Cxepe"]{
+	background-color: black;
+	border: dotted #131;
+	border-width: 1px;
+}
+#app-mount div[class=name-28HaxV]{
+	text-decoration-line: overline underline;
+	text-underline-offset: 5px;
+	text-decoration-thickness: 5px;
+	text-align: center;
+}
+#app-mount div[class="containerDefault-YUSmu3"]{
+	background-color: #211;
+}
+#app-mount div[class="overflow-1wOqNV"]{
+	font-size: large;
+	color: #000;
+	text-shadow:
+	 1px 1px 2px green;
+}
+#app-mount div[class="name-28HaxV channelName-3KPsGw overflow-1wOqNV"]{
+	color: #090;
+}
+/*end of channel list text*/
+
+/*spotify player plugin*/
+.bar-1GpknY /* user profile spotify whole bar */{
+    background-color: black;
+}
+.barInner-3dHef4 /* user profile spotify progression bar */{
+    background-color: black;
+}
+
+div[id="vc-spotify-progress-bar"]{
+	background-color: #010;
+	padding-top: 0px;
+}
+#vc-spotify-player{
+	background-color: #010;
+}
+.mini-28oMa3 .grabber-3R-Rx9{
+	background-color: #000;
+	
+}
+.vc-spotify-progress-time{
+	top:35px;
+}
+/*end of spotify player plugin*/
