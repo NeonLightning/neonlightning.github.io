@@ -24,7 +24,6 @@
 
 :root {
 --background-mentioned-before: #faa61a;
---modal-background: yellow;
 --background-primary:#020;
 --background-secondary-alt:#020;
 --background-secondary:#000800;
@@ -44,35 +43,16 @@
 --squared-border-width: 4px;
 --squared-real-border-width: clamp(1px, var(--squared-border-width), 16px);
 
---green-inset-thickness: 3px;
-
- --outline-dark-emojis: drop-shadow(0px 0px .5px rgb(204, 0, 255)) drop-shadow(0px 0px 1px green);
- --accentcolor: 16,0,0;
- --accentcolor2: 80,0,77;
- --linkcolor: 2,112,126;
- --mentioncolor: 228,171,0;
- --textbrightest: 85,159,0;
- --textbrighter: 0,150,136;
- --textbright: 177,0,0;
- --textdark: 203,182,0;
- --textdarker: 76,175,80;
- --textdarkest: 68,0,189;
- --backgroundaccent: 0,0,0;
- --backgroundprimary: 0,0,0;
- --backgroundsecondary: 0,2,12;
- --backgroundsecondaryalt: 25,0,0;
- --backgroundtertiary: 0,0,0;
- --backgroundfloating: 0,0,0;
- --settingsicons: 1;
- --sidebars-animation: var(--sidebar-animation-speed) ease-out 0.1s;
- --member-bar-top-offset: 0px;
- --sidebar-animation-speed: 0.2s;
- --resizeEmojiSize: 1.25;
- --server-size: var(--HSL-server-icon-size, var(--HSL-size, 30px));
- --server-spacing: var(--HSL-server-spacing, var(--HSL-spacing, 3px));
- --server-container: calc(var(--server-size) + 20px);
- --server-direction: var(--HSL-server-direction, column);
- --server-alignment: var(--HSL-server-alignment, flex-start);
+--outline-dark-emojis: drop-shadow(0px 0px .5px rgb(204, 0, 255)) drop-shadow(0px 0px 1px green);
+--sidebars-animation: var(--sidebar-animation-speed) ease-out 0.1s;
+--member-bar-top-offset: 0px;
+--sidebar-animation-speed: 0.2s;
+--resizeEmojiSize: 1.25;
+--server-size: var(--HSL-server-icon-size, var(--HSL-size, 30px));
+--server-spacing: var(--HSL-server-spacing, var(--HSL-spacing, 3px));
+--server-container: calc(var(--server-size) + 20px);
+--server-direction: var(--HSL-server-direction, column);
+--server-alignment: var(--HSL-server-alignment, flex-start);
 }
 
 /*start of set font*/
@@ -135,6 +115,18 @@
     background-color: green;
 	width: 8px;
 }
+
+/*attempt to speed up*/
+* {
+  animation: none!important;
+}
+* {
+  backdrop-filter: unset!important;
+}
+* {
+  transition: none!important;
+}
+/*end attempt to speed up*/
 
 /*fix pinned msgs*/
 #app-mount div[class="messagesPopoutWrap-3zryHW"]{
@@ -675,7 +667,7 @@ body.foldercontentopened .base-2jDfDU {
 }
 /* end of readall plugin modification */
 
-
+/*chat text*/
 /*chatcontent username edit*/
 #app-mount .headerText-2z4IhQ span[class="username-h_Y3Us desaturateUserColors-1O-G89 clickable-31pE3P"]{
 	font-size: 14px;
@@ -698,14 +690,25 @@ body.foldercontentopened .base-2jDfDU {
 	color:#090;
 	font-size: 12px;
 }
-/* alternating text colors */
+/*end of chatroom text size*/
+
+/* text colors */
+
 #app-mount li[class="messageListItem-ZZ7v6g"]:nth-of-type(odd){
   background-color: #000400;
 }
 #app-mount li[class="messageListItem-ZZ7v6g"]:nth-of-type(even){
   background-color: #000800;
 }
-/*end of chatroom text size */
+
+/* #app-mount div[class="markup-eYLPri messageContent-2t3eCI"]{
+ background-color: #050520;
+ } 
+*/
+/*end of text colors*/
+
+/*end of chat text*/
+
 /*channel list text*/
 #app-mount li[class=containerDefault-3TQ5YN]{
 	text-decoration-line: underline;
@@ -747,24 +750,65 @@ body.foldercontentopened .base-2jDfDU {
 
 /*spotify player plugin*/
 .bar-1GpknY /* user profile spotify whole bar */{
-    background-color: black;
+    background-color: var(--background-secondary);
 }
 .barInner-3dHef4 /* user profile spotify progression bar */{
-    background-color: black;
+    background-color: var(--background-mentioned-before);
 }
 
 div[id="vc-spotify-progress-bar"]{
-	background-color: #010;
-	padding-top: 0px;
+	background-color: var(--background-primary);
 }
 #vc-spotify-player{
-	background-color: #010;
-}
-.mini-28oMa3 .grabber-3R-Rx9{
-	background-color: #000;
-	
+	background-color: var(--background-primary);
 }
 .vc-spotify-progress-time{
-	top:35px;
+	padding-top:6px;
 }
 /*end of spotify player plugin*/
+
+
+/* status alignment */
+[aria-label="User area"] {
+    margin:5px;
+    padding-bottom: 11px;
+}
+
+[aria-label="User area"] [class^="container-"] {
+    padding-top: 12px;
+    border-top: 8px solid var(--background-tertiary);
+    align-items: left;
+    justify-content: space-between;
+}
+
+[aria-label="User area"] [aria-label="Set Status"] {
+    background-color: var(--background-secondary);
+    min-width: unset;
+}
+
+[aria-label="User area"] [class^="nameTag-"] [class*="title-"] {
+    margin-top: 10px;
+    padding-bottom: 0px;
+    font-size: 12px;
+    max-width: 60pt;
+}
+
+[class^="channelTextArea-"] [class^="scrollableContainer-"] {
+    display: flex;
+    align-items: left;
+    justify-items: left;
+    min-height: 44px;
+    flex-wrap: wrap;
+    width: 98%;
+}
+
+[class^="channelTextArea-"] [class^="scrollableContainer-"] [class^="inner-"] {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+[class^="channelTextArea-"] [class^="scrollableContainer-"] ul[role="list"] {
+    flex-grow: 1;
+}
+/* end of status alignment */
