@@ -683,7 +683,6 @@ body.foldercontentopened .base-2jDfDU {
 	text-decoration-thickness: 1px;
 	text-underline-offset: 4px;
 }
-/*end of chatcontent username edit*/
 
 /* chatroom text size */
 #app-mount div[class="markup-eYLPri messageContent-2t3eCI"]{
@@ -691,6 +690,20 @@ body.foldercontentopened .base-2jDfDU {
 	font-size: 12px;
 }
 /*end of chatroom text size*/
+
+.scrollerSpacer-3AqkT9 {
+    height: 0px;
+}
+.form-3gdLxP{
+    margin-top: 7px;    
+}
+.messagesWrapper-RpOMA3, .scrollerContent-2SW0kQ{
+    background-color: var(--background-secondary);
+}
+
+.form-3gdLxP{
+    border-bottom: 8px solid;
+}
 
 /* text colors */
 
@@ -771,26 +784,29 @@ div[id="vc-spotify-progress-bar"]{
 /* status alignment */
 [aria-label="User area"] {
     margin:5px;
-    padding-bottom: 11px;
+    margin-bottom: 8px;
+    padding-bottom:11px;
+    background-color: var(--background-primary);
 }
 
 [aria-label="User area"] [class^="container-"] {
-    padding-top: 12px;
+    padding-top: 11px;
     border-top: 8px solid var(--background-tertiary);
     align-items: left;
     justify-content: space-between;
+    background-color: var(--background-primary);
 }
 
 [aria-label="User area"] [aria-label="Set Status"] {
-    background-color: var(--background-secondary);
     min-width: unset;
+    background-color: var(--background-primary);
 }
 
 [aria-label="User area"] [class^="nameTag-"] [class*="title-"] {
-    margin-top: 10px;
+    margin-top:2px;
     padding-bottom: 0px;
     font-size: 12px;
-    max-width: 60pt;
+    max-width: 56pt;
 }
 
 [class^="channelTextArea-"] [class^="scrollableContainer-"] {
