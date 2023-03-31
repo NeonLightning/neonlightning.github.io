@@ -669,16 +669,31 @@ body.foldercontentopened .base-2jDfDU {
 
 /*chat text*/
 /*chatcontent username edit*/
-#app-mount .headerText-2z4IhQ span[class="username-h_Y3Us desaturateUserColors-1O-G89 clickable-31pE3P"]{
+li[class="messageListItem-ZZ7v6g"]:nth-of-type(even) span[class="username-h_Y3Us desaturateUserColors-1O-G89 clickable-31pE3P"]{
 	font-size: 14px;
 	font-family: "Courier Prime Code";
 	font-weight: 700;
-	color: #090;
+    color: #050;
 	text-shadow:
 	-0.5px -0.5px 0 black,
      0.5px  0.5px 0 black,
-	 -1px -1px 0 purple,
-	 1px 1px 0 purple;
+	 -1px -1px 0 darkred,
+	 1px 1px 0 darkred;
+	text-decoration-line: underline overline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 4px;
+}
+
+li[class="messageListItem-ZZ7v6g"]:nth-of-type(odd) span[class="username-h_Y3Us desaturateUserColors-1O-G89 clickable-31pE3P"]{
+	font-size: 14px;
+	font-family: "Courier Prime Code";
+	font-weight: 700;
+    color: #050;
+	text-shadow:
+	-0.5px -0.5px 0 black,
+     0.5px  0.5px 0 black,
+	 -1px -1px 0 darkblue,
+	 1px 1px 0 darkblue;
 	text-decoration-line: underline overline;
 	text-decoration-thickness: 1px;
 	text-underline-offset: 4px;
@@ -688,6 +703,10 @@ body.foldercontentopened .base-2jDfDU {
 #app-mount div[class="markup-eYLPri messageContent-2t3eCI"]{
 	color:#090;
 	font-size: 12px;
+}
+#app-mount div[class="markup-eYLPri messageContent-2t3eCI"]:before{
+	content: ": ";
+	font-size: 16px;
 }
 /*end of chatroom text size*/
 
@@ -717,17 +736,13 @@ body.foldercontentopened .base-2jDfDU {
 /* #app-mount div[class="markup-eYLPri messageContent-2t3eCI"]{
  background-color: #050520;
  } 
-*/
+/
 /*end of text colors*/
 
 /*end of chat text*/
 
 /*channel list text*/
 #app-mount li[class=containerDefault-3TQ5YN]{
-	text-decoration-line: underline;
-	text-decoration-color: yellow;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 5px;
 	text-align: center;
 }
 #app-mount div[class="iconVisibility-3pLDEs wrapper-1S43wv wrapperCommon-I1TMDb clickable-2AoIYN"]{
@@ -828,3 +843,10 @@ div[id="vc-spotify-progress-bar"]{
     flex-grow: 1;
 }
 /* end of status alignment */
+
+.compact-2Nkcau .repliedMessage-3Z6XBG {
+    --text-indent: -30px;
+}
+em, a, .mention, code, strong, .roleMention-11Aaqi, .channelWithIcon.iconMentionText-u6IUqo, .name-32H74l, .icon-2Ph-Lv, .channelMention.wrapper-1ZcZW-.interactive {
+    margin-top: -4px!important;
+}
