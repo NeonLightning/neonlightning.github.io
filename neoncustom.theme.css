@@ -23,42 +23,42 @@
 @import url("https://greenman36.github.io/files/discord-mods/themes/snippets/better-image-embeds.css");
 
 :root {
---background-mentioned-before: #535;
---background-primary:#010;
---background-secondary-alt:#020;
---background-secondary:#00080;
---background-tertiary: #000800;
---background-warning: #111;
---brightcolor: #0f0;
---mediumcolor: #0a0;
---darkcolor: #070;
---channamescolor:#307030;
---channamescolor2: #505050;
---font-primary: "Courier Prime Code" !important;
---font-display: "Courier Prime" !important;
---font-headline: "Courier Prime"!important;
---successcolor: 59,165,92;
---warningcolor: 250,166,26;
---dangercolor: 237,66,69;
---squared-green: hsl(145.38,65%,39.22%);
---squared-yellow: hsl(40.42,86.36%,56.86%);
---squared-red: hsl(358.66,87.32%,59.8%);
---squared-grey: hsl(226.15,5.49%,53.53%);
---squared-border-width: 4px;
---squared-real-border-width: clamp(1px, var(--squared-border-width), 16px);
---outline-dark-emojis: drop-shadow(0px 0px .5px rgb(30, 255, 0)) drop-shadow(0px 0px 1px green);
---sidebars-animation: var(--sidebar-animation-speed) ease-out 0.1s;
---member-bar-top-offset: 0px;
---sidebar-animation-speed: 0.2s;
---resizeEmojiSize: 1.25;
---server-size: var(--HSL-server-icon-size, var(--HSL-size, 30px));
---server-spacing: var(--HSL-server-spacing, var(--HSL-spacing, 3px));
---server-container: calc(var(--server-size) + 20px);
---server-direction: var(--HSL-server-direction, column);
---server-alignment: var(--HSL-server-alignment, flex-start);
---text-muted: green;
---interactive-active: black;
---interactive-normal: green;
+	--background-mentioned-before: #535;
+	--background-primary:#010;
+	--background-secondary-alt:#020;
+	--background-secondary:#00080;
+	--background-tertiary: #000800;
+	--background-warning: #111;
+	--brightcolor: #0f0;
+	--mediumcolor: #0a0;
+	--darkcolor: #070;
+	--channamescolor:#307030;
+	--channamescolor2: #505050;
+	--font-primary: "Courier Prime Code" !important;
+	--font-display: "Courier Prime" !important;
+	--font-headline: "Courier Prime"!important;
+	--successcolor: 59,165,92;
+	--warningcolor: 250,166,26;
+	--dangercolor: 237,66,69;
+	--squared-green: hsl(145.38,65%,39.22%);
+	--squared-yellow: hsl(40.42,86.36%,56.86%);
+	--squared-red: hsl(358.66,87.32%,59.8%);
+	--squared-grey: hsl(226.15,5.49%,53.53%);
+	--squared-border-width: 3px;
+	--squared-real-border-width: clamp(1px, var(--squared-border-width), 16px);
+	--outline-dark-emojis: drop-shadow(0px 0px .5px rgb(30, 255, 0)) drop-shadow(0px 0px 1px green);
+	--sidebars-animation: var(--sidebar-animation-speed) ease-out 0.1s;
+	--member-bar-top-offset: 0px;
+	--sidebar-animation-speed: 0.2s;
+	--resizeEmojiSize: 1.25;
+	--server-size: var(--HSL-server-icon-size, var(--HSL-size, 30px));
+	--server-spacing: var(--HSL-server-spacing, var(--HSL-spacing, 3px));
+	--server-container: calc(var(--server-size) + 20px);
+	--server-direction: var(--HSL-server-direction, column);
+	--server-alignment: var(--HSL-server-alignment, flex-start);
+	--text-muted: green;
+	--interactive-active: black;
+	--interactive-normal: green;
 }
 
 /*start of set font*/
@@ -157,6 +157,8 @@
  * @description This theme makes the Discord client look squared AF.
 */
 
+
+
 .wrapper-3Un6-K svg foreignobject,
 .avatarUploader-CHGwK7 {
     border: var(--squared-real-border-width) solid transparent;
@@ -197,9 +199,7 @@
     display: none;
 }
 
-* {
-    border-radius: 0 !important;
-}
+* {border-radius: 0 !important}
 
 /* call controlls and more */
 :is(.wrapper-2PSQCG, .controlButton-2PMNom) svg foreignobject {
@@ -207,13 +207,11 @@
 }
 
 /* avatar view profile */
-.avatarHint-2g3Mcd {
-   overflow: visible;
-}
-.avatarWrapper-3y0KZ1 svg foreignObject:has(.avatarHintInner-3gk_Yx) {
-    mask: none;
-    transform: scale(1.1);
-}
+.avatarWrapper-3y0KZ1 svg foreignObject:has(.avatarHintInner-3gk_Yx) {mask: none} /* remove mask from hover */
+.avatarWrapper-3y0KZ1 .wrapper-3Un6-K svg foreignobject {transform: none}
+
+/* settings switch button */
+.slider-HJFN2i rect {rx: 0}
 
 /* radio buttons will take more work and I won't because a box indicates a checkbox, not a radio button */
 
@@ -565,16 +563,30 @@ body.foldercontentopened .base-2jDfDU {
 
 
 /*start of memberlist autohide */
+.membersGroup-2eiWxl{
+    padding-top: 5px;
+    padding-left: 5px;
+    height: 20px;
+    color: var(--channamescolor);
+    text-decoration: underline;
+}
+    div[id="vc-membercount"]{
+        margin: 0%  !important!;
+        gap: 0px !important;
+    }
+    
 div[class="members-3WRCEx thin-RnSY0a scrollerBase-1Pkza4 fade-27X6bG customTheme-3QAYZq"]{
     background-color: var(--background-primary);
-
 }
+
     .container-2o3qEW {
+        border-left: 1px solid var(--background-secondary-alt);
         max-width: 60px;
         position: absolute;
         top: var(--member-bar-top-offset);
         bottom: 0;
         right: 0;
+        background-color: var(--background-primary);
         /* fixes a weird bug that sometimes happens when doing a big paste in the textbox */
         height: calc(100% - var(--member-bar-top-offset));
     }
@@ -605,6 +617,7 @@ div[class="members-3WRCEx thin-RnSY0a scrollerBase-1Pkza4 fade-27X6bG customThem
     
     div:not(.threadSidebarOpen-1LSXvU) > div > .container-3wLKDe {
         padding-right: 60px;
+        
     }
     
     .chatLayerWrapper-2mgEK- > .container-3XgAHv:hover {
@@ -841,7 +854,6 @@ li[class="messagelogger-deleted messageListItem-ZZ7v6g"]::after{
 li[class="messagelogger-deleted messageListItem-ZZ7v6g"]:before{
     display: block;
     color: var(--background-mentioned-before);
-    background-color: ;
     padding-left: 74px;
     font-size: x-small;
     padding-top: 10px;
