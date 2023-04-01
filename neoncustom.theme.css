@@ -12,6 +12,11 @@
  * 
  */
 
+/* old colourful theme 
+@import url("https://neonlightning.github.io/neon.theme.css"); 
+*/
+@import url("https://greenman36.github.io/files/discord-mods/themes/snippets/square-discord.css");
+
 @import url("https://mwittrien.github.io/BetterDiscordAddons/Themes/_res/SettingsIcons.css");
 
 @import url("https://greenman36.github.io/files/discord-mods/themes/snippets/channel-icons.css");
@@ -23,29 +28,30 @@
 @import url("https://greenman36.github.io/files/discord-mods/themes/snippets/better-image-embeds.css");
 
 :root {
-	--background-mentioned-before: #535;
-	--background-primary:#010;
-	--background-secondary-alt:#020;
-	--background-secondary:#000800;
-	--background-tertiary: #000800;
-	--background-warning: #111;
-    --header-secondary:#070;
-    --header-primary:#070;
-	--brightcolor: #0f0;
-	--mediumcolor: #0a0;
-	--darkcolor: #070;
-	--channamescolor:#307030;
-	--channamescolor2: #505050;
+	--background-mentioned-before: #535 !important;
+	--background-primary:#010 !important;
+	--background-secondary-alt:#020 !important;
+	--background-secondary:#000800 !important;
+	--background-tertiary: #000800 !important;
+	--background-warning: #111 !important;
+    --header-secondary:#070 !important;
+    --header-primary:#070 !important;
+	--brightcolor: #0f0 !important;
+	--mediumcolor: #0a0 !important;
+	--darkcolor: #070 !important;
+	--channamescolor:#307030 !important;
+	--channamescolor2: #505050 !important;
+	--text-muted: green !important;
+	--interactive-active: black !important;
+	--interactive-normal: green !important;
 	--font-primary: "Courier Prime Code" !important;
 	--font-display: "Courier Prime" !important;
 	--font-headline: "Courier Prime"!important;
-	--successcolor: 59,165,92;
-	--warningcolor: 250,166,26;
-	--dangercolor: 237,66,69;
-	--squared-green: hsl(145.38,65%,39.22%);
-	--squared-yellow: hsl(40.42,86.36%,56.86%);
-	--squared-red: hsl(358.66,87.32%,59.8%);
-	--squared-grey: hsl(226.15,5.49%,53.53%);
+    
+	--squared-green: hsl(145.38,65%,39.22%) !important;
+	--squared-yellow: hsl(40.42,86.36%,56.86%) !important;
+	--squared-red: hsl(358.66,87.32%,59.8%) !important;
+	--squared-grey: hsl(226.15,5.49%,53.53%) !important;
 	--squared-border-width: 3px;
 	--squared-real-border-width: clamp(1px, var(--squared-border-width), 16px);
 	--outline-dark-emojis: drop-shadow(0px 0px .5px rgb(30, 255, 0)) drop-shadow(0px 0px 1px green);
@@ -58,9 +64,6 @@
 	--server-container: calc(var(--server-size) + 20px);
 	--server-direction: var(--HSL-server-direction, column);
 	--server-alignment: var(--HSL-server-alignment, flex-start);
-	--text-muted: green;
-	--interactive-active: black;
-	--interactive-normal: green;
 }
 
 /*start of set font*/
@@ -150,74 +153,6 @@
     padding-top: 4px;
 }
 /*end of full titlebar drag area */
-
-/**
- * @name Greens SquareCord
- * @author GreenMan36#0633
- * @authorLink https://github.com/GreenMan36
- * @version 26.03.23a
- * @description This theme makes the Discord client look squared AF.
-*/
-
-
-
-.wrapper-3Un6-K svg foreignobject,
-.avatarUploader-CHGwK7 {
-    border: var(--squared-real-border-width) solid transparent;
-    mask: none;
-    transform: scale(1.1);
-}
-
-[aria-label*=", Online"] svg foreignobject,
-.avatarUploader-CHGwK7:has(div svg rect[fill="hsl(145.38,65%,39.22%)"]){
-   border: var(--squared-real-border-width) solid var(--squared-green);
-}
-
-[aria-label*=", Idle"] svg foreignobject,
-.avatarUploader-CHGwK7:has(div svg rect[fill="hsl(40.42,86.36%,56.86%)"]){
-   border: var(--squared-real-border-width) solid var(--squared-yellow);
-}
-
-[aria-label*=", Do Not Disturb"] svg foreignobject,
-.avatarUploader-CHGwK7:has(div svg rect[fill="hsl(358.66,87.32%,59.8%)"]){
-   border: var(--squared-real-border-width) solid var(--squared-red);
-}
-
-:is([aria-label*=", Invisible"], [aria-label*=", Offline"]) svg foreignobject,
-.avatarUploader-CHGwK7:has(div svg rect[fill="hsl(226.15,5.49%,53.53%)"]){
-   border: var(--squared-real-border-width) solid var(--squared-grey);
-}
-
-:is(
-    [aria-label*=", Online"],
-    [aria-label*=", Idle"],
-    [aria-label*=", Do Not Disturb"],
-    [aria-label*=", Invisible"],
-    [aria-label*=", Offline"]
-   ) svg :is(rect, mask, circle),
-.status-b9jLr4,
-.blobContainer-ikKyFs .svg-2ifYOU mask,
-.bannerSVGWrapper-qc0szY mask {
-    display: none;
-}
-
-* {border-radius: 0 !important}
-
-/* call controlls and more */
-:is(.wrapper-2PSQCG, .controlButton-2PMNom) svg foreignobject {
-    mask:none;
-}
-
-/* avatar view profile */
-.avatarWrapper-3y0KZ1 svg foreignObject:has(.avatarHintInner-3gk_Yx) {mask: none} /* remove mask from hover */
-.avatarWrapper-3y0KZ1 .wrapper-3Un6-K svg foreignobject {transform: none}
-
-/* settings switch button */
-.slider-HJFN2i rect {rx: 0}
-
-/* radio buttons will take more work and I won't because a box indicates a checkbox, not a radio button */
-
-/* end of square */
 
 /* start of reaction sizes */
 /* on messages */
@@ -887,7 +822,7 @@ li[class="messagelogger-deleted messageListItem-ZZ7v6g"]:before{
 /*threads stuff*/
 /*need to hardcode colours for some reason look into it later*/
 
-div[class="browser-mnQ1T7 container-18GwIk"]{
+#app-mount div[class="browser-mnQ1T7 container-18GwIk"]{
     background-color: #010;
 }
 div[class="header-3_zmOb"]{
@@ -965,7 +900,7 @@ div[class="overflow-1wOqNV"]{
     color: var(--channamescolor) !important;
 }
 li[class="containerDefault-YUSmu3 selected-2TbFuo"] a[class="mainContent-20q_Hp"]{
-background-color: #020;
+background-color: var(--channelnames);
 }
 div[class="content-1gYQeQ"]{
 }
@@ -984,5 +919,9 @@ div[class="scrollableContainer-15eg7h webkit-QgSAqd hasConnectedBar-1vN2JH"]{
 code[class="scrollbarGhostHairline-2LpzZ9 scrollbar-3vVt8d hljs"]{
     background-color: var(--darkcolor);
     opacity: 70%;
+}
+#app-mount code{
+    background-color: var(--background-secondary);
+    color: var(--darkcolor);
 }
 /* end of random crap i forgot to comment or sort or couldn't figure out where to put */
