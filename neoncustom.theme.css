@@ -23,27 +23,30 @@
 @import url("https://greenman36.github.io/files/discord-mods/themes/snippets/better-image-embeds.css");
 
 :root {
---background-mentioned-before: #faa61a;
---background-primary:#020;
+--background-mentioned-before: #535;
+--background-primary:#010;
 --background-secondary-alt:#020;
---background-secondary:#000800;
+--background-secondary:#00080;
 --background-tertiary: #000800;
+--background-warning: #111;
+--brightcolor: #0f0;
+--mediumcolor: #0a0;
+--darkcolor: #070;
+--channamescolor:#307030;
+--channamescolor2: #505050;
 --font-primary: "Courier Prime Code" !important;
 --font-display: "Courier Prime" !important;
 --font-headline: "Courier Prime"!important;
-
 --successcolor: 59,165,92;
 --warningcolor: 250,166,26;
 --dangercolor: 237,66,69;
-
 --squared-green: hsl(145.38,65%,39.22%);
 --squared-yellow: hsl(40.42,86.36%,56.86%);
 --squared-red: hsl(358.66,87.32%,59.8%);
 --squared-grey: hsl(226.15,5.49%,53.53%);
 --squared-border-width: 4px;
 --squared-real-border-width: clamp(1px, var(--squared-border-width), 16px);
-
---outline-dark-emojis: drop-shadow(0px 0px .5px rgb(204, 0, 255)) drop-shadow(0px 0px 1px green);
+--outline-dark-emojis: drop-shadow(0px 0px .5px rgb(30, 255, 0)) drop-shadow(0px 0px 1px green);
 --sidebars-animation: var(--sidebar-animation-speed) ease-out 0.1s;
 --member-bar-top-offset: 0px;
 --sidebar-animation-speed: 0.2s;
@@ -53,6 +56,9 @@
 --server-container: calc(var(--server-size) + 20px);
 --server-direction: var(--HSL-server-direction, column);
 --server-alignment: var(--HSL-server-alignment, flex-start);
+--text-muted: green;
+--interactive-active: black;
+--interactive-normal: green;
 }
 
 /*start of set font*/
@@ -112,7 +118,7 @@
 /*end of set font*/
 
 .mentioned-Tre-dv:before /* Thin line in front of the mention */{
-    background-color: green;
+    background-color: var(--background-mentioned-before);
 	width: 8px;
 }
 
@@ -130,11 +136,9 @@
 
 /*fix pinned msgs*/
 #app-mount div[class="messagesPopoutWrap-3zryHW"]{
-	background-color:darkgreen;
 	bottom: 0px;
 	height: 700px;
 	top: 0px;
-	right: -236px;
 }
 /*end of fix pinned msgs*/
 
@@ -561,10 +565,10 @@ body.foldercontentopened .base-2jDfDU {
 
 
 /*start of memberlist autohide */
-/* only enable colapsing member bar when below this window size */
-@media only screen and (max-width: 1920px) {
-    
-    
+div[class="members-3WRCEx thin-RnSY0a scrollerBase-1Pkza4 fade-27X6bG customTheme-3QAYZq"]{
+    background-color: var(--background-primary);
+
+}
     .container-2o3qEW {
         max-width: 60px;
         position: absolute;
@@ -602,19 +606,6 @@ body.foldercontentopened .base-2jDfDU {
     div:not(.threadSidebarOpen-1LSXvU) > div > .container-3wLKDe {
         padding-right: 60px;
     }
-}
-
-@media only screen and (max-width: 1290) {
-    /* fix forum */
-    .container-3XgAHv /*:not(.chatTarget-3H6mpC)*/ {
-        position: absolute;
-        right: -440px;
-        bottom: 0;
-        top: 0;
-        transition: right var(--sidebars-animation);
-        transition-delay: .5s;
-        width: 500px !important
-    }
     
     .chatLayerWrapper-2mgEK- > .container-3XgAHv:hover {
         right: 0;
@@ -633,7 +624,6 @@ body.foldercontentopened .base-2jDfDU {
     div.threadSidebarOpen-1LSXvU > div > .container-3wLKDe {
         padding-right: 60px;
     }
-}
 /* end of autohide */
 
 /* start of surround status */
@@ -659,8 +649,8 @@ body.foldercontentopened .base-2jDfDU {
 
 .button-ejjZWC.lookFilled-1H2Jvj.colorBrand-2M3O3N.sizeMin-3Yqxk5.grow-2T4nbg {
     font-size: 18px;
-	background-color: #000;
-	color: green;
+	background-color: var(--background-secondary);
+	color: var(--brightcolor);
     margin-left: 0px !important;
     text-transform: uppercase;
 	padding-left: 5px;
@@ -669,31 +659,16 @@ body.foldercontentopened .base-2jDfDU {
 
 /*chat text*/
 /*chatcontent username edit*/
-li[class="messageListItem-ZZ7v6g"]:nth-of-type(even) span[class="username-h_Y3Us desaturateUserColors-1O-G89 clickable-31pE3P"]{
+li[class="messageListItem-ZZ7v6g"] span[class="username-h_Y3Us desaturateUserColors-1O-G89 clickable-31pE3P"]{
 	font-size: 14px;
 	font-family: "Courier Prime Code";
 	font-weight: 700;
-    color: #050;
+    color: var(--channamescolor);
 	text-shadow:
 	-0.5px -0.5px 0 black,
      0.5px  0.5px 0 black,
-	 -1px -1px 0 darkred,
-	 1px 1px 0 darkred;
-	text-decoration-line: underline overline;
-	text-decoration-thickness: 1px;
-	text-underline-offset: 4px;
-}
-
-li[class="messageListItem-ZZ7v6g"]:nth-of-type(odd) span[class="username-h_Y3Us desaturateUserColors-1O-G89 clickable-31pE3P"]{
-	font-size: 14px;
-	font-family: "Courier Prime Code";
-	font-weight: 700;
-    color: #050;
-	text-shadow:
-	-0.5px -0.5px 0 black,
-     0.5px  0.5px 0 black,
-	 -1px -1px 0 darkblue,
-	 1px 1px 0 darkblue;
+	 -1px -1px 0 var(--channamescolor2),
+	 1px 1px 0 var(--channamescolor2);
 	text-decoration-line: underline overline;
 	text-decoration-thickness: 1px;
 	text-underline-offset: 4px;
@@ -714,7 +689,7 @@ li[class="messageListItem-ZZ7v6g"]:nth-of-type(odd) span[class="username-h_Y3Us 
     height: 0px;
 }
 .form-3gdLxP{
-    margin-top: 7px;    
+    margin-top: 6px;    
 }
 .messagesWrapper-RpOMA3, .scrollerContent-2SW0kQ{
     background-color: var(--background-secondary);
@@ -746,15 +721,15 @@ li[class="messageListItem-ZZ7v6g"]:nth-of-type(odd) span[class="username-h_Y3Us 
 	text-align: center;
 }
 #app-mount div[class="iconVisibility-3pLDEs wrapper-1S43wv wrapperCommon-I1TMDb clickable-2AoIYN"]{
-	background-color: #001000;
+	background-color: var(--background-secondary-alt);
 }
 #app-mount li[class="containerDefault-YUSmu3 selected-2TbFuo"]{
-	background-color: #211;
+	background-color: var(--background-primary);
 }
 #app-mount div[class="iconVisibility-vptxma wrapper-NhbLHG modeUnread-3Cxepe"]{
-	background-color: black;
-	border: dotted #131;
-	border-width: 1px;
+
+    background-color: var(--background-secondary-alt);
+    padding-bottom: 0px;
 }
 #app-mount div[class=name-28HaxV]{
 	text-decoration-line: overline underline;
@@ -769,7 +744,7 @@ li[class="messageListItem-ZZ7v6g"]:nth-of-type(odd) span[class="username-h_Y3Us 
 	font-size: large;
 	color: #000;
 	text-shadow:
-	 1px 1px 2px green;
+	 1px 1px 2px var(--darkcolor);
 }
 #app-mount div[class="name-28HaxV channelName-3KPsGw overflow-1wOqNV"]{
 	color: #090;
@@ -778,16 +753,12 @@ li[class="messageListItem-ZZ7v6g"]:nth-of-type(odd) span[class="username-h_Y3Us 
 
 /*spotify player plugin*/
 .bar-1GpknY /* user profile spotify whole bar */{
-    background-color: var(--background-secondary);
+    background-color: var(--background-primary);
 }
 .barInner-3dHef4 /* user profile spotify progression bar */{
-    background-color: var(--background-mentioned-before);
+    background-color: var(--background-primary);
 }
-
 div[id="vc-spotify-progress-bar"]{
-	background-color: var(--background-primary);
-}
-#vc-spotify-player{
 	background-color: var(--background-primary);
 }
 .vc-spotify-progress-time{
@@ -800,12 +771,12 @@ div[id="vc-spotify-progress-bar"]{
 [aria-label="User area"] {
     margin:5px;
     margin-bottom: 8px;
-    padding-bottom:11px;
+    padding-bottom:22px;
     background-color: var(--background-primary);
 }
 
 [aria-label="User area"] [class^="container-"] {
-    padding-top: 11px;
+    padding-top: 23px;
     border-top: 8px solid var(--background-tertiary);
     align-items: left;
     justify-content: space-between;
@@ -828,7 +799,7 @@ div[id="vc-spotify-progress-bar"]{
     display: flex;
     align-items: left;
     justify-items: left;
-    min-height: 44px;
+    min-height: 67px;
     flex-wrap: wrap;
     width: 98%;
 }
@@ -849,4 +820,84 @@ div[id="vc-spotify-progress-bar"]{
 }
 em, a, .mention, code, strong, .roleMention-11Aaqi, .channelWithIcon.iconMentionText-u6IUqo, .name-32H74l, .icon-2Ph-Lv, .channelMention.wrapper-1ZcZW-.interactive {
     margin-top: -4px!important;
+}
+
+/*deleted msgs plugin themeing*/
+li[class="messagelogger-deleted messageListItem-ZZ7v6g"]{
+    white-space: pre-wrap;
+    background-color: var(--background-warning);
+}
+li[class="messagelogger-deleted messageListItem-ZZ7v6g"]::after{
+    display: block;
+    color: var(--background-mentioned-before);
+    padding-left: 74px;
+    font-size: x-small;
+    content: "!!(B-l33ted)!! ↑";
+    margin-bottom: 7px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    border-bottom: 2px solid orange;
+}
+li[class="messagelogger-deleted messageListItem-ZZ7v6g"]:before{
+    display: block;
+    color: var(--background-mentioned-before);
+    background-color: ;
+    padding-left: 74px;
+    font-size: x-small;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top: 2px solid orange;
+    content: "!!(B-l33ted)!!";
+    
+}
+/*end of deleted msgs plugin theme*/
+
+#app-mount div[class="placeholder-1rCBhr slateTextArea-27tjG0 fontSize16Padding-XoMpjI"]{
+    padding-left: 135px;
+	text-decoration-line: underline;
+	text-underline-offset: 1px;
+	text-decoration-thickness: 1px;
+}
+#app-mount div[class="markup-eYLPri editor-H2NA06 slateTextArea-27tjG0 fontSize16Padding-XoMpjI"]::before{
+    color:var(--brightcolor);
+    padding-top: 1px;
+    font-size: 12px;
+    font-weight: 400;
+    content: "~/Discord/type$ ";
+}
+#app-mount div[class="scrollableContainer-15eg7h webkit-QgSAqd"]{
+    background-color: var(--background-primary);
+}
+div[class="markup-eYLPri editor-H2NA06 slateTextArea-27tjG0 fontSize16Padding-XoMpjI"]{
+font-size: 10px;
+}
+
+span[class="emojiContainer-2XKwXX"]{
+    font-size: 16px;    
+}
+span[class="emojiContainer-2XKwXX"]:hover{   
+    font-size: 60px;
+}
+div[class="sprite-2lxwfc"]{
+    filter: saturate(150%) brightness(0.6) hue-rotate(57deg) !important;
+}
+a[class="link-39sEB3"]{
+    color: var(--channamescolor) !important;
+}
+div[class="overflow-1wOqNV"]{
+    color: var(--channamescolor) !important;
+}
+li[class="containerDefault-YUSmu3 selected-2TbFuo"] a[class="mainContent-20q_Hp"]{
+background-color: #020;
+}
+div[class="content-1gYQeQ"]{
+}
+.modeSelected-3DmyhH .content-1gYQeQ, .modeSelected-3DmyhH:hover .content-1gYQeQ{
+    background-color: var(--background-secondary-alt);
+   	border: dotted var(--darkcolor);
+	border-width: 1px;
+}
+div[class="unread-36eUEm unreadRelevant-2f-VSK"]{
+    background-color: var(--brightcolor);
+    
 }
