@@ -301,14 +301,21 @@
  width: 100%;
  top: -90% !important;
 }
+div[class="wrapper-3XVBev"]{
+    margin: -1px;
+border: 3px dotted var(--background-secondary-alt);
+}
+div[class="listItem-3SmSlK"]{
+}
 #app-mount .guilds-2JjMmN [class*=pill] span {
- height: 35% !important;
- width: 70% !important;
+ height: 30px !important;
+ width: 25px !important;
+ margin: 2px;
+ margin-left: 1px;
  transform: scale(0, 1) !important;
  transition: 0.15s ease !important;
- margin-left: 1px;
- background-color:Tomato;
- border: 4px solid #224422;
+ background-color: var(--channamescolor);
+ border: 2px dotted var(--background-mentioned-before);
 }
 #app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 0"] {
  transform: scale(1, 0.24) !important;
@@ -471,6 +478,7 @@
 #app-mount .guilds-2JjMmN .wrapper-3XVBev {
  top: 0;
  bottom: 0;
+
 }
 #app-mount .guilds-2JjMmN .target-1eRTCg::before {
  top: 0;
@@ -571,7 +579,7 @@ body.foldercontentopened .base-2jDfDU {
     text-decoration: underline;
 }
     div[id="vc-membercount"]{
-        margin: 0%  !important!;
+        margin: 0%  !important;
         gap: 0px !important;
     }
     
@@ -917,4 +925,10 @@ div[class="unread-36eUEm unreadRelevant-2f-VSK"]{
     background-color: var(--brightcolor);    
 }
 
+div[class="scrollableContainer-15eg7h webkit-QgSAqd hasConnectedBar-1vN2JH"]{
+    background-color: #000;
+}
+code[class="scrollbarGhostHairline-2LpzZ9 scrollbar-3vVt8d hljs"]{
+    background-color: var(--darkcolor);
+}
 /* end of random crap i forgot to comment or sort or couldn't figure out where to put */
