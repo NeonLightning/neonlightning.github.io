@@ -753,13 +753,13 @@ li[class="messageListItem-ZZ7v6g"] span[class="username-h_Y3Us desaturateUserCol
 
 /*spotify player plugin*/
 .bar-1GpknY /* user profile spotify whole bar */{
-    background-color: var(--background-primary);
+    background-color: var(--background-secondary);
 }
 .barInner-3dHef4 /* user profile spotify progression bar */{
-    background-color: var(--background-primary);
+    background-color: var(--background-secondary);
 }
 div[id="vc-spotify-progress-bar"]{
-	background-color: var(--background-primary);
+	background-color: var(--background-secondary);
 }
 .vc-spotify-progress-time{
 	padding-top:6px;
@@ -852,6 +852,8 @@ li[class="messagelogger-deleted messageListItem-ZZ7v6g"]:before{
 }
 /*end of deleted msgs plugin theme*/
 
+/* random crap i forgot to comment or sort or couldn't figure out where to put */
+
 #app-mount div[class="placeholder-1rCBhr slateTextArea-27tjG0 fontSize16Padding-XoMpjI"]{
     padding-left: 135px;
 	text-decoration-line: underline;
@@ -869,7 +871,9 @@ li[class="messagelogger-deleted messageListItem-ZZ7v6g"]:before{
     background-color: var(--background-primary);
 }
 div[class="markup-eYLPri editor-H2NA06 slateTextArea-27tjG0 fontSize16Padding-XoMpjI"]{
-font-size: 10px;
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--channamescolor2);
 }
 
 span[class="emojiContainer-2XKwXX"]{
@@ -898,6 +902,7 @@ div[class="content-1gYQeQ"]{
 	border-width: 1px;
 }
 div[class="unread-36eUEm unreadRelevant-2f-VSK"]{
-    background-color: var(--brightcolor);
-    
+    background-color: var(--brightcolor);    
 }
+
+/* end of random crap i forgot to comment or sort or couldn't figure out where to put */
