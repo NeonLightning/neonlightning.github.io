@@ -26,9 +26,11 @@
 	--background-mentioned-before: #535;
 	--background-primary:#010;
 	--background-secondary-alt:#020;
-	--background-secondary:#00080;
+	--background-secondary:#000800;
 	--background-tertiary: #000800;
 	--background-warning: #111;
+    --header-secondary:#070;
+    --header-primary:#070;
 	--brightcolor: #0f0;
 	--mediumcolor: #0a0;
 	--darkcolor: #070;
@@ -719,6 +721,15 @@ li[class="messageListItem-ZZ7v6g"] span[class="username-h_Y3Us desaturateUserCol
 .form-3gdLxP{
     border-bottom: 8px solid;
 }
+div[class="jumpToPresentBar-1cEnH0 barBase-3xxDXu"]{
+    background-color: var(--background-secondary-alt);
+}
+button[class="barButtonMain-2GIx4o barButtonBase-Sk2mdB"]{
+    color: var(--darkcolor);
+}
+button[class="barButtonAlt-TQoCdZ barButtonBase-Sk2mdB"]{
+    color: var(--darkcolor);
+}
 
 /* text colors */
 
@@ -781,9 +792,10 @@ li[class="messageListItem-ZZ7v6g"] span[class="username-h_Y3Us desaturateUserCol
 }
 div[id="vc-spotify-progress-bar"]{
 	background-color: var(--background-secondary);
+    padding-bottom: 17px;
 }
 .vc-spotify-progress-time{
-	padding-top:6px;
+	padding-top:9px;
 }
 /*end of spotify player plugin*/
 
@@ -872,6 +884,47 @@ li[class="messagelogger-deleted messageListItem-ZZ7v6g"]:before{
 }
 /*end of deleted msgs plugin theme*/
 
+/*threads stuff*/
+/*need to hardcode colours for some reason look into it later*/
+
+div[class="browser-mnQ1T7 container-18GwIk"]{
+    background-color: #010;
+}
+div[class="header-3_zmOb"]{
+    background-color: #010;
+}
+div[class="container-2rzKKA"]{
+    background-color: #000;
+}
+div[class="inner-2pOSmK"]{
+    background-color: #000;
+}
+/* end of need to hardcode colours for some reason look into it later*/
+
+h1[class="defaultColor-1EVLSt heading-md-semibold-2h_vsp defaultColor-1GKx81 title-10Au0i"]{
+    color: var(--channamescolor);
+}
+svg[class="threadIcon-rd1kqG"]{
+    color: var(--channamescolor);
+}
+button[class="createButton-oruGBs button-ejjZWC lookFilled-1H2Jvj colorBrand-2M3O3N sizeMin-3Yqxk5 grow-2T4nbg"]{
+    border: 1px dotted var(--channamescolor);
+}
+div[class="contents-3NembX"]{
+    color: var(--channamescolor);
+}
+div[class="closeIcon-11tHJX"]{
+    color: var(--channamescolor);
+}
+div[class="text-xs-bold-9jfMvZ sectionHeader-QsOv68"]{
+    color: var(--channamescolor) !important;
+    font-weight: 900;
+}
+
+/*threads stuff*/
+
+
+
 /* random crap i forgot to comment or sort or couldn't figure out where to put */
 
 #app-mount div[class="placeholder-1rCBhr slateTextArea-27tjG0 fontSize16Padding-XoMpjI"]{
@@ -900,7 +953,7 @@ span[class="emojiContainer-2XKwXX"]{
     font-size: 16px;    
 }
 span[class="emojiContainer-2XKwXX"]:hover{   
-    font-size: 60px;
+    font-size: 25px;
 }
 div[class="sprite-2lxwfc"]{
     filter: saturate(150%) brightness(0.6) hue-rotate(57deg) !important;
@@ -930,5 +983,6 @@ div[class="scrollableContainer-15eg7h webkit-QgSAqd hasConnectedBar-1vN2JH"]{
 }
 code[class="scrollbarGhostHairline-2LpzZ9 scrollbar-3vVt8d hljs"]{
     background-color: var(--darkcolor);
+    opacity: 70%;
 }
 /* end of random crap i forgot to comment or sort or couldn't figure out where to put */
