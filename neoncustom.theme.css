@@ -47,7 +47,7 @@
 	--font-primary: "Courier Prime Code" !important;
 	--font-display: "Courier Prime" !important;
 	--font-headline: "Courier Prime"!important;
-    
+
 	--squared-green: hsl(145.38,65%,39.22%) !important;
 	--squared-yellow: hsl(40.42,86.36%,56.86%) !important;
 	--squared-red: hsl(358.66,87.32%,59.8%) !important;
@@ -634,11 +634,11 @@ li[class="messageListItem-ZZ7v6g"] span[class="username-h_Y3Us desaturateUserCol
 
 /* chatroom text size */
 #app-mount div[class="markup-eYLPri messageContent-2t3eCI"]{
-	color:#090;
+	color: var(--mediumcolor);
 	font-size: 12px;
 }
 #app-mount div[class="markup-eYLPri messageContent-2t3eCI"]:before{
-	content: ": ";
+	content: "\a -- ";
 	font-size: 16px;
 }
 /*end of chatroom text size*/
@@ -694,9 +694,11 @@ button[class="barButtonAlt-TQoCdZ barButtonBase-Sk2mdB"]{
 	background-color: var(--background-primary);
 }
 #app-mount div[class="iconVisibility-vptxma wrapper-NhbLHG modeUnread-3Cxepe"]{
-
     background-color: var(--background-secondary-alt);
-    padding-bottom: 0px;
+    padding: 0px;
+    margin: 0px;
+    padding-top: 2px;
+    height: 22px;
 }
 #app-mount div[class=name-28HaxV]{
 	text-decoration-line: overline underline;
@@ -887,9 +889,6 @@ div[class="markup-eYLPri editor-H2NA06 slateTextArea-27tjG0 fontSize16Padding-Xo
 span[class="emojiContainer-2XKwXX"]{
     font-size: 16px;    
 }
-span[class="emojiContainer-2XKwXX"]:hover{   
-    font-size: 25px;
-}
 div[class="sprite-2lxwfc"]{
     filter: saturate(150%) brightness(0.6) hue-rotate(57deg) !important;
 }
@@ -903,11 +902,19 @@ li[class="containerDefault-YUSmu3 selected-2TbFuo"] a[class="mainContent-20q_Hp"
 background-color: var(--channelnames);
 }
 div[class="content-1gYQeQ"]{
+    margin: 0px;
+    padding: 0px;
+    height: 22px;
+    padding-left: 5px;
 }
 .modeSelected-3DmyhH .content-1gYQeQ, .modeSelected-3DmyhH:hover .content-1gYQeQ{
     background-color: var(--background-secondary-alt);
    	border: dotted var(--darkcolor);
 	border-width: 1px;
+    padding: 0px;
+    padding-top: 5px;
+    margin: 0px;
+    height: 20px;
 }
 div[class="unread-36eUEm unreadRelevant-2f-VSK"]{
     background-color: var(--brightcolor);    
@@ -923,5 +930,17 @@ code[class="scrollbarGhostHairline-2LpzZ9 scrollbar-3vVt8d hljs"]{
 #app-mount code{
     background-color: var(--background-secondary);
     color: var(--darkcolor);
+}
+.username-h_Y3Us:after{
+    display: none;
+}
+.compact-2Nkcau .contents-2MsGLg {
+    margin-left: -0px !important;
+    padding-left: 10px;
+    text-indent: -75px;
+}
+.barBase-3xxDXu{
+    background-color: var(--background-primary);
+    width: calc(100% - 60px);
 }
 /* end of random crap i forgot to comment or sort or couldn't figure out where to put */
