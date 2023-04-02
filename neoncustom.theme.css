@@ -12,9 +12,9 @@
  * 
  */
 
-/* old colourful theme 
+/* old colourful theme
 @import url("https://neonlightning.github.io/neon.theme.css"); 
-*/
+ */
 @import url("https://greenman36.github.io/files/discord-mods/themes/snippets/square-discord.css");
 
 @import url("https://mwittrien.github.io/BetterDiscordAddons/Themes/_res/SettingsIcons.css");
@@ -630,6 +630,10 @@ li[class="messageListItem-ZZ7v6g"] span[class="username-h_Y3Us desaturateUserCol
 	text-decoration-line: underline overline;
 	text-decoration-thickness: 1px;
 	text-underline-offset: 4px;
+    text-decoration-style: unset;
+}
+li[class="messageListItem-ZZ7v6g"] span[class="username-h_Y3Us desaturateUserColors-1O-G89 clickable-31pE3P"]:hover{
+    text-decoration-style: dotted;
 }
 
 /* chatroom text size */
@@ -942,5 +946,15 @@ code[class="scrollbarGhostHairline-2LpzZ9 scrollbar-3vVt8d hljs"]{
 .barBase-3xxDXu{
     background-color: var(--background-primary);
     width: calc(100% - 60px);
+}
+#app-mount .spine-29OFwR{
+    fill: var(--background-secondary-alt);
+    left: 30px;
+    top: 0%;
+    color: var(--background-secondary-alt);
+}
+.spineBorder-1-F4s1{
+    left: 30px;
+    background-color: var(--background-secondary-alt);
 }
 /* end of random crap i forgot to comment or sort or couldn't figure out where to put */
