@@ -619,7 +619,6 @@ div[class="members-3WRCEx thin-RnSY0a scrollerBase-1Pkza4 fade-27X6bG customThem
 li[class="messageListItem-ZZ7v6g"] span[class="username-h_Y3Us desaturateUserColors-1O-G89 clickable-31pE3P"]{
 	font-size: 14px;
 	font-family: "Courier Prime Code";
-	font-weight: 700;
     color: var(--channamescolor);
 	text-shadow:
 	-0.5px -0.5px 0 black,
@@ -639,11 +638,13 @@ li[class="messageListItem-ZZ7v6g"] span[class="username-h_Y3Us desaturateUserCol
 #app-mount div[class="markup-eYLPri messageContent-2t3eCI"]{
 	color: var(--mediumcolor);
 	font-size: 12px;
+    line-height: 16px;
+    padding-left: 20px;
 }
 #app-mount div[class="markup-eYLPri messageContent-2t3eCI"]:before{
-	content: "\a -- ";
-	font-size: 16px;
-}
+	content: "-- ";
+	font-size: 10px;
+    }
 /*end of chatroom text size*/
 
 .scrollerSpacer-3AqkT9 {
@@ -678,10 +679,8 @@ button[class="barButtonAlt-TQoCdZ barButtonBase-Sk2mdB"]{
   background-color: #000800;
 }
 
-/* #app-mount div[class="markup-eYLPri messageContent-2t3eCI"]{
- background-color: #050520;
- } 
-/
+
+
 /*end of text colors*/
 
 /*end of chat text*/
@@ -792,7 +791,7 @@ div[id="vc-spotify-progress-bar"]{
     --text-indent: -30px;
 }
 em, a, .mention, code, strong, .roleMention-11Aaqi, .channelWithIcon.iconMentionText-u6IUqo, .name-32H74l, .icon-2Ph-Lv, .channelMention.wrapper-1ZcZW-.interactive {
-    margin-top: -4px!important;
+    margin-top: -1px !important;
 }
 
 /*deleted msgs plugin themeing*/
@@ -891,7 +890,7 @@ Try changing the second value '0.6s' and fiddle around with it to change the spe
 #app-mount div[class="markup-eYLPri editor-H2NA06 slateTextArea-27tjG0 fontSize16Padding-XoMpjI"]::before{
     color:var(--brightcolor);
     padding-top: 1px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 400;
     content: "~/Discord/type$ ";
 }
@@ -945,10 +944,7 @@ code[class="scrollbarGhostHairline-2LpzZ9 scrollbar-3vVt8d hljs"]{
     background-color: var(--darkcolor);
     opacity: 70%;
 }
-#app-mount code{
-    background-color: var(--background-secondary);
-    color: var(--darkcolor);
-}
+
 .username-h_Y3Us:after{
     display: none;
 }
@@ -1002,7 +998,7 @@ div[class=".cozy-VmLDNB .messageContent-2t3eCI"]{
 .cozy-VmLDNB .messageContent-2t3eCI{
     padding-bottom: 5px;
     margin: 0px;
-    line-height: 3px;
+    line-height: 9px;
 }
 .zalgo-26OfGz.cozy-VmLDNB .header-2jRmjb {
 padding-bottom: 5px;
@@ -1033,5 +1029,17 @@ background-color: unset;
 color: var(--brightcolor);
 border-top: 1px solid;
 border-bottom: 1px solid;
+}
+#app-mount code{
+    font-size: 12px !important;
+    background-color: var(--background-warning) !important;
+    line-height: 20px;
+    color: ;
+}
+.repliedMessage-3Z6XBG{
+    line-height: normal;
+}
+#app-mount div[class="markup-eYLPri messageContent-2t3eCI"]:has(span[class="mention wrapper-1ZcZW- interactive"]){
+line-height: normal;
 }
 /* end of random crap i forgot to comment or sort or couldn't figure out where to put */
