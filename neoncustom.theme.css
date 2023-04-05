@@ -378,8 +378,7 @@ div[class="listItem-3SmSlK"]{
  transform: scale(1, 1) !important;
 }
 #app-mount .guilds-2JjMmN .wrapper-z5ab_q {
- height: var(--server-size) !important;
- padding-bottom: 9px;
+ width: calc(var(--server-size));
 }
 #app-mount .guilds-2JjMmN .wrapper-38slSD {
  width: var(--server-container);
@@ -865,6 +864,21 @@ div[class="text-xs-bold-9jfMvZ sectionHeader-QsOv68"]{
 /*threads stuff*/
 
 
+/* Makes messages slide into chat 
+Try changing the second value '0.6s' and fiddle around with it to change the speed*/
+@keyframes slide-up {
+    0% {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+.message-2CShn3 {
+  animation: slide-up 2.6s ease;
+}
 
 /* random crap i forgot to comment or sort or couldn't figure out where to put */
 
@@ -956,5 +970,68 @@ code[class="scrollbarGhostHairline-2LpzZ9 scrollbar-3vVt8d hljs"]{
 .spineBorder-1-F4s1{
     left: 30px;
     background-color: var(--background-secondary-alt);
+}
+#app-mount .guilds-2JjMmN .wrapper-z5ab_q {
+ width: calc(var(--server-size));
+}
+#app-mount .guilds-2JjMmN [class*=pill] span[style*="height: 40"]{
+    background-color: var(--channamescolor2);
+    top: 6px;
+    height: 14px !important;
+    width: calc(var(--server-size) - 5px) !important;
+    opacity: 0.5%;
+    border: 2px solid var(--mediumcolor);
+    border-bottom: 3px solid var(--mediumcolor);
+}
+div[class="isSending-3SiDwE"]{
+    font-size: 14px !important;
+    color: var(--background-mentioned-before) !important;
+}
+img[class="avatar-2e8lTP clickable-31pE3P"]{
+    height: 32px !important;
+    width: 32px !important;
+}
+div[class=".cozy-VmLDNB .messageContent-2t3eCI"]{
+    margin: 0px;
+    padding: 0px;
+}
+.group-spacing-16 .groupStart-3Mlgv1{
+    margin-top: 0px;
+    padding-top: 0px;
+}
+.cozy-VmLDNB .messageContent-2t3eCI{
+    padding-bottom: 5px;
+    margin: 0px;
+    line-height: 3px;
+}
+.zalgo-26OfGz.cozy-VmLDNB .header-2jRmjb {
+padding-bottom: 5px;
+}
+.avatar-2e8lTP{
+    left: 20px;
+}
+img[class="avatar-2e8lTP"]::after{
+    content: ":";
+}
+div[id="---new-messages-bar"]{
+    padding: 3px;
+    border: 2px dotted var(--background-mentioned-before);
+    margin-left: 1%;
+    width: 98%;
+}
+.group-spacing-16 .divider-IqmEqJ.beforeGroup-1BvJAt{
+    top: 0px;
+    margin-top: 5px ;
+    margin-bottom: 5px;
+    background-color:var(--channamescolor2);
+}
+.unreadPillCap-2-iI4h{
+    display: none;
+}
+.unreadPill-3nEWYM, .unreadPillCap-2-iI4h{
+background-color: unset;
+color: var(--brightcolor);
+border-top: 1px solid;
+border-bottom: 1px solid;
 }
 /* end of random crap i forgot to comment or sort or couldn't figure out where to put */
