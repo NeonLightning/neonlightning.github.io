@@ -1034,12 +1034,22 @@ border-bottom: 1px solid;
     font-size: 12px !important;
     background-color: var(--background-warning) !important;
     line-height: 20px;
-    color: ;
 }
 .repliedMessage-3Z6XBG{
     line-height: normal;
 }
 #app-mount div[class="markup-eYLPri messageContent-2t3eCI"]:has(span[class="mention wrapper-1ZcZW- interactive"]){
 line-height: normal;
+}
+div[class="repliedTextContent-2hOYMB markup-eYLPri messageContent-2t3eCI"]{
+    color: var(--mediumcolor) !important;
+    padding-left: 15px !important;
+
+}
+div[class="repliedTextContent-2hOYMB markup-eYLPri messageContent-2t3eCI"]::before{
+content: "      ---===||  ";
+}
+div[class="repliedTextContent-2hOYMB markup-eYLPri messageContent-2t3eCI"]::after{
+content: "  ||===---    ";
 }
 /* end of random crap i forgot to comment or sort or couldn't figure out where to put */
