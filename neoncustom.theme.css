@@ -1027,6 +1027,7 @@ div[id="---new-messages-bar"]{
 .unreadPill-3nEWYM, .unreadPillCap-2-iI4h{
 background-color: unset;
 color: var(--brightcolor);
+top: -4px;
 border-top: 1px solid;
 border-bottom: 1px solid;
 }
@@ -1051,5 +1052,15 @@ content: "      ---===||  ";
 }
 div[class="repliedTextContent-2hOYMB markup-eYLPri messageContent-2t3eCI"]::after{
 content: "  ||===---    ";
+}
+.content-yjf30S{
+    height: auto !important;
+}
+.button-ejjZWC .contents-3NembX{
+background-color: var(--background-primary);
+background-image: none;
+}
+.lookFilled-1H2Jvj.colorPrimary-2-Lusz{
+    background-color: var(--background-primary);
 }
 /* end of random crap i forgot to comment or sort or couldn't figure out where to put */
