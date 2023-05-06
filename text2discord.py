@@ -1,7 +1,7 @@
 '''
 Text2Discord
 Sends the output of specific text files out to Discord. for "logs..."
-just gotta set main.plugins.text2discord.files and main.plugins.text2discord.webhook
+just gotta set main.plugins.text2discord.files = [ "/path/to/files", "/and/other/files",] and main.plugins.text2discord.webhook = "http://webhook/url"
 '''
 
 
