@@ -3,8 +3,6 @@ import subprocess
 import logging
 from pwnagotchi import plugins
 from flask import render_template_string
-from pwnagotchi.ui.components import LabeledValue
-from pwnagotchi.ui.view import BLACK
 
 WEBSSH2_SERV = """
 [Unit]
