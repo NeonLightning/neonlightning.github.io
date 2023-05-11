@@ -3,6 +3,8 @@ import subprocess
 import logging
 from pwnagotchi import plugins
 from flask import render_template_string
+from pwnagotchi.ui.components import LabeledValue
+from pwnagotchi.ui.view import BLACK
 
 WEBSSH2_SERV = """
 [Unit]
@@ -10,9 +12,10 @@ Description=Access Webssh2
 After=default.target
 
 [Service]
-ExecStart=WebSSH2
+ExecStart=/bin/bash WebSSH2
 Restart=always
 User=pi
+Group=pi
 
 [Install]
 WantedBy=default.target
