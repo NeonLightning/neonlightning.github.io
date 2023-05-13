@@ -1,23 +1,13 @@
-import pwnagotchi.plugins as plugins
 from pwnagotchi import config
-import pwnagotchi
-import logging
-import qrcode
 from PIL import Image
-import html
-import csv
-import os
-import io
-import glob
-import telegram
-import time
-
+import pwnagotchi, logging, qrcode, json, html, csv, os, io, glob, telegram, time
+import pwnagotchi.plugins as plugins
 
 class qt(plugins.Plugin):
     __author__ = 'NeonLightning'
     __version__ = '0.1.3'
     __license__ = 'GPL3'
-    __description__ = ''
+    __description__ = 'takes cracked hashes, makes qr codes, and will send that, the login info and the location if possible to your telegram.'
         
     def on_loaded(self):
         logging.info("[qt] loaded")
@@ -34,12 +24,13 @@ class qt(plugins.Plugin):
 
         self.all_bssid=[]
         
+        self._update_all()
         self.send_qr_codes()
 
         
     def on_unloaded(self):
         logging.info("[qt] done")
-        return
+        break
         
     def _update_all(self):
         all_passwd=[]
@@ -72,8 +63,12 @@ class qt(plugins.Plugin):
             logging.error('[qt] encountered a problem in onlinehashcrack.cracked')
         h.close()
                     
-        for ssid, password in zip(all_ssid, all_passwd):
-            png_filepath = os.path.join("/home/pi/qrcodes/", f"{ssid}-{password}.png")
+        for bssid, ssid, password in zip(self.all_bssid, all_ssid, all_passwd):
+            if not os.path.exists('/home/pi/qrcodes/'):
+                os.makedirs('/home/pi/qrcodes/')
+                self.qrcode_dir = '/home/pi/qrcodes/'
+
+            png_filepath = os.path.join("/home/pi/qrcodes/", f"{ssid}-{password}-{bssid.lower().replace(':', '')}.png")
 
             if os.path.exists(png_filepath):
                 continue
@@ -92,9 +87,9 @@ class qt(plugins.Plugin):
             try:
                 img = qr_code.make_image(fill_color="yellow", back_color="black")
                 img.save(png_filepath)
-                logging.info(f"[qt] QR code generated and saved for {ssid}-{password}")
+                logging.info(f"[qt] QR code generated and saved for {ssid}-{password}-{bssid.lower().replace(':', '')}")
             except Exception as e:
-                logging.error(f"[qt] something went wrong generating QR code for {ssid}-{password}: {e}")
+                logging.error(f"[qt] something went wrong generating QR code for {ssid}-{password}-{bssid.lower().replace(':', '')}: {e}")
 
     def on_internet_available(self, agent):
         pass
@@ -104,46 +99,56 @@ class qt(plugins.Plugin):
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
 
-        try:
-            f = open("/home/pi/qrcodes/.qrlist", "a+")
-            last_files = set(f.read().splitlines())
-        except Exception as e:
-            logging.error(f"[qt] something went wrong while reading : {e}")
-        finally:
-            if f is not None:
-                f.close()
-
         sent_files = set()
 
+        qrlist_path = "/home/pi/.qrlist"
+        if not os.path.exists(qrlist_path):
+            open(qrlist_path, 'a+').close()
+
+        with open(qrlist_path, 'r+') as f:
+            content = f.read()
+            if content:
+                sent_files = set(content.split('\n'))
+
         while True:
-            self._update_all()
+            if not os.path.exists(dir_path):
+                os.makedirs(dir_path)
+                
             current_files = set(f for f in os.listdir('/home/pi/qrcodes') if f.endswith('.png'))
-            new_files = current_files - last_files
-            if new_files:
-                for filename in new_files:
+            new_files = current_files - sent_files
+            deleted_files = sent_files - current_files
+
+            if new_files or deleted_files:
+                self._update_all()
+
+            for filename in new_files:
+                if filename in sent_files:
+                    continue
+                bssid = filename.rsplit('-', 1)[-1].rsplit('.', 1)[0].lower().replace(':', '')
+                ssid_n_pass = filename.rsplit('-', 1)[-2]
+                geojson_files = glob.glob(f"/root/handshakes/*_{bssid}.geo.json")
+                if geojson_files:
+                    with open(f"/home/pi/qrcodes/{filename}", 'rb') as f_png, open(geojson_files[0], 'r') as f_geojson:
+                        data = json.load(f_geojson)
+                        lat = data['location']['lat']
+                        lng = data['location']['lng']
+                        self.bot.send_message(self.chat_id, f"VVV  {ssid_n_pass} Lat: {lat}, Lng: {lng}")
+                        self.bot.send_photo(self.chat_id, f_png)
+                        self.bot.send_message(self.chat_id, f"^^^")
+                        time.sleep(1)
+                else:
+                    with open(f"/home/pi/qrcodes/{filename}", 'rb') as f:
+                        self.bot.send_message(self.chat_id, f"VVV  Sending file {ssid_n_pass}, Unknown Location")
+                        self.bot.send_photo(self.chat_id, f)
+                        self.bot.send_message(self.chat_id, f"^^^")
+                        time.sleep(1)
+                sent_files.add(filename)
+
+            if deleted_files:
+                for filename in deleted_files:
                     if filename in sent_files:
-                        continue
-                    bssid = filename.split('-')[1]
-                    bssid = bssid.lower().replace(':', '')
-                    geojson_files = glob.glob(f"/root/handshakes/*_{bssid}.geo.json")
-                    # logging.info(f"[qt] geo.json : {geojson_files}")
-                    if geojson_files:
-                        with open(f"/home/pi/qrcodes/{filename}", 'rb') as f_png, open(geojson_files[0], 'rb') as f_geojson:
-                            self.bot.send_message(self.chat_id, f"Sending file {filename}")
-                            self.bot.send_photo(self.chat_id, f_png)
-                            self.bot.send_document(self.chat_id, f_geojson)
-                            time.sleep(1)
-                    else:
-                        with open(f"/home/pi/qrcodes/{filename}", 'rb') as f:
-                            self.bot.send_message(self.chat_id, f"Sending file {filename}")
-                            self.bot.send_photo(self.chat_id, f)
-                            time.sleep(1)
-                    sent_files.add(filename)
+                        sent_files.remove(filename)
+                    logging.info(f"[qt] file {filename} deleted")
 
-            deleted_files = last_files - current_files
-
-            with open("/home/pi/qrcodes/.qrlist", "w") as f:
-                f.write("\n".join(current_files))
-
-            last_files = current_files
-            time.sleep(60)
+            with open(qrlist_path, 'w') as f:
+                f.write('\n'.join(sent_files))
