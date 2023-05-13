@@ -17,33 +17,41 @@ class qt(plugins.Plugin):
     __author__ = 'NeonLightning'
     __version__ = '0.1.3'
     __license__ = 'GPL3'
-    __description__ = 'will upload cracked ssid and pw to telegram. works aside from the bssid matching i think. idk it is late. for some reason had to hardcode a bunch of the filepaths or ended up with errors too. crackfile parsing from mycracked_pw'
+    __description__ = ''
         
     def on_loaded(self):
+        logging.info("[qt] loaded")
         if not os.path.exists('/home/pi/qrcodes/'):
             os.makedirs('/home/pi/qrcodes/')
         self.qrcode_dir = '/home/pi/qrcodes/'
+        
         self.bot_token = config['main']['plugins']['qt']['bot_token']
         self.chat_id = config['main']['plugins']['qt']['chat_id']
+
         self.bot = telegram.Bot(token=self.bot_token)
+
         self.last_files = set()
-        logging.info("[qt] loaded")
+
+        self.all_bssid=[]
+        
+        self.send_qr_codes()
+
         
     def on_unloaded(self):
         logging.info("[qt] done")
-        return  
+        return
         
     def _update_all(self):
         all_passwd=[]
-        all_bssid=[]
         all_ssid=[]
+
         wpa_sec_filepath = '/root/handshakes/wpa-sec.cracked.potfile'
         f = open(wpa_sec_filepath, 'r+', encoding='utf-8')
         try:
             for line_f in f:
                 pwd_f = line_f.split(':')
                 all_passwd.append(str(pwd_f[-1].rstrip('\n')))
-                all_bssid.append(str(pwd_f[0]))
+                self.all_bssid.append(str(pwd_f[0]))
                 all_ssid.append(str(pwd_f[-2]))
         except:
             logging.error('[qt] encountered a problem in wpa-sec.cracked.potfile')
@@ -58,7 +66,7 @@ class qt(plugins.Plugin):
                 ssid_h = str(line_h['ESSID'])
                 if pwd_h and bssid_h and ssid_h:
                     all_passwd.append(pwd_h)
-                    all_bssid.append(bssid_h)
+                    self.all_bssid.append(bssid_h)
                     all_ssid.append(ssid_h)
         except:
             logging.error('[qt] encountered a problem in onlinehashcrack.cracked')
@@ -71,6 +79,7 @@ class qt(plugins.Plugin):
                 continue
 
             qr_data = f"WIFI:T:WPA;S:{html.escape(ssid)};P:{html.escape(password)};;"
+
             qr_code = qrcode.QRCode(
                 version=None,
                 error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -87,8 +96,8 @@ class qt(plugins.Plugin):
             except Exception as e:
                 logging.error(f"[qt] something went wrong generating QR code for {ssid}-{password}: {e}")
 
-    def on_handshake(self, agent):
-        self._update_all()
+    def on_internet_available(self, agent):
+        pass
         
     def send_qr_codes(self):
         dir_path = "/home/pi/qrcodes"
@@ -104,40 +113,37 @@ class qt(plugins.Plugin):
             if f is not None:
                 f.close()
 
-        sent_files = last_files.copy()
+        sent_files = set()
 
-        #works but the bssid matching for the geodata is returning null and i'm having a hard time fixing it. so right now a bunch of this does nothing.
         while True:
             self._update_all()
             current_files = set(f for f in os.listdir('/home/pi/qrcodes') if f.endswith('.png'))
-            new_files = current_files - sent_files
+            new_files = current_files - last_files
             if new_files:
                 for filename in new_files:
                     if filename in sent_files:
                         continue
-                    bssid = self.all_bssid.get(filename.split('-')[1].split('.')[0])
-                    if bssid:
-                        bssid = bssid.lower().replace(':', '')
-                        geojson_files = glob.glob(f"/root/handshakes/*_{bssid}.geo.json")
-                        logging.info(f"[qt] geo.json : {geojson_files}")
-                        if geojson_files:
-                            with open(f"/home/pi/qrcodes/{filename}", 'rb') as f_png, open(geojson_files[0], 'rb') as f_geojson:
-                                self.bot.send_message(self.chat_id, f"Sending file {filename}")
-                                self.bot.send_photo(self.chat_id, f_png)
-                                self.bot.send_document(self.chat_id, f_geojson)
-                                time.sleep(1)
-                        else:
-                            with open(f"/home/pi/qrcodes/{filename}", 'rb') as f:
-                                self.bot.send_message(self.chat_id, f"Sending file {filename}")
-                                self.bot.send_photo(self.chat_id, f)
-                                time.sleep(1)
-                        sent_files.add(filename)
+                    bssid = filename.split('-')[1]
+                    bssid = bssid.lower().replace(':', '')
+                    geojson_files = glob.glob(f"/root/handshakes/*_{bssid}.geo.json")
+                    # logging.info(f"[qt] geo.json : {geojson_files}")
+                    if geojson_files:
+                        with open(f"/home/pi/qrcodes/{filename}", 'rb') as f_png, open(geojson_files[0], 'rb') as f_geojson:
+                            self.bot.send_message(self.chat_id, f"Sending file {filename}")
+                            self.bot.send_photo(self.chat_id, f_png)
+                            self.bot.send_document(self.chat_id, f_geojson)
+                            time.sleep(1)
+                    else:
+                        with open(f"/home/pi/qrcodes/{filename}", 'rb') as f:
+                            self.bot.send_message(self.chat_id, f"Sending file {filename}")
+                            self.bot.send_photo(self.chat_id, f)
+                            time.sleep(1)
+                    sent_files.add(filename)
 
-            deleted_files = sent_files - current_files
+            deleted_files = last_files - current_files
 
             with open("/home/pi/qrcodes/.qrlist", "w") as f:
-                f.write("\n".join(sent_files))
+                f.write("\n".join(current_files))
 
-            sent_files -= deleted_files
-
+            last_files = current_files
             time.sleep(60)
