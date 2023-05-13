@@ -30,7 +30,7 @@ class qt(plugins.Plugin):
         
     def on_unloaded(self):
         logging.info("[qt] done")
-        break
+        return
         
     def _update_all(self):
         all_passwd=[]
