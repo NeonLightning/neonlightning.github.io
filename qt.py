@@ -17,7 +17,7 @@ class qt(plugins.Plugin):
     __author__ = 'NeonLightning'
     __version__ = '0.1.3'
     __license__ = 'GPL3'
-    __description__ = 'will upload cracked ssid and pw to telegram. works aside from the bssid matching i think. idk it is late. for some reason had to hardcode a bunch of the filepaths or ended up with errors too.'
+    __description__ = 'will upload cracked ssid and pw to telegram. works aside from the bssid matching i think. idk it is late. for some reason had to hardcode a bunch of the filepaths or ended up with errors too. crackfile parsing from mycracked_pw'
         
     def on_loaded(self):
         if not os.path.exists('/home/pi/qrcodes/'):
@@ -46,7 +46,7 @@ class qt(plugins.Plugin):
                 all_bssid.append(str(pwd_f[0]))
                 all_ssid.append(str(pwd_f[-2]))
         except:
-            logging.error('[mycracked_pw] encountered a problem in wpa-sec.cracked.potfile')
+            logging.error('[qt] encountered a problem in wpa-sec.cracked.potfile')
         f.close()
 
         onlinehashcrack_filepath = '/root/handshakes/onlinehashcrack.cracked'
@@ -61,7 +61,7 @@ class qt(plugins.Plugin):
                     all_bssid.append(bssid_h)
                     all_ssid.append(ssid_h)
         except:
-            logging.error('[mycracked_pw] encountered a problem in onlinehashcrack.cracked')
+            logging.error('[qt] encountered a problem in onlinehashcrack.cracked')
         h.close()
                     
         for ssid, password in zip(all_ssid, all_passwd):
