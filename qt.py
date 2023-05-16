@@ -16,6 +16,7 @@ class qt(plugins.Plugin):
     #unneeded buttons stuff.
     KEY_PRESS_PIN = 13
     KEY1_PIN = 21
+    KEY2_PIN = 20
     KEY3_PIN = 16
 
     def __init__(self):
@@ -23,6 +24,7 @@ class qt(plugins.Plugin):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.KEY_PRESS_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.KEY1_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.KEY2_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.KEY3_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         
     def on_loaded(self):
@@ -39,8 +41,8 @@ class qt(plugins.Plugin):
         logging.info("[qt] loaded")
         if not os.path.exists('/home/pi/qrcodes/'):
             os.makedirs('/home/pi/qrcodes/')
-        self._update_all()
-        self._send_qr_codes()
+        while self.loaded:
+            self._buttons_()
                 
     #unneeded buttons stuff.                
     @staticmethod
@@ -122,7 +124,22 @@ class qt(plugins.Plugin):
             self._add_password_to_file(password)
 
     def on_internet_available(self, agent):
-        pass
+        self._update_all()
+        self._send_qr_codes()
+
+    def _buttons_(self):
+        if self.get_input(self.KEY_PRESS_PIN) != 0:
+            if self.get_input(self.KEY3_PIN) != 0:
+                logging.info(f"resetting service(auto)")
+                pwnagotchi.restart('auto')
+            if self.get_input(self.KEY1_PIN) != 0:
+                logging.info(f"reboot")
+                subprocess.run(['sudo', 'reboot'])
+            if self.get_input(self.KEY2_PIN) != 0:
+                logging.info(f"shutdown")
+                subprocess.run(['sudo', 'shutdown', '-h', 'now'])
+            logging.info(f"resend telegram qrcodes")
+            subprocess.run(['sudo', 'rm', '-rf', '/home/pi/qrcodes', '/home/pi/.qrlist'])
 
     def _send_qr_codes(self):
         dir_path = "/home/pi/qrcodes"
@@ -138,15 +155,7 @@ class qt(plugins.Plugin):
                 sent_files = set(content.split('\n'))
         while self.loaded:
             #unneeded buttons stuff.
-            if self.get_input(self.KEY_PRESS_PIN) != 0:
-                if self.get_input(self.KEY3_PIN) != 0:
-                    logging.info(f"resetting service(auto)")
-                    pwnagotchi.restart('auto')
-                if self.get_input(self.KEY1_PIN) != 0:
-                    logging.info(f"reboot")
-                    subprocess.run(['reboot'])
-                logging.info(f"resend telegram qrcodes")
-                subprocess.run(['rm', '-rf', '/home/pi/qrcodes', '/home/pi/.qrlist'])
+
             if not os.path.exists(dir_path):
                 os.makedirs(dir_path)
             current_files = set(f for f in os.listdir('/home/pi/qrcodes') if f.endswith('.png'))
