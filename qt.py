@@ -141,6 +141,24 @@ class qt(plugins.Plugin):
             logging.info(f"resend telegram qrcodes")
             subprocess.run(['sudo', 'rm', '-rf', '/home/pi/qrcodes', '/home/pi/.qrlist'])
 
+    def send_qrcode_file(self, filename):
+        ssid_n_pass = filename.rsplit('-', 1)[-2]
+        bssid = filename.rsplit('-', 1)[-1].rsplit('.', 1)[0].lower().replace(':', '')
+        geojson_files = glob.glob(f"/root/handshakes/*_{bssid}.geo.json")
+        if geojson_files:
+            with open(f"/home/pi/qrcodes/{filename}", 'rb') as f, open(geojson_files[0], 'r') as f_geojson:
+                data = json.load(f_geojson)
+                lat = data['location']['lat']
+                lng = data['location']['lng']
+                self.bot.send_message(self.chat_id, f"VVV  {ssid_n_pass} Lat: {lat}, Lng: {lng}")
+                self.bot.send_photo(self.chat_id, f)
+                time.sleep(1)
+        else:
+            with open(f"/home/pi/qrcodes/{filename}", 'rb') as f:
+                self.bot.send_message(self.chat_id, f"VVV  Sending file {ssid_n_pass}, Unknown Location")
+                self.bot.send_photo(self.chat_id, f)
+                time.sleep(1)
+
     def _send_qr_codes(self):
         dir_path = "/home/pi/qrcodes"
         if not os.path.exists(dir_path):
@@ -154,8 +172,6 @@ class qt(plugins.Plugin):
             if content:
                 sent_files = set(content.split('\n'))
         while self.loaded:
-            #unneeded buttons stuff.
-
             if not os.path.exists(dir_path):
                 os.makedirs(dir_path)
             current_files = set(f for f in os.listdir('/home/pi/qrcodes') if f.endswith('.png'))
@@ -166,22 +182,7 @@ class qt(plugins.Plugin):
             for filename in new_files:
                 if filename in sent_files:
                     continue
-                bssid = filename.rsplit('-', 1)[-1].rsplit('.', 1)[0].lower().replace(':', '')
-                ssid_n_pass = filename.rsplit('-', 1)[-2]
-                geojson_files = glob.glob(f"/root/handshakes/*_{bssid}.geo.json")
-                if geojson_files:
-                    with open(f"/home/pi/qrcodes/{filename}", 'rb') as f, open(geojson_files[0], 'r') as f_geojson:
-                        data = json.load(f_geojson)
-                        lat = data['location']['lat']
-                        lng = data['location']['lng']
-                        self.bot.send_message(self.chat_id, f"VVV  {ssid_n_pass} Lat: {lat}, Lng: {lng}")
-                        self.bot.send_photo(self.chat_id, f)
-                        time.sleep(1)
-                else:
-                    with open(f"/home/pi/qrcodes/{filename}", 'rb') as f:
-                        self.bot.send_message(self.chat_id, f"VVV  Sending file {ssid_n_pass}, Unknown Location")
-                        self.bot.send_photo(self.chat_id, f)
-                        time.sleep(1)
+                self.send_qrcode_file(filename)
                 sent_files.add(filename)
             if deleted_files:
                 for filename in deleted_files:
