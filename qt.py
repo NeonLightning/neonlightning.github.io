@@ -12,14 +12,12 @@ class qt(plugins.Plugin):
     __license__ = 'GPL3'
     __description__ = 'takes cracked info and sends it over telegram with qr codes and location'
     
-    #unneeded buttons stuff.
     KEY_PRESS_PIN = 13
     KEY1_PIN = 21
     KEY2_PIN = 20
     KEY3_PIN = 16
 
     def __init__(self):
-        #unneeded buttons stuff.
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.KEY_PRESS_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.KEY1_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -37,13 +35,9 @@ class qt(plugins.Plugin):
         self.all_ssid=[]
         self.all_passwd=[]
         self.loaded = True
-        logging.info("[qt] loaded")
-        if not os.path.exists('/home/pi/qrcodes/'):
-            os.makedirs('/home/pi/qrcodes/')
         while self.loaded:
             self._buttons_()
-                
-    #unneeded buttons stuff.                
+                           
     @staticmethod
     def get_input(pin):
         return not GPIO.input(pin)
@@ -109,6 +103,8 @@ class qt(plugins.Plugin):
                     qrlist = qrlist_file.read().splitlines()
                     if png_filepath in qrlist:
                         return
+            else:
+                open(qrlist_filepath, 'w+').close()
             img = qr_code.make_image(fill_color="yellow", back_color="black")
             img.save(png_filepath)
             logging.info(f"[qt] generated and saved for {ssid}-{password}-{bssid.lower().replace(':', '')}")
