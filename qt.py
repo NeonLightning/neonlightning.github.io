@@ -1,10 +1,11 @@
 #takes cracked hashes, makes qr codes and a wordlist, and will send qrcode, and send the login info also
 #the location if possible all to your telegram. potfile processing and the idea to use qr codes taken from mycracked_pw and the idea to use telegram from WPA2s telegram plugin
-from pwnagotchi import config
-from PIL import Image
+from math import log
 import pwnagotchi, logging, qrcode, json, html, csv, os, io, glob, telegram, time, subprocess
 import pwnagotchi.plugins as plugins#unneeded button stuff
 import RPi.GPIO as GPIO
+from pwnagotchi import config
+from PIL import Image
 
 class qt(plugins.Plugin):
     __author__ = 'NeonLightning'
@@ -12,17 +13,17 @@ class qt(plugins.Plugin):
     __license__ = 'GPL3'
     __description__ = 'takes cracked info and sends it over telegram with qr codes and location'
     
-    KEY_PRESS_PIN = 13
-    KEY1_PIN = 21
-    KEY2_PIN = 20
-    KEY3_PIN = 16
+    # KEY_PRESS_PIN = 13
+    # KEY1_PIN = 21
+    # KEY2_PIN = 20
+    #KEY3_PIN = 16
 
-    def __init__(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.KEY_PRESS_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self.KEY1_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self.KEY2_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self.KEY3_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    # def __init__(self):
+        # GPIO.setmode(GPIO.BCM)
+        # GPIO.setup(self.KEY_PRESS_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        # GPIO.setup(self.KEY1_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        # GPIO.setup(self.KEY2_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        # GPIO.setup(self.KEY3_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         
     def on_loaded(self):
         self.qrcode_dir = '/home/pi/qrcodes/'
@@ -35,15 +36,19 @@ class qt(plugins.Plugin):
         self.all_ssid=[]
         self.all_passwd=[]
         self.loaded = True
-        while self.loaded:
-            self._buttons_()
+        logging.info(f"[qt] loaded")
+
+    def _async_running(self):
+        self._update_all()
+            # self._buttons_
+        self._send_qr_codes()
                            
-    @staticmethod
-    def get_input(pin):
-        return not GPIO.input(pin)
+    # @staticmethod
+    # async def get_input(pin):
+    #     return not GPIO.input(pin)
         
     def on_unloaded(self):
-        logging.info("[qt] done")
+        logging.info("[qt] unloaded")
         return
         
     def _read_wpa_sec_file(self):
@@ -70,8 +75,9 @@ class qt(plugins.Plugin):
                         self.all_passwd.append(pwd_h)
                         self.all_bssid.append(bssid_h)
                         self.all_ssid.append(ssid_h)
-        except:
-            logging.error('[qt] encountered a problem in onlinehashcrack.cracked')
+                h.close()
+        except Exception as e:
+            logging.error(f"[qt] Encountered a problem in onlinehashcrack.cracked: {str(e)}")
 
     def _generate_qr_code(self, bssid, ssid, password):
         if not os.path.exists('/home/pi/qrcodes/'):
@@ -122,27 +128,32 @@ class qt(plugins.Plugin):
         self._read_wpa_sec_file()
         self._read_onlinehashcrack_file()
         for bssid, ssid, password in zip(self.all_bssid, self.all_ssid, self.all_passwd):
-            self._generate_qr_code(bssid, ssid, password)
             self._add_password_to_file(password)
+            self._generate_qr_code(bssid, ssid, password)
 
     def on_internet_available(self, agent):
-        time.sleep(1)
+        # self._buttons_
         self._update_all()
         self._send_qr_codes()
+        
+    def on_handshake(self, agent):
+        self._update_all()
 
-    def _buttons_(self):
-        if self.get_input(self.KEY_PRESS_PIN) != 0:
-            if self.get_input(self.KEY3_PIN) != 0:
-                logging.info(f"resetting service(auto)")
-                pwnagotchi.restart('auto')
-            if self.get_input(self.KEY1_PIN) != 0:
-                logging.info(f"reboot")
-                subprocess.run(['sudo', 'reboot'])
-            if self.get_input(self.KEY2_PIN) != 0:
-                logging.info(f"shutdown")
-                subprocess.run(['sudo', 'shutdown', '-h', 'now'])
-            logging.info(f"resend telegram qrcodes")
-            subprocess.run(['sudo', 'rm', '-rf', '/home/pi/qrcodes', '/home/pi/.qrlist'])
+    # async def _buttons_(self):
+    #     while self.loaded:
+    #         if self.get_input(self.KEY_PRESS_PIN) != 0:
+    #             if self.get_input(self.KEY3_PIN) != 0:
+    #                 logging.info(f"resetting service(auto)")
+    #                 pwnagotchi.restart('auto')
+    #             if self.get_input(self.KEY1_PIN) != 0:
+    #                 logging.info(f"reboot")
+    #                 subprocess.run(['sudo', 'reboot'])
+    #             if self.get_input(self.KEY2_PIN) != 0:
+    #                 logging.info(f"shutdown")
+    #                 subprocess.run(['sudo', 'shutdown', '-h', 'now'])
+    #             logging.info(f"resend telegram qrcodes")
+    #             subprocess.run(['sudo', 'rm', '-rf', '/home/pi/qrcodes', '/home/pi/.qrlist'])
+    #         await trio.sleep(0.1)  # Adjust sleep duration if needed
 
     def send_qrcode_file(self, filename):
         qrlist_path = "/home/pi/.qrlist"
@@ -159,13 +170,13 @@ class qt(plugins.Plugin):
                 data = json.load(f_geojson)
                 lat = data['location']['lat']
                 lng = data['location']['lng']
-                self.bot.send_message(self.chat_id, f"VVV  {ssid_n_pass} Lat: {lat}, Lng: {lng}")
-                self.bot.send_photo(self.chat_id, f)
+                caption = f"^^^ {ssid_n_pass} Lat: {lat}, Lng: {lng}"
+                self.bot.send_photo(self.chat_id, f, caption)
                 time.sleep(1)
         else:
             with open(f"/home/pi/qrcodes/{filename}", 'rb') as f:
-                self.bot.send_message(self.chat_id, f"VVV  Sending file {ssid_n_pass}, Unknown Location")
-                self.bot.send_photo(self.chat_id, f)
+                caption = f"^^^ {ssid_n_pass}"
+                self.bot.send_photo(self.chat_id, f, caption)
                 time.sleep(1)
         with open(qrlist_path, 'a') as qrlist_file:
             qrlist_file.write(filename + '\n')
@@ -188,11 +199,9 @@ class qt(plugins.Plugin):
             self._update_all()
             for filename in new_files:
                 if filename not in sent_files:
+                    logging.info("[qt] sent file: " + filename)
                     self.send_qrcode_file(filename)
                     sent_files.add(filename)
+                sent_files_list = list(sent_files)
             with open(qrlist_path, 'w') as f:
                 f.write('\n'.join(sent_files))
-                
-    def on_unload(self, agent):
-        logging.info(f"[qt] unloading")
-        self.loaded = False
