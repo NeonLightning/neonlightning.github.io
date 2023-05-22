@@ -3,6 +3,7 @@
 from math import log
 import pwnagotchi, logging, qrcode, json, html, csv, os, io, glob, telegram, time, subprocess
 import pwnagotchi.plugins as plugins#unneeded button stuff
+import RPi.GPIO as GPIO
 from pwnagotchi import config
 from PIL import Image
 
@@ -11,7 +12,19 @@ class qt(plugins.Plugin):
     __version__ = '0.2.1'
     __license__ = 'GPL3'
     __description__ = 'takes cracked info and sends it over telegram with qr codes and location'
-            
+    
+    # KEY_PRESS_PIN = 13
+    # KEY1_PIN = 21
+    # KEY2_PIN = 20
+    #KEY3_PIN = 16
+
+    # def __init__(self):
+        # GPIO.setmode(GPIO.BCM)
+        # GPIO.setup(self.KEY_PRESS_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        # GPIO.setup(self.KEY1_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        # GPIO.setup(self.KEY2_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        # GPIO.setup(self.KEY3_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        
     def on_loaded(self):
         self.qrcode_dir = '/home/pi/qrcodes/'
         self.bot_token = config['main']['plugins']['qt']['bot_token']
@@ -25,9 +38,9 @@ class qt(plugins.Plugin):
         self.loaded = True
         logging.info(f"[qt] loaded")
 
-    def _async_running(self):
-        self._update_all()
-        self._send_qr_codes()
+    # @staticmethod
+    # async def get_input(pin):
+    #     return not GPIO.input(pin)
         
     def on_unloaded(self):
         logging.info("[qt] unloaded")
@@ -114,11 +127,28 @@ class qt(plugins.Plugin):
             self._generate_qr_code(bssid, ssid, password)
 
     def on_internet_available(self, agent):
+        # self._buttons_
         self._update_all()
         self._send_qr_codes()
         
     def on_handshake(self, agent):
         self._update_all()
+
+    # async def _buttons_(self):
+    #     while self.loaded:
+    #         if self.get_input(self.KEY_PRESS_PIN) != 0:
+    #             if self.get_input(self.KEY3_PIN) != 0:
+    #                 logging.info(f"resetting service(auto)")
+    #                 pwnagotchi.restart('auto')
+    #             if self.get_input(self.KEY1_PIN) != 0:
+    #                 logging.info(f"reboot")
+    #                 subprocess.run(['sudo', 'reboot'])
+    #             if self.get_input(self.KEY2_PIN) != 0:
+    #                 logging.info(f"shutdown")
+    #                 subprocess.run(['sudo', 'shutdown', '-h', 'now'])
+    #             logging.info(f"resend telegram qrcodes")
+    #             subprocess.run(['sudo', 'rm', '-rf', '/home/pi/qrcodes', '/home/pi/.qrlist'])
+    #         await trio.sleep(0.1)  # Adjust sleep duration if needed
 
     def send_qrcode_file(self, filename):
         qrlist_path = "/home/pi/.qrlist"
