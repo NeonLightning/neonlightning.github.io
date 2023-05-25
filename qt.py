@@ -1,8 +1,7 @@
 # takes cracked hashes, makes qr codes and a wordlist, and will send qrcode, and send the login info also
 # the location if possible all to your telegram. potfile processing and the idea to use qr codes taken
 # from mycracked_pw and the idea to use telegram from WPA2s telegram plugin.
-import pwnagotchi, logging, json, html, csv, os, io, glob, time, subprocess
-import qrcode, telegram # python deps
+import pwnagotchi, logging, qrcode, json, html, csv, os, io, glob, telegram, time, subprocess
 import pwnagotchi.plugins as plugins
 from math import log
 from telegram.ext import CommandHandler, Updater
@@ -12,7 +11,7 @@ from PIL import Image
 
 class qt(plugins.Plugin):
     __author__ = 'NeonLightning'
-    __version__ = '0.4.5'
+    __version__ = '0.4.1'
     __license__ = 'GPL3'
     __description__ = 'takes cracked info and sends it over telegram with qr codes and location among other things'
 
@@ -20,15 +19,12 @@ class qt(plugins.Plugin):
         self.updater = None
            
     def on_loaded(self):
-        # configs
         self.qrcode_dir = '/root/qrcodes/'
-        self.bot_token = config['main']['plugins']['qt']['bot_token'] # BotFather
-        self.chat_id = config['main']['plugins']['qt']['chat_id'] # @Telegram Bot Raw
-        self.saveqr = config['main']['plugins']['qt']['saveqr'] # true/false
-        self.storepw = config['main']['plugins']['qt']['storepw'] # true/false
-        self.cracked = "/home/pi/wordlists/cracked.txt" # written as su
-        
-        # suggest leaving stuff after here alone
+        self.bot_token = config['main']['plugins']['qt']['bot_token']
+        self.chat_id = config['main']['plugins']['qt']['chat_id']
+        self.saveqr = config['main']['plugins']['qt']['saveqr']
+        self.storepw = config['main']['plugins']['qt']['storepw']
+        self.cracked = "/home/pi/wordlists/cracked.txt"
         self.qrlist_path = "/root/.qrlist"
         self.bot = telegram.Bot(token=self.bot_token)
         self.last_files = set()
@@ -168,20 +164,21 @@ class qt(plugins.Plugin):
         else:
             context.bot.send_message(chat_id=chat_id, text="Please provide a file name.")
 
-
     def on_internet_available(self, agent):
         self._update_all()
         sent_files = set()
-        with open(self.qrlist_path, 'r+') as f:
+        with open(self.qrlist_path, 'a+') as f:
+            f.seek(0)  # Move the file pointer to the beginning
             for line in f:
                 sent_files.add(line.strip())
-        current_files = set(f for f in os.listdir(self.qrcode_dir) if f.endswith('.png'))
-        new_files = current_files - sent_files
-        for filename in new_files:
-            logging.info("[qt] sent file: " + filename)
-            self.send_qrcode_file(filename)
-            sent_files.add(filename)
-        with open(self.qrlist_path, 'w') as f:
+            current_files = set(f for f in os.listdir(self.qrcode_dir) if f.endswith('.png'))
+            new_files = current_files - sent_files
+            for filename in new_files:
+                logging.info("[qt] sent file: " + filename)
+                self.send_qrcode_file(filename)
+                sent_files.add(filename)
+            f.seek(0)  # Move the file pointer to the beginning
+            f.truncate()  # Clear the file contents
             f.write('\n'.join(sent_files))
         
     def on_handshake(self, agent):
