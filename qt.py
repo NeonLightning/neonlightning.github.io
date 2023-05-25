@@ -1,7 +1,8 @@
 # takes cracked hashes, makes qr codes and a wordlist, and will send qrcode, and send the login info also
 # the location if possible all to your telegram. potfile processing and the idea to use qr codes taken
 # from mycracked_pw and the idea to use telegram from WPA2s telegram plugin.
-import pwnagotchi, logging, qrcode, json, html, csv, os, io, glob, telegram, time, subprocess
+import pwnagotchi, logging, json, html, csv, os, io, glob, time, subprocess
+import qrcode, telegram # python deps
 import pwnagotchi.plugins as plugins
 from math import log
 from telegram.ext import CommandHandler, Updater
@@ -11,7 +12,7 @@ from PIL import Image
 
 class qt(plugins.Plugin):
     __author__ = 'NeonLightning'
-    __version__ = '0.4.1'
+    __version__ = '0.4.5'
     __license__ = 'GPL3'
     __description__ = 'takes cracked info and sends it over telegram with qr codes and location among other things'
 
@@ -19,12 +20,15 @@ class qt(plugins.Plugin):
         self.updater = None
            
     def on_loaded(self):
+        # configs
         self.qrcode_dir = '/root/qrcodes/'
-        self.bot_token = config['main']['plugins']['qt']['bot_token']
-        self.chat_id = config['main']['plugins']['qt']['chat_id']
-        self.saveqr = config['main']['plugins']['qt']['saveqr']
-        self.storepw = config['main']['plugins']['qt']['storepw']
-        self.cracked = "/home/pi/wordlists/cracked.txt"
+        self.bot_token = config['main']['plugins']['qt']['bot_token'] # BotFather
+        self.chat_id = config['main']['plugins']['qt']['chat_id'] # @Telegram Bot Raw
+        self.saveqr = config['main']['plugins']['qt']['saveqr'] # true/false
+        self.storepw = config['main']['plugins']['qt']['storepw'] # true/false
+        self.cracked = "/home/pi/wordlists/cracked.txt" # written as su
+        
+        # suggest leaving stuff after here alone
         self.qrlist_path = "/root/.qrlist"
         self.bot = telegram.Bot(token=self.bot_token)
         self.last_files = set()
