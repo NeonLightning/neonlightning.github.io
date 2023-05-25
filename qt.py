@@ -135,7 +135,7 @@ class qt(plugins.Plugin):
 
     def start_command(self, update, context):
         chat_id = update.effective_chat.id
-        context.bot.send_message(chat_id=chat_id, text='[Qt] Bulk Resend Qr Codes')
+        context.bot.send_message(chat_id=chat_id, text='[Qt] Regenerating/Resending Qr Codes, May take some time for next net signal to send.')
         os.remove(self.qrlist_path)
 
     def send_specific_qr_file(self, update, context):
