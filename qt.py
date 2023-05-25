@@ -168,7 +168,7 @@ class qt(plugins.Plugin):
     def on_internet_available(self, agent):
         self._update_all()
         sent_files = set()
-        with open(self.qrlist_path, 'r') as f:
+        with open(self.qrlist_path, 'r+') as f:
             for line in f:
                 sent_files.add(line.strip())
         current_files = set(f for f in os.listdir(self.qrcode_dir) if f.endswith('.png'))
@@ -189,7 +189,6 @@ class qt(plugins.Plugin):
                 qrlist = qrlist_file.read().splitlines()
                 if filename in qrlist:
                     return
-
         ssid_n_pass = filename.rsplit('-', 1)[-2]
         bssid = filename.rsplit('-', 1)[-1].rsplit('.', 1)[0].lower().replace(':', '')
         geojson_files = glob.glob(f"/root/handshakes/*_{bssid}.geo.json")
@@ -206,7 +205,6 @@ class qt(plugins.Plugin):
                 caption = f"^^^ {ssid_n_pass}"
                 self.bot.send_photo(self.chat_id, f, caption)
                 time.sleep(1)
-
         with open(self.qrlist_path, 'a') as qrlist_file:
             qrlist_file.write(filename + '\n')
             if self.saveqr:
