@@ -99,8 +99,8 @@ class PiSugar3(plugins.Plugin):
         if capacity <= self.options['shutdown']:
             logging.info('[pisugar3] Battery capacity low. Checking multiple times before shutdown.')
             capacities = [capacity]  # List to store capacity values
-            for _ in range(2):  # Perform two additional checks, 1 second apart
-                time.sleep(1)
+            for _ in range(5):  # Perform two additional checks, 1 second apart
+                time.sleep(.5)
                 capacity = self.ups.capacity()
                 capacities.append(capacity)
             max_capacity = max(capacities)
