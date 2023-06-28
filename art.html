@@ -27,16 +27,16 @@
       // Loop through the image file names from 1.png to 95.png
       for (var i = 1; i <= 95; i++) {
         var img = document.createElement('img');
-        img.src = i + '.png';
+        img.src = 'art/' + i + '.png';
         gallery.appendChild(img);
       }
 
       // Add additional image files
       var additionalImages = [
-        '1.bmp',
-        'watching your own world torn down.png',
-        'lost and alone in the end.png',
-        'digital sadness.png'
+        'art/1.bmp',
+        'art/watching your own world torn down.png',
+        'art/lost and alone in the end.png',
+        'art/digital sadness.png'
       ];
 
       // Loop through the additional image file names
