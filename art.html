@@ -3,16 +3,35 @@
 <head>
   <title>Image Gallery</title>
   <style>
+    body {
+      background-color: black;
+      transition: filter 0.3s ease-in-out;
+    }
     .gallery {
       display: flex;
+      border: 5px solid purple;
       flex-wrap: wrap;
       justify-content: center;
+      transition: transform 0.3s ease-in-out;
     }
 
     .gallery img {
       width: 200px;
       height: 200px;
       margin: 10px;
+      cursor: pointer;
+    }
+
+    .gallery img.fullsize {
+      width: auto;
+      height: auto;
+      max-width: 90%;
+      max-height: 90%;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
     }
   </style>
 </head>
@@ -27,24 +46,32 @@
       // Loop through the image file names from 1.png to 95.png
       for (var i = 1; i <= 95; i++) {
         var img = document.createElement('img');
-        img.src = i + '.png';
+        img.src = 'art/' + i + '.png';
+        img.addEventListener('click', toggleFullsize);
         gallery.appendChild(img);
       }
 
       // Add additional image files
       var additionalImages = [
-        '1.bmp',
-        'watching your own world torn down.png',
-        'lost and alone in the end.png',
-        'digital sadness.png'
+        'art/1.bmp',
+        'art/watching your own world torn down.png',
+        'art/lost and alone in the end.png',
+        'art/digital sadness.png'
       ];
 
       // Loop through the additional image file names
       additionalImages.forEach(file => {
         var img = document.createElement('img');
         img.src = file;
+        img.addEventListener('click', toggleFullsize);
         gallery.appendChild(img);
       });
+    }
+
+    // Function to toggle full-size view of the clicked image
+    function toggleFullsize(event) {
+      var img = event.target;
+      img.classList.toggle('fullsize');
     }
 
     // Call the loadImages function when the page finishes loading
