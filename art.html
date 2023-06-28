@@ -3,6 +3,11 @@
 <head>
   <title>Image Gallery</title>
   <style>
+    body {
+      background-color: black;
+      transition: filter 0.3s ease-in-out;
+    }
+
     .gallery {
       display: flex;
       flex-wrap: wrap;
@@ -13,7 +18,9 @@
       width: 200px;
       height: 200px;
       margin: 10px;
+      border: 5px solid purple;
       cursor: pointer;
+      transition: transform 0.3s ease-in-out;
     }
 
     .gallery img.fullsize {
@@ -26,6 +33,7 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 9999;
+      filter: pixelate(10px); /* Adjust the pixel size as desired */
     }
   </style>
 </head>
@@ -37,35 +45,34 @@
     function loadImages() {
       var gallery = document.querySelector('.gallery');
 
-      // Loop through the image file names from 1.png to 95.png
-      for (var i = 1; i <= 95; i++) {
-        var img = document.createElement('img');
-        img.src = 'art/' + i + '.png';
-        img.addEventListener('click', toggleFullsize);
-        gallery.appendChild(img);
-      }
+      // Fetch the image files from the "art" folder
+      fetch('art/')
+        .then(response => response.text())
+        .then(data => {
+          var parser = new DOMParser();
+          var html = parser.parseFromString(data, 'text/html');
+          var links = html.querySelectorAll('a');
 
-      // Add additional image files
-      var additionalImages = [
-        'art/1.bmp',
-        'art/watching your own world torn down.png',
-        'art/lost and alone in the end.png',
-        'art/digital sadness.png'
-      ];
+          // Filter only image files (PNG, JPEG, GIF, BMP, etc.)
+          var imageFiles = Array.from(links)
+            .filter(link => /\.(png|jpe?g|gif|bmp)$/i.test(link.href));
 
-      // Loop through the additional image file names
-      additionalImages.forEach(file => {
-        var img = document.createElement('img');
-        img.src = file;
-        img.addEventListener('click', toggleFullsize);
-        gallery.appendChild(img);
-      });
+          // Create <img> elements for each image file
+          imageFiles.forEach(file => {
+            var img = document.createElement('img');
+            img.src = 'art/' + file.href;
+            img.addEventListener('click', toggleFullsize);
+            gallery.appendChild(img);
+          });
+        })
+        .catch(error => console.error(error));
     }
 
     // Function to toggle full-size view of the clicked image
     function toggleFullsize(event) {
       var img = event.target;
       img.classList.toggle('fullsize');
+      document.body.classList.toggle('pixelate');
     }
 
     // Call the loadImages function when the page finishes loading
