@@ -3,51 +3,52 @@
 <head>
   <title>Image Gallery</title>
   <style>
-    /* Optional CSS styles for image grid */
-    .image-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      grid-gap: 10px;
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
     }
-    .image-container img {
-      width: 100%;
-      height: auto;
+
+    .gallery img {
+      width: 200px;
+      height: 200px;
+      margin: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="image-container"></div>
+  <div class="gallery"></div>
 
   <script>
-    // JavaScript code to fetch and display PNG images
+    // Function to load and display the image files
+    function loadImages() {
+      var gallery = document.querySelector('.gallery');
 
-    // Fetch the list of files in the ./art/ folder
-    fetch('./art/')
-      .then(response => response.text())
-      .then(data => {
-        // Parse the response HTML into a document
-        const parser = new DOMParser();
-        const htmlDoc = parser.parseFromString(data, 'text/html');
+      // Loop through the image file names from 1.png to 95.png
+      for (var i = 1; i <= 95; i++) {
+        var img = document.createElement('img');
+        img.src = i + '.png';
+        gallery.appendChild(img);
+      }
 
-        // Get all the <a> tags in the document
-        const links = htmlDoc.getElementsByTagName('a');
+      // Add additional image files
+      var additionalImages = [
+        '1.bmp',
+        'watching your own world torn down.png',
+        'lost and alone in the end.png',
+        'digital sadness.png'
+      ];
 
-        // Iterate over the links and display PNG images
-        const container = document.querySelector('.image-container');
-        for (let i = 0; i < links.length; i++) {
-          const link = links[i].getAttribute('href');
-
-          // Check if the file is a PNG image
-          if (link.endsWith('.png')) {
-            const img = document.createElement('img');
-            img.src = './art/' + link;
-            container.appendChild(img);
-          }
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
+      // Loop through the additional image file names
+      additionalImages.forEach(file => {
+        var img = document.createElement('img');
+        img.src = file;
+        gallery.appendChild(img);
       });
+    }
+
+    // Call the loadImages function when the page finishes loading
+    window.addEventListener('load', loadImages);
   </script>
 </body>
 </html>
