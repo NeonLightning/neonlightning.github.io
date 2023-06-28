@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Gallery</title>
+  <style>
+    /* Optional CSS styles for image grid */
+    .image-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-gap: 10px;
+    }
+    .image-container img {
+      width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="image-container"></div>
+
+  <script>
+    // JavaScript code to fetch and display PNG images
+
+    // Fetch the list of files in the ./art/ folder
+    fetch('./art/')
+      .then(response => response.text())
+      .then(data => {
+        // Parse the response HTML into a document
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(data, 'text/html');
+
+        // Get all the <a> tags in the document
+        const links = htmlDoc.getElementsByTagName('a');
+
+        // Iterate over the links and display PNG images
+        const container = document.querySelector('.image-container');
+        for (let i = 0; i < links.length; i++) {
+          const link = links[i].getAttribute('href');
+
+          // Check if the file is a PNG image
+          if (link.endsWith('.png')) {
+            const img = document.createElement('img');
+            img.src = './art/' + link;
+            container.appendChild(img);
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  </script>
+</body>
+</html>
