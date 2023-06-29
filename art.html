@@ -99,9 +99,13 @@
           if (currentIndex >= 0) {
             images[currentIndex].classList.remove('fullsize');
           }
-          
-          currentIndex = images.indexOf(img);
-          img.classList.add('fullsize');
+
+          if (currentIndex === images.indexOf(img)) {
+            currentIndex = -1;
+          } else {
+            currentIndex = images.indexOf(img);
+            img.classList.add('fullsize');
+          }
         });
       });
     }
