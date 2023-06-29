@@ -105,38 +105,38 @@
         }
       });
 
-      images.forEach(img => {
+      images.forEach((img, index) => {
         img.addEventListener('click', function() {
-          if (currentIndex >= 0) {
-            images[currentIndex].classList.remove('fullsize');
-            placeholders[currentIndex].style.display = 'block';
+          if (currentIndex === index) {
+            img.classList.remove('fullsize');
+            placeholders[index].style.display = 'block';
             arrows.forEach(arrow => {
               arrow.style.display = 'none';
             });
-          }
-
-          if (currentIndex === images.indexOf(img)) {
             currentIndex = -1;
           } else {
-            currentIndex = images.indexOf(img);
+            if (currentIndex >= 0) {
+              images[currentIndex].classList.remove('fullsize');
+              placeholders[currentIndex].style.display = 'block';
+            }
             img.classList.add('fullsize');
-            placeholders[currentIndex].style.display = 'none';
+            placeholders[index].style.display = 'none';
             arrows.forEach(arrow => {
               arrow.style.display = 'block';
             });
+            currentIndex = index;
           }
         });
       });
 
       function createPlaceholder() {
-        const placeholder = document.createElement('div');
-        placeholder.className = 'placeholder';
-        return placeholder;
+        return document.createElement('div');
       }
 
       const leftArrow = createArrow('left');
       const rightArrow = createArrow('right');
-      arrows.push(leftArrow, rightArrow);
+      arrows.push(leftArrow);
+      arrows.push(rightArrow);
       document.body.appendChild(leftArrow);
       document.body.appendChild(rightArrow);
 
