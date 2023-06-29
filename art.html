@@ -39,19 +39,18 @@
   <div class="gallery"></div>
 
   <script>
-    // Function to load and display the image files
+    var currentImageIndex = 0;
+    var galleryImages = [];
+
     function loadImages() {
       var gallery = document.querySelector('.gallery');
+      var imageCount = 95;
 
-      // Loop through the image file names from 1.png to 95.png
-      for (var i = 1; i <= 95; i++) {
-        var img = document.createElement('img');
-        img.src = 'art/' + i + '.png';
-        img.addEventListener('click', toggleFullsize);
+      for (var i = 1; i <= imageCount; i++) {
+        var img = createImageElement('art/' + i + '.png');
         gallery.appendChild(img);
       }
 
-      // Add additional image files
       var additionalImages = [
         'art/1.bmp',
         'art/watching your own world torn down.png',
@@ -59,23 +58,44 @@
         'art/digital sadness.png'
       ];
 
-      // Loop through the additional image file names
-      additionalImages.forEach(file => {
-        var img = document.createElement('img');
-        img.src = file;
-        img.addEventListener('click', toggleFullsize);
+      additionalImages.forEach(function(file) {
+        var img = createImageElement(file);
         gallery.appendChild(img);
       });
+
+      galleryImages = Array.from(document.querySelectorAll('.gallery img'));
+      galleryImages[currentImageIndex].classList.add('active');
     }
 
-    // Function to toggle full-size view of the clicked image
+    function createImageElement(src) {
+      var img = document.createElement('img');
+      img.src = src;
+      img.addEventListener('click', toggleFullsize);
+      return img;
+    }
+
     function toggleFullsize(event) {
       var img = event.target;
       img.classList.toggle('fullsize');
     }
 
-    // Call the loadImages function when the page finishes loading
+    function navigateGallery(event) {
+      var key = event.key;
+
+      if (key === 'ArrowLeft') {
+        currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+      } else if (key === 'ArrowRight') {
+        currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+      }
+
+      galleryImages.forEach(function(img) {
+        img.classList.remove('active');
+      });
+
+      galleryImages[currentImageIndex].classList.add('active');
+    }
+
     window.addEventListener('load', loadImages);
+    window.addEventListener('keydown', navigateGallery);
   </script>
 </body>
-</html>
