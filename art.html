@@ -36,7 +36,7 @@
     }
 
     .gallery img.selected {
-      border-color: red;
+      border: 2px solid red;
     }
 
     .arrow {
@@ -67,7 +67,6 @@
       var images = [];
       var currentIndex = -1;
       var currentImage = null;
-      var currentPlaceholder = null;
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('art/' + i + '.png');
@@ -94,19 +93,14 @@
         var img = event.target;
         if (currentImage === img) {
           img.classList.remove('fullsize');
-          currentPlaceholder.style.display = 'none';
           img.classList.remove('selected');
           currentImage = null;
         } else {
           if (currentImage) {
             currentImage.classList.remove('fullsize');
-            currentPlaceholder.style.display = 'none';
             currentImage.classList.remove('selected');
           }
           img.classList.add('fullsize');
-          currentPlaceholder = createPlaceholder();
-          currentImage.parentNode.insertBefore(currentPlaceholder, img);
-          currentPlaceholder.style.display = 'block';
           img.classList.add('selected');
           currentImage = img;
         }
@@ -128,23 +122,11 @@
         nextIndex = (nextIndex + images.length) % images.length;
 
         currentImage.classList.remove('fullsize');
-        currentPlaceholder.style.display = 'none';
         currentImage.classList.remove('selected');
 
         currentImage = images[nextIndex];
-        currentPlaceholder = createPlaceholder();
-        currentImage.parentNode.insertBefore(currentPlaceholder, currentImage);
-        currentPlaceholder.style.display = 'block';
         currentImage.classList.add('fullsize');
         currentImage.classList.add('selected');
-      }
-
-      function createPlaceholder() {
-        var placeholder = document.createElement('div');
-        placeholder.style.width = '200px';
-        placeholder.style.height = '200px';
-        placeholder.style.border = '2px solid red';
-        return placeholder;
       }
 
       function createImage(src) {
