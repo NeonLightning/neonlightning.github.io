@@ -17,8 +17,8 @@
     }
 
     .gallery img {
-      width: 100px;
-      height: 100px;
+      width: 150px;
+      height: 150px;
       margin: 5px;
       cursor: pointer;
       border: 2px solid transparent;
@@ -27,8 +27,8 @@
     .gallery img.fullsize {
       width: auto;
       height: auto;
-      max-width: 75%;
-      max-height: 75%;
+      max-width: 80%;
+      max-height: 80%;
       position: fixed;
       top: 50%;
       left: 50%;
@@ -41,42 +41,52 @@
     }
 
     .arrow {
+      display: none;
       position: fixed;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 60px;
+      font-size: 30px;
       color: white;
       cursor: pointer;
-      display: none;
     }
 
     .arrow.left {
-      left: 30px;
+      left: 10px;
     }
 
     .arrow.right {
-      right: 30px;
+      right: 10px;
     }
 
-    /* Overlay */
-    .overlay {
+    /* .overlay {
+      pointer-events: none;
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url('');
-      background-size: 0;
-      pointer-events: none;
       z-index: 9998;
+      background-repeat: repeat;
+      background-position: center;
+      background-size: cover;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
     }
+
+    .overlay.fade-in {
+      opacity: 1;
+    }
+
+    .overlay.fade-out {
+      opacity: 0;
+    } */
   </style>
 </head>
 <body>
   <div class="gallery"></div>
+  <!-- <div class="overlay"></div> -->
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
-  <div class="overlay"></div>
 
   <script>
     function loadImages() {
@@ -85,22 +95,23 @@
       var currentIndex = -1;
       var currentImage = null;
       var currentPlaceholder = null;
+      // var overlay = document.querySelector('.overlay');
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
-      var overlay = document.querySelector('.overlay');
+      // var patternInterval;
 
       for (var i = 1; i <= 95; i++) {
-        var img = createImage('art/' + i + '.png');
+        var img = createImage('display/' + i + '.png');
         img.addEventListener('click', toggleFullsize);
         images.push(img);
         gallery.appendChild(img);
       }
 
       var additionalImages = [
-        'art/1.bmp',
-        'art/watching your own world torn down.png',
-        'art/lost and alone in the end.png',
-        'art/digital sadness.png'
+        'display/1.bmp',
+        'display/watching your own world torn down.png',
+        'display/lost and alone in the end.png',
+        'display/digital sadness.png'
       ];
 
       additionalImages.forEach(file => {
@@ -110,21 +121,18 @@
         gallery.appendChild(img);
       });
 
-      // Generate a pixelated pattern programmatically
-      var pixelSize = 10; // Adjust the pixel size as desired
-      var patternSize = Math.ceil(window.innerWidth / pixelSize) + 'px ' + Math.ceil(window.innerHeight / pixelSize) + 'px';
-      var patternURL = generatePixelatedPattern(pixelSize, 'black', 'white');
-      overlay.style.backgroundImage = 'url(' + patternURL + ')';
-      overlay.style.backgroundSize = patternSize;
-
       function toggleFullsize(event) {
         var img = event.target;
         if (currentImage === img) {
           unzoom();
         } else {
           if (currentImage) {
-            unzoom();
+            currentImage.classList.remove('fullsize');
+            currentPlaceholder.style.display = 'none';
+            currentImage.classList.remove('selected');
           }
+          var src = img.src.replace('display', 'art');
+          img.src = src;
           img.classList.add('fullsize');
           currentImage = img;
           currentPlaceholder = createPlaceholder();
@@ -133,6 +141,9 @@
           img.classList.add('selected');
           updateArrows();
           currentPlaceholder.addEventListener('click', unzoom);
+          // overlay.style.display = 'block';
+          // overlay.classList.add('fade-in');
+          // startPixelation();
         }
       }
 
@@ -144,6 +155,13 @@
         currentPlaceholder = null;
         leftArrow.style.display = 'none';
         rightArrow.style.display = 'none';
+        // overlay.classList.remove('fade-in');
+        // overlay.classList.add('fade-out');
+        // stopPixelation();
+        // setTimeout(function() {
+        //   overlay.style.display = 'none';
+        //   overlay.classList.remove('fade-out');
+        // }, 300);
       }
 
       document.addEventListener('keydown', function(event) {
@@ -179,8 +197,8 @@
       function createPlaceholder() {
         var placeholder = document.createElement('img');
         placeholder.src = currentImage.src;
-        placeholder.style.width = '100px';
-        placeholder.style.height = '100px';
+        placeholder.style.width = '150px';
+        placeholder.style.height = '150px';
         placeholder.style.border = '2px dotted green';
         return placeholder;
       }
@@ -195,31 +213,40 @@
         var currentIndex = images.indexOf(currentImage);
         leftArrow.style.display = 'block';
         rightArrow.style.display = 'block';
-        if (currentIndex === 0) {
-          leftArrow.style.display = 'none';
-        } else if (currentIndex === images.length - 1) {
-          rightArrow.style.display = 'none';
-        }
       }
 
-      function generatePixelatedPattern(pixelSize, color1, color2) {
+      /* function generatePixelatedPattern() {
         var canvas = document.createElement('canvas');
-        canvas.width = pixelSize * 2;
-        canvas.height = pixelSize * 2;
-        var context = canvas.getContext('2d');
-        context.fillStyle = color1;
-        context.fillRect(0, 0, pixelSize, pixelSize);
-        context.fillStyle = color2;
-        context.fillRect(pixelSize, 0, pixelSize, pixelSize);
-        context.fillStyle = color2;
-        context.fillRect(0, pixelSize, pixelSize, pixelSize);
-        context.fillStyle = color1;
-        context.fillRect(pixelSize, pixelSize, pixelSize, pixelSize);
+        var ctx = canvas.getContext('2d');
+        var size = 20;
+        canvas.width = Math.ceil(window.innerWidth / size) * size;
+        canvas.height = Math.ceil(window.innerHeight / size) * size;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        for (var x = 0; x < canvas.width; x += size) {
+          for (var y = 0; y < canvas.height; y += size) {
+            if (Math.random() < 0.5) {
+              var transparency = Math.random() * 1 + 0.5;
+              ctx.fillStyle = `rgba(0, 0, 0, ${transparency})`;
+              ctx.fillRect(x, y, size, size);
+            }
+          }
+        }
         return canvas.toDataURL();
       }
+
+      function startPixelation() {
+        patternInterval = setInterval(function() {
+          overlay.style.backgroundImage = `url(${generatePixelatedPattern()})`;
+        }, 300);
+      }
+
+      function stopPixelation() {
+        clearInterval(patternInterval);
+        overlay.style.backgroundImage = 'none';
+      } */
     }
 
-    window.addEventListener('load', loadImages);
+    loadImages();
   </script>
 </body>
 </html>
