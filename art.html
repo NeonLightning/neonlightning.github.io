@@ -16,9 +16,9 @@
     }
 
     .gallery img {
-      width: 200px;
-      height: 200px;
-      margin: 10px;
+      width: 100px;
+      height: 100px;
+      margin: 5px;
       cursor: pointer;
       border: 2px solid transparent;
     }
@@ -26,8 +26,8 @@
     .gallery img.fullsize {
       width: auto;
       height: auto;
-      max-width: 90%;
-      max-height: 90%;
+      max-width: 75%;
+      max-height: 75%;
       position: fixed;
       top: 50%;
       left: 50%;
@@ -43,18 +43,18 @@
       position: fixed;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 30px;
+      font-size: 60px;
       color: white;
       cursor: pointer;
       display: none;
     }
 
     .arrow.left {
-      left: 10px;
+      left: 30px;
     }
 
     .arrow.right {
-      right: 10px;
+      right: 30px;
     }
   </style>
 </head>
@@ -156,8 +156,8 @@
       function createPlaceholder() {
         var placeholder = document.createElement('img');
         placeholder.src = currentImage.src;
-        placeholder.style.width = '200px';
-        placeholder.style.height = '200px';
+        placeholder.style.width = '100px';
+        placeholder.style.height = '100px';
         placeholder.style.border = '2px dotted green';
         return placeholder;
       }
