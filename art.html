@@ -34,7 +34,7 @@
       z-index: 9999;
     }
 
-    .gallery .placeholder {
+    .placeholder {
       width: 200px;
       height: 200px;
       margin: 10px;
@@ -42,7 +42,7 @@
       display: none;
     }
 
-    .gallery .arrow {
+    .arrow {
       position: fixed;
       top: 50%;
       font-size: 30px;
@@ -51,11 +51,11 @@
       display: none;
     }
 
-    .gallery .arrow.left {
+    .arrow.left {
       left: 10px;
     }
 
-    .gallery .arrow.right {
+    .arrow.right {
       right: 10px;
     }
   </style>
@@ -73,8 +73,9 @@
       for (let i = 1; i <= 95; i++) {
         const img = createImage(`art/${i}.png`);
         images.push(img);
-        placeholders.push(createPlaceholder());
-        gallery.appendChild(placeholders[i - 1]);
+        const placeholder = createPlaceholder();
+        placeholders.push(placeholder);
+        gallery.appendChild(placeholder);
         gallery.appendChild(img);
       }
 
@@ -88,8 +89,9 @@
       additionalImages.forEach(file => {
         const img = createImage(file);
         images.push(img);
-        placeholders.push(createPlaceholder());
-        gallery.appendChild(placeholders[images.length - 1]);
+        const placeholder = createPlaceholder();
+        placeholders.push(placeholder);
+        gallery.appendChild(placeholder);
         gallery.appendChild(img);
       });
 
@@ -127,25 +129,15 @@
       });
 
       function createPlaceholder() {
-        const placeholder = document.createElement('div');
-        placeholder.className = 'placeholder';
-        return placeholder;
+        return document.createElement('div');
       }
 
       const leftArrow = createArrow('left');
       const rightArrow = createArrow('right');
       arrows.push(leftArrow);
       arrows.push(rightArrow);
-      gallery.appendChild(leftArrow);
-      gallery.appendChild(rightArrow);
-
-      leftArrow.addEventListener('click', function() {
-        navigate('left');
-      });
-
-      rightArrow.addEventListener('click', function() {
-        navigate('right');
-      });
+      document.body.appendChild(leftArrow);
+      document.body.appendChild(rightArrow);
 
       function navigate(direction) {
         if (currentIndex >= 0) {
