@@ -39,15 +39,16 @@
       height: 200px;
       margin: 10px;
       background-color: gray;
+      display: none;
     }
 
     .arrow {
       position: fixed;
       top: 50%;
-      transform: translateY(-50%);
       font-size: 30px;
       color: white;
       cursor: pointer;
+      display: none;
     }
 
     .arrow.left {
@@ -68,6 +69,7 @@
       var gallery = document.querySelector('.gallery');
       var images = [];
       var placeholders = [];
+      var arrows = [];
 
       // Loop through the image file names from 1.png to 95.png
       for (var i = 1; i <= 95; i++) {
@@ -111,6 +113,10 @@
       function navigate(direction) {
         if (currentIndex >= 0) {
           images[currentIndex].classList.remove('fullsize');
+          placeholders[currentIndex].style.display = 'block';
+          arrows.forEach(arrow => {
+            arrow.style.display = 'none';
+          });
         }
 
         if (direction === 'left') {
@@ -120,7 +126,10 @@
         }
 
         images[currentIndex].classList.add('fullsize');
-        updatePlaceholder();
+        placeholders[currentIndex].style.display = 'none';
+        arrows.forEach(arrow => {
+          arrow.style.display = 'block';
+        });
       }
 
       // Event listener for click toggle
@@ -128,6 +137,10 @@
         img.addEventListener('click', function() {
           if (currentIndex >= 0) {
             images[currentIndex].classList.remove('fullsize');
+            placeholders[currentIndex].style.display = 'block';
+            arrows.forEach(arrow => {
+              arrow.style.display = 'none';
+            });
           }
 
           if (currentIndex === images.indexOf(img)) {
@@ -135,9 +148,11 @@
           } else {
             currentIndex = images.indexOf(img);
             img.classList.add('fullsize');
+            placeholders[currentIndex].style.display = 'none';
+            arrows.forEach(arrow => {
+              arrow.style.display = 'block';
+            });
           }
-
-          updatePlaceholder();
         });
       });
 
@@ -146,20 +161,11 @@
         return document.createElement('div');
       }
 
-      // Update the placeholder element
-      function updatePlaceholder() {
-        placeholders.forEach(function(placeholder, index) {
-          if (index === currentIndex) {
-            placeholder.style.display = 'none';
-          } else {
-            placeholder.style.display = 'block';
-          }
-        });
-      }
-
       // Create and append arrow elements
       var leftArrow = createArrow('left');
       var rightArrow = createArrow('right');
+      arrows.push(leftArrow);
+      arrows.push(rightArrow);
       document.body.appendChild(leftArrow);
       document.body.appendChild(rightArrow);
 
@@ -179,13 +185,13 @@
         arrow.innerHTML = direction === 'left' ? '&lt;' : '&gt;';
         return arrow;
       }
-    }
 
-    // Function to create an image element
-    function createImage(src) {
-      var img = document.createElement('img');
-      img.src = src;
-      return img;
+      // Function to create an image element
+      function createImage(src) {
+        var img = document.createElement('img');
+        img.src = src;
+        return img;
+      }
     }
 
     // Call the loadImages function when the page finishes loading
