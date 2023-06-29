@@ -120,49 +120,37 @@
         images.push(img);
         gallery.appendChild(img);
       });
+	  
+function toggleFullsize(event) {
+  var img = event.target;
+  if (currentImage === img) {
+    unzoom();
+  } else {
+    if (currentImage) {
+      unzoom();
+    }
+    img.src = img.src.replace('display', 'art'); // Update source only for the selected thumbnail
+    img.classList.add('fullsize');
+    currentImage = img;
+    currentPlaceholder = createPlaceholder();
+    currentImage.parentNode.insertBefore(currentPlaceholder, currentImage);
+    currentPlaceholder.style.display = 'block';
+    img.classList.add('selected');
+    updateArrows();
+    currentPlaceholder.addEventListener('click', unzoom);
+  }
+}
 
-      function toggleFullsize(event) {
-        var img = event.target;
-        if (currentImage === img) {
-          unzoom();
-        } else {
-          if (currentImage) {
-            currentImage.classList.remove('fullsize');
-            currentPlaceholder.style.display = 'none';
-            currentImage.classList.remove('selected');
-          }
-          var src = img.src.replace('display', 'art');
-          img.src = src;
-          img.classList.add('fullsize');
-          currentImage = img;
-          currentPlaceholder = createPlaceholder();
-          currentImage.parentNode.insertBefore(currentPlaceholder, currentImage);
-          currentPlaceholder.style.display = 'block';
-          img.classList.add('selected');
-          updateArrows();
-          currentPlaceholder.addEventListener('click', unzoom);
-          // overlay.style.display = 'block';
-          // overlay.classList.add('fade-in');
-          // startPixelation();
-        }
-      }
-
-      function unzoom() {
-        currentImage.classList.remove('fullsize');
-        currentPlaceholder.style.display = 'none';
-        currentImage.classList.remove('selected');
-        currentImage = null;
-        currentPlaceholder = null;
-        leftArrow.style.display = 'none';
-        rightArrow.style.display = 'none';
-        // overlay.classList.remove('fade-in');
-        // overlay.classList.add('fade-out');
-        // stopPixelation();
-        // setTimeout(function() {
-        //   overlay.style.display = 'none';
-        //   overlay.classList.remove('fade-out');
-        // }, 300);
-      }
+function unzoom() {
+  currentImage.src = currentImage.src.replace('art', 'display'); // Switch back to thumbnail
+  currentImage.classList.remove('fullsize');
+  currentPlaceholder.style.display = 'none';
+  currentImage.classList.remove('selected');
+  currentImage = null;
+  currentPlaceholder = null;
+  leftArrow.style.display = 'none';
+  rightArrow.style.display = 'none';
+}
 
       document.addEventListener('keydown', function(event) {
         if (currentImage) {
@@ -203,11 +191,11 @@
         return placeholder;
       }
 
-      function createImage(src) {
-        var img = document.createElement('img');
-        img.src = src;
-        return img;
-      }
+function createImage(src) {
+  var img = document.createElement('img');
+  img.src = src.replace('art', 'display'); // Use the "display" folder for thumbnails
+  return img;
+}
 
       function updateArrows() {
         var currentIndex = images.indexOf(currentImage);
