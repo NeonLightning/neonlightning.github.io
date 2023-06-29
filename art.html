@@ -6,51 +6,7 @@
     body {
       background-color: black;
       transition: filter 0.3s ease-in-out;
-      animation: glitch-anim-1 3s infinite;
     }
-    
-    @keyframes glitch-anim-1 {
-      0%, 100% {
-        clip-path: polygon(0 10%, 100% 10%, 100% 12%, 0 12%);
-      }
-
-      10% {
-        clip-path: polygon(0 25%, 100% 25%, 100% 22%, 0 22%);
-      }
-
-      20% {
-        clip-path: polygon(0 20%, 100% 20%, 100% 22%, 0 22%);
-      }
-
-      30% {
-        clip-path: polygon(0 25%, 100% 25%, 100% 24%, 0 24%);
-      }
-
-      40% {
-        clip-path: polygon(0 15%, 100% 15%, 100% 18%, 0 18%);
-      }
-
-      50% {
-        clip-path: polygon(0 15%, 100% 15%, 100% 13%, 0 13%);
-      }
-
-      60% {
-        clip-path: polygon(0 12%, 100% 12%, 100% 10%, 0 10%);
-      }
-
-      70% {
-        clip-path: polygon(0 30%, 100% 30%, 100% 32%, 0 32%);
-      }
-
-      80% {
-        clip-path: polygon(0 35%, 100% 35%, 100% 38%, 0 38%);
-      }
-
-      90% {
-        clip-path: polygon(0 30%, 100% 30%, 100% 32%, 0 32%);
-      }
-    }
-
     .gallery {
       display: flex;
       border: 5px solid purple;
@@ -100,22 +56,13 @@
     .arrow.right {
       right: 10px;
     }
-    body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity here */
-  pointer-events: none;
-}
   </style>
 </head>
 <body>
   <div class="gallery"></div>
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
+  <svg id="pixelate"></svg>
 
   <script>
     function loadImages() {
@@ -126,6 +73,12 @@
       var currentPlaceholder = null;
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
+      var additionalImages = [
+        'art/1.bmp',
+        'art/watching your own world torn down.png',
+        'art/lost and alone in the end.png',
+        'art/digital sadness.png'
+      ];
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('art/' + i + '.png');
@@ -134,14 +87,7 @@
         gallery.appendChild(img);
       }
 
-      var additionalImages = [
-        'art/1.bmp',
-        'art/watching your own world torn down.png',
-        'art/lost and alone in the end.png',
-        'art/digital sadness.png'
-      ];
-
-      additionalImages.forEach(file => {
+      additionalImages.forEach(function(file) {
         var img = createImage(file);
         img.addEventListener('click', toggleFullsize);
         images.push(img);
@@ -164,6 +110,7 @@
           img.classList.add('selected');
           updateArrows();
           currentPlaceholder.addEventListener('click', unzoom);
+          applyPixelateEffect();
         }
       }
 
@@ -175,6 +122,7 @@
         currentPlaceholder = null;
         leftArrow.style.display = 'none';
         rightArrow.style.display = 'none';
+        removePixelateEffect();
       }
 
       document.addEventListener('keydown', function(event) {
@@ -231,6 +179,15 @@
         } else if (currentIndex === images.length - 1) {
           rightArrow.style.display = 'none';
         }
+      }
+
+      function applyPixelateEffect() {
+        pixelate(5, 1);
+      }
+
+      function removePixelateEffect() {
+        var pixelateElement = document.getElementById('pixelate');
+        pixelateElement.innerHTML = '';
       }
 
     }
