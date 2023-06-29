@@ -68,14 +68,14 @@
     function loadImages() {
       var gallery = document.querySelector('.gallery');
       var images = [];
-      var placeholders = [];
-      var arrows = [];
+      var currentIndex = -1;
+      var currentImage = null;
+      var currentPlaceholder = null;
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('art/' + i + '.png');
+        img.addEventListener('click', toggleFullsize);
         images.push(img);
-        placeholders.push(createPlaceholder());
-        gallery.appendChild(placeholders[i - 1]);
         gallery.appendChild(img);
       }
 
@@ -88,58 +88,30 @@
 
       additionalImages.forEach(file => {
         var img = createImage(file);
+        img.addEventListener('click', toggleFullsize);
         images.push(img);
-        placeholders.push(createPlaceholder());
-        gallery.appendChild(placeholders[images.length - 1]);
         gallery.appendChild(img);
       });
 
-      var currentIndex = -1;
-
-      document.addEventListener('keydown', function(event) {
-        if (event.key === 'ArrowLeft') {
-          navigate('left');
-        } else if (event.key === 'ArrowRight') {
-          navigate('right');
+      function toggleFullsize(event) {
+        var img = event.target;
+        if (currentImage === img) {
+          img.classList.remove('fullsize');
+          currentPlaceholder.style.display = 'none';
+          currentImage = null;
+          currentPlaceholder = null;
+        } else {
+          if (currentImage) {
+            currentImage.classList.remove('fullsize');
+            currentPlaceholder.style.display = 'none';
+          }
+          img.classList.add('fullsize');
+          currentPlaceholder = createPlaceholder();
+          currentPlaceholder.style.display = 'block';
+          img.parentNode.insertBefore(currentPlaceholder, img);
+          currentImage = img;
         }
-      });
-
-      function navigate(direction) {
-        if (currentIndex >= 0) {
-          images[currentIndex].classList.remove('fullsize');
-          placeholders[currentIndex].style.display = 'block';
-          arrows.forEach(arrow => (arrow.style.display = 'none'));
-        }
-
-        if (direction === 'left') {
-          currentIndex = (currentIndex - 1 + images.length) % images.length;
-        } else if (direction === 'right') {
-          currentIndex = (currentIndex + 1) % images.length;
-        }
-
-        images[currentIndex].classList.add('fullsize');
-        placeholders[currentIndex].style.display = 'none';
-        arrows.forEach(arrow => (arrow.style.display = 'block'));
       }
-
-      images.forEach(function(img) {
-        img.addEventListener('click', function() {
-          if (currentIndex >= 0) {
-            images[currentIndex].classList.remove('fullsize');
-            placeholders[currentIndex].style.display = 'block';
-            arrows.forEach(arrow => (arrow.style.display = 'none'));
-          }
-
-          if (currentIndex === images.indexOf(img)) {
-            currentIndex = -1;
-          } else {
-            currentIndex = images.indexOf(img);
-            img.classList.add('fullsize');
-            placeholders[currentIndex].style.display = 'none';
-            arrows.forEach(arrow => (arrow.style.display = 'block'));
-          }
-        });
-      });
 
       function createPlaceholder() {
         var placeholder = document.createElement('div');
@@ -147,32 +119,37 @@
         return placeholder;
       }
 
-      var leftArrow = createArrow('left');
-      var rightArrow = createArrow('right');
-      arrows.push(leftArrow, rightArrow);
-      document.body.appendChild(leftArrow);
-      document.body.appendChild(rightArrow);
-
-      leftArrow.addEventListener('click', function() {
-        navigate('left');
+      document.addEventListener('keydown', function(event) {
+        if (currentImage) {
+          if (event.key === 'ArrowLeft') {
+            navigate('left');
+          } else if (event.key === 'ArrowRight') {
+            navigate('right');
+          }
+        }
       });
 
-      rightArrow.addEventListener('click', function() {
-        navigate('right');
-      });
+      function navigate(direction) {
+        var currentIndex = images.indexOf(currentImage);
+        var nextIndex = direction === 'left' ? currentIndex - 1 : currentIndex + 1;
+        nextIndex = (nextIndex + images.length) % images.length;
 
-      function createArrow(direction) {
-        var arrow = document.createElement('div');
-        arrow.className = 'arrow ' + direction;
-        arrow.innerHTML = direction === 'left' ? '&lt;' : '&gt;';
-        return arrow;
+        currentImage.classList.remove('fullsize');
+        currentPlaceholder.style.display = 'none';
+
+        currentImage = images[nextIndex];
+        currentPlaceholder = createPlaceholder();
+        currentPlaceholder.style.display = 'block';
+        currentImage.parentNode.insertBefore(currentPlaceholder, currentImage);
+        currentImage.classList.add('fullsize');
       }
-    }
 
-    function createImage(src) {
-      var img = document.createElement('img');
-      img.src = src;
-      return img;
+      function createImage(src) {
+        var img = document.createElement('img');
+        img.src = src;
+        return img;
+      }
+
     }
 
     window.addEventListener('load', loadImages);
