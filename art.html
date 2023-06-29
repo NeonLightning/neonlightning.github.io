@@ -34,7 +34,7 @@
       z-index: 9999;
     }
 
-    .placeholder {
+    .gallery .placeholder {
       width: 200px;
       height: 200px;
       margin: 10px;
@@ -118,9 +118,11 @@
             if (currentIndex >= 0) {
               images[currentIndex].classList.remove('fullsize');
               placeholders[currentIndex].style.display = 'block';
+              placeholders[index].style.display = 'none';
+            } else {
+              placeholders[index].style.display = 'none';
             }
             img.classList.add('fullsize');
-            placeholders[index].style.display = 'none';
             arrows.forEach(arrow => {
               arrow.style.display = 'block';
             });
@@ -130,7 +132,9 @@
       });
 
       function createPlaceholder() {
-        return document.createElement('div');
+        const placeholder = document.createElement('div');
+        placeholder.className = 'placeholder';
+        return placeholder;
       }
 
       const leftArrow = createArrow('left');
