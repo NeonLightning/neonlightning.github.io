@@ -38,10 +38,30 @@
     .gallery img.selected {
       border: 2px solid red;
     }
+
+    .arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+      display: none;
+    }
+
+    .arrow.left {
+      left: 10px;
+    }
+
+    .arrow.right {
+      right: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="gallery"></div>
+  <div class="arrow left">&lt;</div>
+  <div class="arrow right">&gt;</div>
 
   <script>
     function loadImages() {
@@ -50,6 +70,8 @@
       var currentIndex = -1;
       var currentImage = null;
       var currentPlaceholder = null;
+      var leftArrow = document.querySelector('.arrow.left');
+      var rightArrow = document.querySelector('.arrow.right');
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('art/' + i + '.png');
@@ -80,6 +102,8 @@
           img.classList.remove('selected');
           currentImage = null;
           currentPlaceholder = null;
+          leftArrow.style.display = 'none';
+          rightArrow.style.display = 'none';
         } else {
           if (currentImage) {
             currentImage.classList.remove('fullsize');
@@ -92,7 +116,38 @@
           currentImage.parentNode.insertBefore(currentPlaceholder, currentImage);
           currentPlaceholder.style.display = 'block';
           img.classList.add('selected');
+          updateArrows();
         }
+      }
+
+      document.addEventListener('keydown', function(event) {
+        if (currentImage) {
+          if (event.key === 'ArrowLeft') {
+            navigateImage('left');
+          } else if (event.key === 'ArrowRight') {
+            navigateImage('right');
+          }
+        }
+      });
+
+      leftArrow.addEventListener('click', function() {
+        navigateImage('left');
+      });
+
+      rightArrow.addEventListener('click', function() {
+        navigateImage('right');
+      });
+
+      function navigateImage(direction) {
+        var currentIndex = images.indexOf(currentImage);
+        var newIndex;
+        if (direction === 'left') {
+          newIndex = (currentIndex - 1 + images.length) % images.length;
+        } else if (direction === 'right') {
+          newIndex = (currentIndex + 1) % images.length;
+        }
+        var newImage = images[newIndex];
+        toggleFullsize({ target: newImage });
       }
 
       function createPlaceholder() {
@@ -108,6 +163,17 @@
         var img = document.createElement('img');
         img.src = src;
         return img;
+      }
+
+      function updateArrows() {
+        var currentIndex = images.indexOf(currentImage);
+        leftArrow.style.display = 'block';
+        rightArrow.style.display = 'block';
+        if (currentIndex === 0) {
+          leftArrow.style.display = 'none';
+        } else if (currentIndex === images.length - 1) {
+          rightArrow.style.display = 'none';
+        }
       }
 
     }
