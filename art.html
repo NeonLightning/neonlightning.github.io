@@ -38,32 +38,55 @@
       width: 200px;
       height: 200px;
       margin: 10px;
-      background-color: gray;
-      cursor: pointer;
-      position: relative;
+      background-color: #333;
+    }
+
+    .gallery .zoomed-container {
       display: flex;
-      justify-content: center;
       align-items: center;
-    }
-
-    .gallery .placeholder::before {
-      content: 'Click to Zoom';
-      color: white;
-    }
-
-    .zoomed-controls {
+      justify-content: center;
       position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9998;
+    }
+
+    .gallery .zoomed-image {
+      position: relative;
+      max-width: 80%;
+      max-height: 80%;
+    }
+
+    .gallery .zoomed-image img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .gallery .zoomed-image .navigation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .gallery .zoomed-image .navigation .arrow {
+      position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      z-index: 9999;
-      display: none;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
     }
 
-    .zoomed-controls .arrow {
-      color: white;
-      font-size: 40px;
-      margin: 0 10px;
-      cursor: pointer;
+    .gallery .zoomed-image .navigation .arrow.left {
+      left: 20px;
+    }
+
+    .gallery .zoomed-image .navigation .arrow.right {
+      right: 20px;
     }
   </style>
 </head>
@@ -100,14 +123,13 @@
 
       // Set initial state
       var currentIndex = -1;
-      var zoomedControls = createZoomedControls();
 
       // Event listener for arrow key navigation
       document.addEventListener('keydown', function(event) {
-        if (currentIndex >= 0) {
-          if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-            navigate(event.key);
-          }
+        if (event.key === 'ArrowLeft') {
+          navigate('left');
+        } else if (event.key === 'ArrowRight') {
+          navigate('right');
         }
       });
 
@@ -117,13 +139,14 @@
           images[currentIndex].classList.remove('fullsize');
         }
 
-        if (direction === 'ArrowLeft') {
+        if (direction === 'left') {
           currentIndex = (currentIndex - 1 + images.length) % images.length;
-        } else if (direction === 'ArrowRight') {
+        } else if (direction === 'right') {
           currentIndex = (currentIndex + 1) % images.length;
         }
 
         images[currentIndex].classList.add('fullsize');
+        updateZoomedView();
       }
 
       // Event listener for click toggle
@@ -138,39 +161,43 @@
           } else {
             currentIndex = images.indexOf(img);
             img.classList.add('fullsize');
-            updateZoomedControls();
           }
+
+          updateZoomedView();
         });
       });
 
-      // Function to create an image element
-      function createImage(src) {
-        var img = document.createElement('img');
-        img.src = src;
-        return img;
-      }
-
-      // Function to create zoomed controls
-      function createZoomedControls() {
-        var zoomedControls = document.createElement('div');
-        zoomedControls.className = 'zoomed-controls';
-        zoomedControls.innerHTML = '<span class="arrow" onclick="navigate(\'ArrowLeft\')">&lt;</span><span class="arrow" onclick="navigate(\'ArrowRight\')">&gt;</span>';
-        document.body.appendChild(zoomedControls);
-        return zoomedControls;
-      }
-
-      // Function to update the zoomed controls
-      function updateZoomedControls() {
+      // Function to update the zoomed view
+      function updateZoomedView() {
+        var zoomedContainer = document.querySelector('.zoomed-container');
         if (currentIndex >= 0) {
-          zoomedControls.style.display = 'flex';
+          var zoomedImage = document.createElement('div');
+          zoomedImage.classList.add('zoomed-image');
+          zoomedImage.innerHTML = `
+            <div class="navigation">
+              <div class="arrow left" onclick="navigate('left')">&lt;</div>
+              <div class="arrow right" onclick="navigate('right')">&gt;</div>
+            </div>
+            <img src="${images[currentIndex].src}">
+          `;
+          zoomedContainer.innerHTML = '';
+          zoomedContainer.appendChild(zoomedImage);
         } else {
-          zoomedControls.style.display = 'none';
+          zoomedContainer.innerHTML = '';
         }
       }
+    }
+
+    // Function to create an image element
+    function createImage(src) {
+      var img = document.createElement('img');
+      img.src = src;
+      return img;
     }
 
     // Call the loadImages function when the page finishes loading
     window.addEventListener('load', loadImages);
   </script>
+  <div class="zoomed-container"></div>
 </body>
 </html>
