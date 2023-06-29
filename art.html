@@ -129,13 +129,14 @@
       });
 
       function createPlaceholder() {
-        return document.createElement('div');
+        const placeholder = document.createElement('div');
+        placeholder.className = 'placeholder';
+        return placeholder;
       }
 
       const leftArrow = createArrow('left');
       const rightArrow = createArrow('right');
-      arrows.push(leftArrow);
-      arrows.push(rightArrow);
+      arrows.push(leftArrow, rightArrow);
       document.body.appendChild(leftArrow);
       document.body.appendChild(rightArrow);
 
