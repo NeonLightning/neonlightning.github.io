@@ -6,8 +6,6 @@
     body {
       background-color: black;
       transition: filter 0.3s ease-in-out;
-      margin: 0;
-      overflow: hidden;
     }
     .gallery {
       display: flex;
@@ -59,11 +57,14 @@
       right: 10px;
     }
 
-    #pixelate {
+    #pixelate-overlay {
       position: fixed;
       top: 0;
       left: 0;
-      z-index: -1;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9998;
     }
   </style>
 </head>
@@ -71,7 +72,7 @@
   <div class="gallery"></div>
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
-  <svg id="pixelate"></svg>
+  <div id="pixelate-overlay"></div>
 
   <script>
     function loadImages() {
@@ -82,6 +83,7 @@
       var currentPlaceholder = null;
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
+      var pixelateOverlay = document.getElementById('pixelate-overlay');
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('art/' + i + '.png');
@@ -120,6 +122,7 @@
           img.classList.add('selected');
           updateArrows();
           currentPlaceholder.addEventListener('click', unzoom);
+          pixelateOverlay.style.display = 'block';
         }
       }
 
@@ -131,6 +134,7 @@
         currentPlaceholder = null;
         leftArrow.style.display = 'none';
         rightArrow.style.display = 'none';
+        pixelateOverlay.style.display = 'none';
       }
 
       document.addEventListener('keydown', function(event) {
@@ -188,6 +192,7 @@
           rightArrow.style.display = 'none';
         }
       }
+
     }
 
     function pixelate(tileSize = 10, sigmaGauss = 2) {
@@ -218,53 +223,17 @@
         }
       }
 
-      const pixelate = document.getElementById("pixelate");
-      pixelate.innerHTML = "";
-
-      const blur = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "feGaussianBlur"
-      );
-      blur.setAttribute("in", "SourceGraphic");
-      blur.setAttribute("stdDeviation", sigmaGauss);
-      blur.setAttribute("result", "blurred");
-
-      const hmap = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "feImage"
-      );
-      const hmapUrl = canvas.toDataURL();
-      hmap.setAttribute("href", hmapUrl);
-      hmap.setAttribute("result", "hmap");
-
-      const blend = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "feBlend"
-      );
-      blend.setAttribute("mode", "multiply");
-      blend.setAttribute("in", "blurred");
-      blend.setAttribute("in2", "hmap");
-
-      const morph = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "feMorphology"
-      );
-      morph.setAttribute("operator", "dilate");
-      morph.setAttribute("radius", tileSize / 2);
-
-      pixelate.setAttribute("width", canvas.width);
-      pixelate.setAttribute("height", canvas.height);
-      pixelate.appendChild(blur);
-      pixelate.appendChild(hmap);
-      pixelate.appendChild(blend);
-      pixelate.appendChild(morph);
+      pixelateOverlay.innerHTML = "";
+      pixelateOverlay.appendChild(canvas);
     }
 
-    loadImages();
-    pixelate(5, 1);
-    setTimeout(function() {
+    window.addEventListener('load', function() {
+      loadImages();
       pixelate(5, 1);
-    }, 3000);
+      setTimeout(function() {
+        pixelate(5, 1);
+      }, 3000);
+    });
   </script>
 </body>
 </html>
