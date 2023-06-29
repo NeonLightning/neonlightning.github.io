@@ -68,7 +68,6 @@
 
       // Set initial state
       var currentIndex = 0;
-      images[currentIndex].classList.add('fullsize');
 
       // Event listener for arrow key navigation
       document.addEventListener('keydown', function(event) {
@@ -104,6 +103,9 @@
           }
         });
       });
+
+      // Set initial zoom state
+      images[currentIndex].classList.add('fullsize');
     }
 
     // Function to create an image element
