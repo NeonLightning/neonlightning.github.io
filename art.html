@@ -67,7 +67,7 @@
       });
 
       // Set initial state
-      var currentIndex = 0;
+      var currentIndex = -1;
 
       // Event listener for arrow key navigation
       document.addEventListener('keydown', function(event) {
@@ -80,7 +80,9 @@
 
       // Function to navigate between images
       function navigate(direction) {
-        images[currentIndex].classList.remove('fullsize');
+        if (currentIndex >= 0) {
+          images[currentIndex].classList.remove('fullsize');
+        }
 
         if (direction === 'left') {
           currentIndex = (currentIndex - 1 + images.length) % images.length;
@@ -94,18 +96,14 @@
       // Event listener for click toggle
       images.forEach(function(img) {
         img.addEventListener('click', function() {
-          if (img.classList.contains('fullsize')) {
-            img.classList.remove('fullsize');
-          } else {
+          if (currentIndex >= 0) {
             images[currentIndex].classList.remove('fullsize');
-            currentIndex = images.indexOf(img);
-            img.classList.add('fullsize');
           }
+          
+          currentIndex = images.indexOf(img);
+          img.classList.add('fullsize');
         });
       });
-
-      // Set initial zoom state
-      images[currentIndex].classList.add('fullsize');
     }
 
     // Function to create an image element
