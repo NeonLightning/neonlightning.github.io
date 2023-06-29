@@ -38,24 +38,6 @@
     .gallery img.selected {
       border: 2px solid red;
     }
-
-    .arrow {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 30px;
-      color: white;
-      cursor: pointer;
-      display: none;
-    }
-
-    .arrow.left {
-      left: 10px;
-    }
-
-    .arrow.right {
-      right: 10px;
-    }
   </style>
 </head>
 <body>
@@ -67,6 +49,7 @@
       var images = [];
       var currentIndex = -1;
       var currentImage = null;
+      var currentPlaceholder = null;
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('art/' + i + '.png');
@@ -93,51 +76,32 @@
         var img = event.target;
         if (currentImage === img) {
           img.classList.remove('fullsize');
+          currentPlaceholder.style.display = 'none';
           img.classList.remove('selected');
           currentImage = null;
+          currentPlaceholder = null;
         } else {
           if (currentImage) {
             currentImage.classList.remove('fullsize');
+            currentPlaceholder.style.display = 'none';
             currentImage.classList.remove('selected');
           }
           img.classList.add('fullsize');
           currentImage = img;
-          setMinimizedSelected();
+          currentPlaceholder = createPlaceholder();
+          currentImage.parentNode.insertBefore(currentPlaceholder, currentImage);
+          currentPlaceholder.style.display = 'block';
+          img.classList.add('selected');
         }
       }
 
-      document.addEventListener('keydown', function(event) {
-        if (currentImage) {
-          if (event.key === 'ArrowLeft') {
-            navigate('left');
-          } else if (event.key === 'ArrowRight') {
-            navigate('right');
-          }
-        }
-      });
-
-      function navigate(direction) {
-        var currentIndex = images.indexOf(currentImage);
-        var nextIndex = direction === 'left' ? currentIndex - 1 : currentIndex + 1;
-        nextIndex = (nextIndex + images.length) % images.length;
-
-        currentImage.classList.remove('fullsize');
-        currentImage.classList.remove('selected');
-
-        currentImage = images[nextIndex];
-        currentImage.classList.add('fullsize');
-        setMinimizedSelected();
-      }
-
-      function setMinimizedSelected() {
-        images.forEach(function(img) {
-          if (img !== currentImage) {
-            img.classList.remove('selected');
-          }
-        });
-        if (currentImage) {
-          currentImage.classList.add('selected');
-        }
+      function createPlaceholder() {
+        var placeholder = document.createElement('img');
+        placeholder.src = currentImage.src;
+        placeholder.style.width = '200px';
+        placeholder.style.height = '200px';
+        placeholder.style.border = '2px solid red';
+        return placeholder;
       }
 
       function createImage(src) {
