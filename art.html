@@ -56,23 +56,12 @@
     .arrow.right {
       right: 10px;
     }
-
-    #pixelate-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 9998;
-    }
   </style>
 </head>
 <body>
   <div class="gallery"></div>
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
-  <div id="pixelate-overlay"></div>
 
   <script>
     function loadImages() {
@@ -83,7 +72,6 @@
       var currentPlaceholder = null;
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
-      var pixelateOverlay = document.getElementById('pixelate-overlay');
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('art/' + i + '.png');
@@ -122,7 +110,6 @@
           img.classList.add('selected');
           updateArrows();
           currentPlaceholder.addEventListener('click', unzoom);
-          pixelateOverlay.style.display = 'block';
         }
       }
 
@@ -134,7 +121,6 @@
         currentPlaceholder = null;
         leftArrow.style.display = 'none';
         rightArrow.style.display = 'none';
-        pixelateOverlay.style.display = 'none';
       }
 
       document.addEventListener('keydown', function(event) {
@@ -195,45 +181,7 @@
 
     }
 
-    function pixelate(tileSize = 10, sigmaGauss = 2) {
-      tileSize = tileSize < 1 ? 1 : tileSize;
-      sigmaGauss = sigmaGauss < 1 ? 1 : sigmaGauss;
-
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const rows = canvas.height / tileSize;
-      const cols = canvas.width / tileSize;
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          ctx.fillStyle = "white";
-
-          ctx.fillRect(
-            c * tileSize - 1 + Math.floor(tileSize / 2),
-            r * tileSize - 1 + Math.floor(tileSize / 2),
-            1,
-            1
-          );
-        }
-      }
-
-      pixelateOverlay.innerHTML = "";
-      pixelateOverlay.appendChild(canvas);
-    }
-
-    window.addEventListener('load', function() {
-      loadImages();
-      pixelate(5, 1);
-      setTimeout(function() {
-        pixelate(5, 1);
-      }, 3000);
-    });
+    window.addEventListener('load', loadImages);
   </script>
 </body>
 </html>
