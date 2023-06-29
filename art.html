@@ -1,19 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Gallery</title>
+  <style>
+    body {
+      background-color: black;
+      transition: filter 0.3s ease-in-out;
+    }
+    .gallery {
+      display: flex;
+      border: 5px solid purple;
+      flex-wrap: wrap;
+      justify-content: center;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .gallery img {
+      width: 200px;
+      height: 200px;
+      margin: 10px;
+      cursor: pointer;
+    }
+
+    .gallery img.fullsize {
+      width: auto;
+      height: auto;
+      max-width: 90%;
+      max-height: 90%;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    }
+  </style>
+</head>
 <body>
   <div class="gallery"></div>
 
   <script>
-    var currentImageIndex = 0;
-    var galleryImages = [];
-
+    // Function to load and display the image files
     function loadImages() {
       var gallery = document.querySelector('.gallery');
-      var imageCount = 95;
+      var images = [];
 
-      for (var i = 1; i <= imageCount; i++) {
-        var img = createImageElement('art/' + i + '.png');
+      // Loop through the image file names from 1.png to 95.png
+      for (var i = 1; i <= 95; i++) {
+        var img = createImage('art/' + i + '.png');
+        images.push(img);
         gallery.appendChild(img);
       }
 
+      // Add additional image files
       var additionalImages = [
         'art/1.bmp',
         'art/watching your own world torn down.png',
@@ -21,50 +59,62 @@
         'art/digital sadness.png'
       ];
 
-      additionalImages.forEach(function(file) {
-        var img = createImageElement(file);
+      // Loop through the additional image file names
+      additionalImages.forEach(file => {
+        var img = createImage(file);
+        images.push(img);
         gallery.appendChild(img);
       });
 
-      galleryImages = Array.from(document.querySelectorAll('.gallery img'));
-      galleryImages[currentImageIndex].classList.add('active');
+      // Set initial state
+      var currentIndex = 0;
+      images[currentIndex].classList.add('fullsize');
+
+      // Event listener for arrow key navigation
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'ArrowLeft') {
+          navigate('left');
+        } else if (event.key === 'ArrowRight') {
+          navigate('right');
+        }
+      });
+
+      // Function to navigate between images
+      function navigate(direction) {
+        images[currentIndex].classList.remove('fullsize');
+
+        if (direction === 'left') {
+          currentIndex = (currentIndex - 1 + images.length) % images.length;
+        } else if (direction === 'right') {
+          currentIndex = (currentIndex + 1) % images.length;
+        }
+
+        images[currentIndex].classList.add('fullsize');
+      }
+
+      // Event listener for click toggle
+      images.forEach(function(img) {
+        img.addEventListener('click', function() {
+          if (img.classList.contains('fullsize')) {
+            img.classList.remove('fullsize');
+          } else {
+            images[currentIndex].classList.remove('fullsize');
+            currentIndex = images.indexOf(img);
+            img.classList.add('fullsize');
+          }
+        });
+      });
     }
 
-    function createImageElement(src) {
+    // Function to create an image element
+    function createImage(src) {
       var img = document.createElement('img');
       img.src = src;
-      img.addEventListener('click', toggleFullsize);
       return img;
     }
 
-    function toggleFullsize(event) {
-      var img = event.target;
-      img.classList.toggle('fullsize');
-      img.classList.remove('active');
-    }
-
-    function navigateGallery(event) {
-      var key = event.key;
-
-      if (key === 'ArrowLeft') {
-        currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
-      } else if (key === 'ArrowRight') {
-        currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
-      }
-
-      galleryImages.forEach(function(img, index) {
-        if (index !== currentImageIndex) {
-          img.classList.remove('fullsize');
-        } else {
-          img.classList.add('fullsize');
-        }
-        img.classList.remove('active');
-      });
-
-      galleryImages[currentImageIndex].classList.add('active');
-    }
-
+    // Call the loadImages function when the page finishes loading
     window.addEventListener('load', loadImages);
-    window.addEventListener('keydown', navigateGallery);
   </script>
 </body>
+</html>
