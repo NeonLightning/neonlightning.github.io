@@ -97,18 +97,10 @@
       function toggleFullsize(event) {
         var img = event.target;
         if (currentImage === img) {
-          img.classList.remove('fullsize');
-          currentPlaceholder.style.display = 'none';
-          img.classList.remove('selected');
-          currentImage = null;
-          currentPlaceholder = null;
-          leftArrow.style.display = 'none';
-          rightArrow.style.display = 'none';
+          unzoom();
         } else {
           if (currentImage) {
-            currentImage.classList.remove('fullsize');
-            currentPlaceholder.style.display = 'none';
-            currentImage.classList.remove('selected');
+            unzoom();
           }
           img.classList.add('fullsize');
           currentImage = img;
@@ -117,7 +109,18 @@
           currentPlaceholder.style.display = 'block';
           img.classList.add('selected');
           updateArrows();
+          currentPlaceholder.addEventListener('click', unzoom);
         }
+      }
+
+      function unzoom() {
+        currentImage.classList.remove('fullsize');
+        currentPlaceholder.style.display = 'none';
+        currentImage.classList.remove('selected');
+        currentImage = null;
+        currentPlaceholder = null;
+        leftArrow.style.display = 'none';
+        rightArrow.style.display = 'none';
       }
 
       document.addEventListener('keydown', function(event) {
