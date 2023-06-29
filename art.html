@@ -94,31 +94,34 @@
         gallery.appendChild(img);
       });
 
-      function toggleFullsize(event) {
-        var img = event.target;
-        if (currentImage === img) {
-          img.classList.remove('fullsize');
-          currentPlaceholder.style.display = 'none';
-          img.classList.remove('selected');
-          currentImage = null;
-          currentPlaceholder = null;
-          leftArrow.style.display = 'none';
-          rightArrow.style.display = 'none';
-        } else {
-          if (currentImage) {
-            currentImage.classList.remove('fullsize');
-            currentPlaceholder.style.display = 'none';
-            currentImage.classList.remove('selected');
-          }
-          img.classList.add('fullsize');
-          currentImage = img;
-          currentPlaceholder = createPlaceholder();
-          currentImage.parentNode.insertBefore(currentPlaceholder, currentImage);
-          currentPlaceholder.style.display = 'block';
-          img.classList.add('selected');
-          updateArrows();
-        }
-      }
+function toggleFullsize(event) {
+  var img = event.target;
+  if (currentImage === img) {
+    img.classList.remove('fullsize');
+    currentPlaceholder.style.display = 'none';
+    img.classList.remove('selected');
+    currentImage = null;
+    currentPlaceholder = null;
+    leftArrow.style.display = 'none';
+    rightArrow.style.display = 'none';
+  } else {
+    if (currentImage) {
+      currentImage.classList.remove('fullsize');
+      currentPlaceholder.style.display = 'none';
+      currentImage.classList.remove('selected');
+    } else {
+      leftArrow.style.display = 'block';
+      rightArrow.style.display = 'block';
+    }
+    img.classList.add('fullsize');
+    currentImage = img;
+    currentPlaceholder = createPlaceholder();
+    currentImage.parentNode.insertBefore(currentPlaceholder, currentImage);
+    currentPlaceholder.style.display = 'block';
+    img.classList.add('selected');
+    updateArrows();
+  }
+}
 
       document.addEventListener('keydown', function(event) {
         if (currentImage) {
