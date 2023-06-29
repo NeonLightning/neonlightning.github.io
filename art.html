@@ -64,43 +64,37 @@
   <div class="gallery"></div>
 
   <script>
-    // Function to load and display the image files
     function loadImages() {
-      var gallery = document.querySelector('.gallery');
-      var images = [];
-      var placeholders = [];
-      var arrows = [];
+      const gallery = document.querySelector('.gallery');
+      const images = [];
+      const placeholders = [];
+      const arrows = [];
 
-      // Loop through the image file names from 1.png to 95.png
-      for (var i = 1; i <= 95; i++) {
-        var img = createImage('art/' + i + '.png');
+      for (let i = 1; i <= 95; i++) {
+        const img = createImage(`art/${i}.png`);
         images.push(img);
         placeholders.push(createPlaceholder());
         gallery.appendChild(placeholders[i - 1]);
         gallery.appendChild(img);
       }
 
-      // Add additional image files
-      var additionalImages = [
+      const additionalImages = [
         'art/1.bmp',
         'art/watching your own world torn down.png',
         'art/lost and alone in the end.png',
         'art/digital sadness.png'
       ];
 
-      // Loop through the additional image file names
       additionalImages.forEach(file => {
-        var img = createImage(file);
+        const img = createImage(file);
         images.push(img);
         placeholders.push(createPlaceholder());
         gallery.appendChild(placeholders[images.length - 1]);
         gallery.appendChild(img);
       });
 
-      // Set initial state
-      var currentIndex = -1;
+      let currentIndex = -1;
 
-      // Event listener for arrow key navigation
       document.addEventListener('keydown', function(event) {
         if (event.key === 'ArrowLeft') {
           navigate('left');
@@ -109,31 +103,7 @@
         }
       });
 
-      // Function to navigate between images
-      function navigate(direction) {
-        if (currentIndex >= 0) {
-          images[currentIndex].classList.remove('fullsize');
-          placeholders[currentIndex].style.display = 'block';
-          arrows.forEach(arrow => {
-            arrow.style.display = 'none';
-          });
-        }
-
-        if (direction === 'left') {
-          currentIndex = (currentIndex - 1 + images.length) % images.length;
-        } else if (direction === 'right') {
-          currentIndex = (currentIndex + 1) % images.length;
-        }
-
-        images[currentIndex].classList.add('fullsize');
-        placeholders[currentIndex].style.display = 'none';
-        arrows.forEach(arrow => {
-          arrow.style.display = 'block';
-        });
-      }
-
-      // Event listener for click toggle
-      images.forEach(function(img) {
+      images.forEach(img => {
         img.addEventListener('click', function() {
           if (currentIndex >= 0) {
             images[currentIndex].classList.remove('fullsize');
@@ -156,20 +126,17 @@
         });
       });
 
-      // Create a placeholder element
       function createPlaceholder() {
         return document.createElement('div');
       }
 
-      // Create and append arrow elements
-      var leftArrow = createArrow('left');
-      var rightArrow = createArrow('right');
+      const leftArrow = createArrow('left');
+      const rightArrow = createArrow('right');
       arrows.push(leftArrow);
       arrows.push(rightArrow);
       document.body.appendChild(leftArrow);
       document.body.appendChild(rightArrow);
 
-      // Add event listeners to arrows
       leftArrow.addEventListener('click', function() {
         navigate('left');
       });
@@ -178,23 +145,42 @@
         navigate('right');
       });
 
-      // Create an arrow element
+      function navigate(direction) {
+        if (currentIndex >= 0) {
+          images[currentIndex].classList.remove('fullsize');
+          placeholders[currentIndex].style.display = 'block';
+          arrows.forEach(arrow => {
+            arrow.style.display = 'none';
+          });
+        }
+
+        if (direction === 'left') {
+          currentIndex = (currentIndex - 1 + images.length) % images.length;
+        } else if (direction === 'right') {
+          currentIndex = (currentIndex + 1) % images.length;
+        }
+
+        images[currentIndex].classList.add('fullsize');
+        placeholders[currentIndex].style.display = 'none';
+        arrows.forEach(arrow => {
+          arrow.style.display = 'block';
+        });
+      }
+
       function createArrow(direction) {
-        var arrow = document.createElement('div');
-        arrow.className = 'arrow ' + direction;
+        const arrow = document.createElement('div');
+        arrow.className = `arrow ${direction}`;
         arrow.innerHTML = direction === 'left' ? '&lt;' : '&gt;';
         return arrow;
       }
 
-      // Function to create an image element
       function createImage(src) {
-        var img = document.createElement('img');
+        const img = document.createElement('img');
         img.src = src;
         return img;
       }
     }
 
-    // Call the loadImages function when the page finishes loading
     window.addEventListener('load', loadImages);
   </script>
 </body>
