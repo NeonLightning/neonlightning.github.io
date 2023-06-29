@@ -34,7 +34,7 @@
       z-index: 9999;
     }
 
-    .placeholder {
+    .gallery .placeholder {
       width: 200px;
       height: 200px;
       margin: 10px;
@@ -42,7 +42,7 @@
       display: none;
     }
 
-    .arrow {
+    .gallery .arrow {
       position: fixed;
       top: 50%;
       font-size: 30px;
@@ -51,11 +51,11 @@
       display: none;
     }
 
-    .arrow.left {
+    .gallery .arrow.left {
       left: 10px;
     }
 
-    .arrow.right {
+    .gallery .arrow.right {
       right: 10px;
     }
   </style>
@@ -127,15 +127,17 @@
       });
 
       function createPlaceholder() {
-        return document.createElement('div');
+        const placeholder = document.createElement('div');
+        placeholder.className = 'placeholder';
+        return placeholder;
       }
 
       const leftArrow = createArrow('left');
       const rightArrow = createArrow('right');
       arrows.push(leftArrow);
       arrows.push(rightArrow);
-      document.body.appendChild(leftArrow);
-      document.body.appendChild(rightArrow);
+      gallery.appendChild(leftArrow);
+      gallery.appendChild(rightArrow);
 
       leftArrow.addEventListener('click', function() {
         navigate('left');
