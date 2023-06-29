@@ -34,46 +34,15 @@
       z-index: 9999;
     }
 
-    .gallery .placeholder {
+    .placeholder {
       width: 200px;
       height: 200px;
       margin: 10px;
-      background-color: #333;
+      background-color: gray;
     }
 
-    .gallery .zoomed-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .arrow {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 9998;
-    }
-
-    .gallery .zoomed-image {
-      position: relative;
-      max-width: 80%;
-      max-height: 80%;
-    }
-
-    .gallery .zoomed-image img {
-      width: 100%;
-      height: 100%;
-    }
-
-    .gallery .zoomed-image .navigation {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .gallery .zoomed-image .navigation .arrow {
-      position: absolute;
       top: 50%;
       transform: translateY(-50%);
       font-size: 30px;
@@ -81,12 +50,12 @@
       cursor: pointer;
     }
 
-    .gallery .zoomed-image .navigation .arrow.left {
-      left: 20px;
+    .arrow.left {
+      left: 10px;
     }
 
-    .gallery .zoomed-image .navigation .arrow.right {
-      right: 20px;
+    .arrow.right {
+      right: 10px;
     }
   </style>
 </head>
@@ -98,11 +67,14 @@
     function loadImages() {
       var gallery = document.querySelector('.gallery');
       var images = [];
+      var placeholders = [];
 
       // Loop through the image file names from 1.png to 95.png
       for (var i = 1; i <= 95; i++) {
         var img = createImage('art/' + i + '.png');
         images.push(img);
+        placeholders.push(createPlaceholder());
+        gallery.appendChild(placeholders[i - 1]);
         gallery.appendChild(img);
       }
 
@@ -118,6 +90,8 @@
       additionalImages.forEach(file => {
         var img = createImage(file);
         images.push(img);
+        placeholders.push(createPlaceholder());
+        gallery.appendChild(placeholders[images.length - 1]);
         gallery.appendChild(img);
       });
 
@@ -146,7 +120,7 @@
         }
 
         images[currentIndex].classList.add('fullsize');
-        updateZoomedView();
+        updatePlaceholder();
       }
 
       // Event listener for click toggle
@@ -163,28 +137,47 @@
             img.classList.add('fullsize');
           }
 
-          updateZoomedView();
+          updatePlaceholder();
         });
       });
 
-      // Function to update the zoomed view
-      function updateZoomedView() {
-        var zoomedContainer = document.querySelector('.zoomed-container');
-        if (currentIndex >= 0) {
-          var zoomedImage = document.createElement('div');
-          zoomedImage.classList.add('zoomed-image');
-          zoomedImage.innerHTML = `
-            <div class="navigation">
-              <div class="arrow left" onclick="navigate('left')">&lt;</div>
-              <div class="arrow right" onclick="navigate('right')">&gt;</div>
-            </div>
-            <img src="${images[currentIndex].src}">
-          `;
-          zoomedContainer.innerHTML = '';
-          zoomedContainer.appendChild(zoomedImage);
-        } else {
-          zoomedContainer.innerHTML = '';
-        }
+      // Create a placeholder element
+      function createPlaceholder() {
+        return document.createElement('div');
+      }
+
+      // Update the placeholder element
+      function updatePlaceholder() {
+        placeholders.forEach(function(placeholder, index) {
+          if (index === currentIndex) {
+            placeholder.style.display = 'none';
+          } else {
+            placeholder.style.display = 'block';
+          }
+        });
+      }
+
+      // Create and append arrow elements
+      var leftArrow = createArrow('left');
+      var rightArrow = createArrow('right');
+      document.body.appendChild(leftArrow);
+      document.body.appendChild(rightArrow);
+
+      // Add event listeners to arrows
+      leftArrow.addEventListener('click', function() {
+        navigate('left');
+      });
+
+      rightArrow.addEventListener('click', function() {
+        navigate('right');
+      });
+
+      // Create an arrow element
+      function createArrow(direction) {
+        var arrow = document.createElement('div');
+        arrow.className = 'arrow ' + direction;
+        arrow.innerHTML = direction === 'left' ? '&lt;' : '&gt;';
+        return arrow;
       }
     }
 
@@ -198,6 +191,5 @@
     // Call the loadImages function when the page finishes loading
     window.addEventListener('load', loadImages);
   </script>
-  <div class="zoomed-container"></div>
 </body>
 </html>
