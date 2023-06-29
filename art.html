@@ -33,6 +33,43 @@
       transform: translate(-50%, -50%);
       z-index: 9999;
     }
+
+    .gallery .placeholder {
+      width: 200px;
+      height: 200px;
+      margin: 10px;
+      background-color: gray;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .gallery .placeholder::before {
+      content: 'Click to Zoom';
+      color: white;
+    }
+
+    .zoomed-controls {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 9999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    .zoomed-controls .arrow {
+      color: white;
+      font-size: 40px;
+      margin: 0 10px;
+      pointer-events: auto;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -91,6 +128,7 @@
         }
 
         images[currentIndex].classList.add('fullsize');
+        updateZoomedControls();
       }
 
       // Event listener for click toggle
@@ -105,16 +143,43 @@
           } else {
             currentIndex = images.indexOf(img);
             img.classList.add('fullsize');
+            updateZoomedControls();
           }
         });
       });
-    }
 
-    // Function to create an image element
-    function createImage(src) {
-      var img = document.createElement('img');
-      img.src = src;
-      return img;
+      // Function to create an image element
+      function createImage(src) {
+        var img = document.createElement('img');
+        img.src = src;
+        return img;
+      }
+
+      // Function to update the zoomed controls
+      function updateZoomedControls() {
+        var zoomedControls = document.querySelector('.zoomed-controls');
+        if (currentIndex >= 0) {
+          zoomedControls.style.display = 'flex';
+        } else {
+          zoomedControls.style.display = 'none';
+        }
+      }
+
+      // Function to handle the click event on the left arrow
+      function onLeftArrowClick() {
+        navigate('left');
+      }
+
+      // Function to handle the click event on the right arrow
+      function onRightArrowClick() {
+        navigate('right');
+      }
+
+      // Create zoomed controls
+      var zoomedControls = document.createElement('div');
+      zoomedControls.className = 'zoomed-controls';
+      zoomedControls.innerHTML = '<span class="arrow" onclick="onLeftArrowClick()">&lt;</span><span class="arrow" onclick="onRightArrowClick()">&gt;</span>';
+      document.body.appendChild(zoomedControls);
     }
 
     // Call the loadImages function when the page finishes loading
