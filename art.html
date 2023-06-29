@@ -7,6 +7,7 @@
       background-color: black;
       transition: filter 0.3s ease-in-out;
     }
+
     .gallery {
       display: flex;
       border: 5px solid purple;
@@ -56,12 +57,26 @@
     .arrow.right {
       right: 30px;
     }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('');
+      background-size: 0;
+      pointer-events: none;
+      z-index: 9998;
+    }
   </style>
 </head>
 <body>
   <div class="gallery"></div>
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
+  <div class="overlay"></div>
 
   <script>
     function loadImages() {
@@ -72,6 +87,7 @@
       var currentPlaceholder = null;
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
+      var overlay = document.querySelector('.overlay');
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('art/' + i + '.png');
@@ -93,6 +109,13 @@
         images.push(img);
         gallery.appendChild(img);
       });
+
+      // Generate a pixelated pattern programmatically
+      var pixelSize = 10; // Adjust the pixel size as desired
+      var patternSize = Math.ceil(window.innerWidth / pixelSize) + 'px ' + Math.ceil(window.innerHeight / pixelSize) + 'px';
+      var patternURL = generatePixelatedPattern(pixelSize, 'black', 'white');
+      overlay.style.backgroundImage = 'url(' + patternURL + ')';
+      overlay.style.backgroundSize = patternSize;
 
       function toggleFullsize(event) {
         var img = event.target;
@@ -179,6 +202,21 @@
         }
       }
 
+      function generatePixelatedPattern(pixelSize, color1, color2) {
+        var canvas = document.createElement('canvas');
+        canvas.width = pixelSize * 2;
+        canvas.height = pixelSize * 2;
+        var context = canvas.getContext('2d');
+        context.fillStyle = color1;
+        context.fillRect(0, 0, pixelSize, pixelSize);
+        context.fillStyle = color2;
+        context.fillRect(pixelSize, 0, pixelSize, pixelSize);
+        context.fillStyle = color2;
+        context.fillRect(0, pixelSize, pixelSize, pixelSize);
+        context.fillStyle = color1;
+        context.fillRect(pixelSize, pixelSize, pixelSize, pixelSize);
+        return canvas.toDataURL();
+      }
     }
 
     window.addEventListener('load', loadImages);
