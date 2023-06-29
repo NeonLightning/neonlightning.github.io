@@ -20,6 +20,7 @@
       height: 200px;
       margin: 10px;
       cursor: pointer;
+      border: 2px solid transparent;
     }
 
     .gallery img.fullsize {
@@ -34,12 +35,8 @@
       z-index: 9999;
     }
 
-    .gallery .placeholder {
-      width: 200px;
-      height: 200px;
-      margin: 10px;
-      background-color: gray;
-      display: none;
+    .gallery img.selected {
+      border-color: red;
     }
 
     .arrow {
@@ -70,7 +67,6 @@
       var images = [];
       var currentIndex = -1;
       var currentImage = null;
-      var currentPlaceholder = null;
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('art/' + i + '.png');
@@ -97,26 +93,17 @@
         var img = event.target;
         if (currentImage === img) {
           img.classList.remove('fullsize');
-          currentPlaceholder.style.display = 'none';
+          img.classList.remove('selected');
           currentImage = null;
-          currentPlaceholder = null;
         } else {
           if (currentImage) {
             currentImage.classList.remove('fullsize');
-            currentPlaceholder.style.display = 'none';
+            currentImage.classList.remove('selected');
           }
           img.classList.add('fullsize');
-          currentPlaceholder = createPlaceholder();
-          currentPlaceholder.style.display = 'block';
-          img.parentNode.insertBefore(currentPlaceholder, img);
+          img.classList.add('selected');
           currentImage = img;
         }
-      }
-
-      function createPlaceholder() {
-        var placeholder = document.createElement('div');
-        placeholder.className = 'placeholder';
-        return placeholder;
       }
 
       document.addEventListener('keydown', function(event) {
@@ -135,13 +122,11 @@
         nextIndex = (nextIndex + images.length) % images.length;
 
         currentImage.classList.remove('fullsize');
-        currentPlaceholder.style.display = 'none';
+        currentImage.classList.remove('selected');
 
         currentImage = images[nextIndex];
-        currentPlaceholder = createPlaceholder();
-        currentPlaceholder.style.display = 'block';
-        currentImage.parentNode.insertBefore(currentPlaceholder, currentImage);
         currentImage.classList.add('fullsize');
+        currentImage.classList.add('selected');
       }
 
       function createImage(src) {
