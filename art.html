@@ -101,8 +101,8 @@
             currentImage.classList.remove('selected');
           }
           img.classList.add('fullsize');
-          img.classList.add('selected');
           currentImage = img;
+          setMinimizedSelected();
         }
       }
 
@@ -126,7 +126,18 @@
 
         currentImage = images[nextIndex];
         currentImage.classList.add('fullsize');
-        currentImage.classList.add('selected');
+        setMinimizedSelected();
+      }
+
+      function setMinimizedSelected() {
+        images.forEach(function(img) {
+          if (img !== currentImage) {
+            img.classList.remove('selected');
+          }
+        });
+        if (currentImage) {
+          currentImage.classList.add('selected');
+        }
       }
 
       function createImage(src) {
