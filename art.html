@@ -34,7 +34,7 @@
       z-index: 9999;
     }
 
-    .placeholder {
+    .gallery .placeholder {
       width: 200px;
       height: 200px;
       margin: 10px;
@@ -142,7 +142,9 @@
       });
 
       function createPlaceholder() {
-        return document.createElement('div');
+        var placeholder = document.createElement('div');
+        placeholder.className = 'placeholder';
+        return placeholder;
       }
 
       var leftArrow = createArrow('left');
