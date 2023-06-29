@@ -1,40 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Image Gallery</title>
-  <style>
-    body {
-      background-color: black;
-      transition: filter 0.3s ease-in-out;
-    }
-    .gallery {
-      display: flex;
-      border: 5px solid purple;
-      flex-wrap: wrap;
-      justify-content: center;
-      transition: transform 0.3s ease-in-out;
-    }
-
-    .gallery img {
-      width: 200px;
-      height: 200px;
-      margin: 10px;
-      cursor: pointer;
-    }
-
-    .gallery img.fullsize {
-      width: auto;
-      height: auto;
-      max-width: 90%;
-      max-height: 90%;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-    }
-  </style>
-</head>
 <body>
   <div class="gallery"></div>
 
@@ -77,6 +40,7 @@
     function toggleFullsize(event) {
       var img = event.target;
       img.classList.toggle('fullsize');
+      img.classList.remove('active');
     }
 
     function navigateGallery(event) {
@@ -88,7 +52,12 @@
         currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
       }
 
-      galleryImages.forEach(function(img) {
+      galleryImages.forEach(function(img, index) {
+        if (index !== currentImageIndex) {
+          img.classList.remove('fullsize');
+        } else {
+          img.classList.add('fullsize');
+        }
         img.classList.remove('active');
       });
 
