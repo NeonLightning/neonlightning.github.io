@@ -15,7 +15,6 @@
       flex-wrap: wrap;
       justify-content: center;
       transition: transform 0.3s ease-in-out;
-      z-index: 1;
     }
 
     .gallery img {
@@ -50,7 +49,6 @@
       color: white;
       cursor: pointer;
       display: none;
-      z-index: 9999;
     }
 
     .arrow.left {
@@ -60,14 +58,12 @@
     .arrow.right {
       right: 10px;
     }
-    
+
     #pixelate {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
+      z-index: -1;
     }
   </style>
 </head>
@@ -86,12 +82,6 @@
       var currentPlaceholder = null;
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
-      var additionalImages = [
-        'art/1.bmp',
-        'art/watching your own world torn down.png',
-        'art/lost and alone in the end.png',
-        'art/digital sadness.png'
-      ];
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('art/' + i + '.png');
@@ -100,7 +90,14 @@
         gallery.appendChild(img);
       }
 
-      additionalImages.forEach(function(file) {
+      var additionalImages = [
+        'art/1.bmp',
+        'art/watching your own world torn down.png',
+        'art/lost and alone in the end.png',
+        'art/digital sadness.png'
+      ];
+
+      additionalImages.forEach(file => {
         var img = createImage(file);
         img.addEventListener('click', toggleFullsize);
         images.push(img);
@@ -176,7 +173,7 @@
       }
 
       function createImage(src) {
-        var img = new Image();
+        var img = document.createElement('img');
         img.src = src;
         return img;
       }
@@ -191,11 +188,8 @@
           rightArrow.style.display = 'none';
         }
       }
-
     }
 
-    window.addEventListener('load', loadImages);
-    
     function pixelate(tileSize = 10, sigmaGauss = 2) {
       tileSize = tileSize < 1 ? 1 : tileSize;
       sigmaGauss = sigmaGauss < 1 ? 1 : sigmaGauss;
@@ -209,8 +203,8 @@
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const rows = Math.ceil(canvas.height / tileSize);
-      const cols = Math.ceil(canvas.width / tileSize);
+      const rows = canvas.height / tileSize;
+      const cols = canvas.width / tileSize;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           ctx.fillStyle = "white";
@@ -247,7 +241,6 @@
         "http://www.w3.org/2000/svg",
         "feBlend"
       );
-      // blend.setAttribute("mode", "lighten");
       blend.setAttribute("mode", "multiply");
       blend.setAttribute("in", "blurred");
       blend.setAttribute("in2", "hmap");
@@ -267,11 +260,11 @@
       pixelate.appendChild(morph);
     }
 
+    loadImages();
     pixelate(5, 1);
-    setTimeout(function () {
+    setTimeout(function() {
       pixelate(5, 1);
     }, 3000);
-    window.p = pixelate;
   </script>
 </body>
 </html>
