@@ -44,12 +44,11 @@
       display: none;
       position: fixed;
       top: 50%;
-      font-weight: bold;
+      background: black;
       transform: translateY(-50%);
       font-size: 76px;
       color: purple;
       cursor: pointer;
-      border: 5px solid purple;
     }
 
     .arrow.left {
@@ -120,7 +119,7 @@ function toggleFullsize(event) {
 }
 
 function unzoom() {
-  currentImage.src = currentImage.src.replace('art', 'display');
+  currentImage.src = currentImage.src.replace('art', 'display'); // Switch back to thumbnail
   currentImage.classList.remove('fullsize');
   currentPlaceholder.style.display = 'none';
   currentImage.classList.remove('selected');
@@ -180,6 +179,7 @@ function createImage(src) {
         leftArrow.style.display = 'block';
         rightArrow.style.display = 'block';
       }
+    }
     loadImages();
   </script>
 </body>
