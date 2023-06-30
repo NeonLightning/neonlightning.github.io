@@ -124,8 +124,7 @@
         currentImage.classList.remove('selected');
         currentImage = null;
         currentPlaceholder = null;
-        leftArrow.style.display = 'none';
-        rightArrow.style.display = 'none';
+        updateArrows();
       }
 
       document.addEventListener('keydown', function(event) {
@@ -170,9 +169,8 @@
       }
 
       function updateArrows() {
-        var currentIndex = images.indexOf(currentImage);
-        leftArrow.style.display = 'block';
-        rightArrow.style.display = 'block';
+        leftArrow.style.display = currentImage ? 'block' : 'none';
+        rightArrow.style.display = currentImage ? 'block' : 'none';
       }
     }
 
