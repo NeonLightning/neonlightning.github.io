@@ -44,11 +44,12 @@
       display: none;
       position: fixed;
       top: 50%;
-      background: black;
+      font-weight: bold;
       transform: translateY(-50%);
       font-size: 76px;
       color: purple;
       cursor: pointer;
+      border: 5px solid purple;
     }
 
     .arrow.left {
@@ -58,34 +59,10 @@
     .arrow.right {
       right: 70px;
     }
-
-    /* .overlay {
-      pointer-events: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 9998;
-      background-repeat: repeat;
-      background-position: center;
-      background-size: cover;
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-    }
-
-    .overlay.fade-in {
-      opacity: 1;
-    }
-
-    .overlay.fade-out {
-      opacity: 0;
-    } */
   </style>
 </head>
 <body>
   <div class="gallery"></div>
-  <!-- <div class="overlay"></div> -->
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
 
@@ -130,7 +107,7 @@ function toggleFullsize(event) {
     if (currentImage) {
       unzoom();
     }
-    img.src = img.src.replace('display', 'art'); // Update source only for the selected thumbnail
+    img.src = img.src.replace('display', 'art');
     img.classList.add('fullsize');
     currentImage = img;
     currentPlaceholder = createPlaceholder();
@@ -143,7 +120,7 @@ function toggleFullsize(event) {
 }
 
 function unzoom() {
-  currentImage.src = currentImage.src.replace('art', 'display'); // Switch back to thumbnail
+  currentImage.src = currentImage.src.replace('art', 'display');
   currentImage.classList.remove('fullsize');
   currentPlaceholder.style.display = 'none';
   currentImage.classList.remove('selected');
@@ -194,7 +171,7 @@ function unzoom() {
 
 function createImage(src) {
   var img = document.createElement('img');
-  img.src = src.replace('art', 'display'); // Use the "display" folder for thumbnails
+  img.src = src.replace('art', 'display');
   return img;
 }
 
@@ -203,38 +180,6 @@ function createImage(src) {
         leftArrow.style.display = 'block';
         rightArrow.style.display = 'block';
       }
-
-      /* function generatePixelatedPattern() {
-        var canvas = document.createElement('canvas');
-        var ctx = canvas.getContext('2d');
-        var size = 20;
-        canvas.width = Math.ceil(window.innerWidth / size) * size;
-        canvas.height = Math.ceil(window.innerHeight / size) * size;
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-        for (var x = 0; x < canvas.width; x += size) {
-          for (var y = 0; y < canvas.height; y += size) {
-            if (Math.random() < 0.5) {
-              var transparency = Math.random() * 1 + 0.5;
-              ctx.fillStyle = `rgba(0, 0, 0, ${transparency})`;
-              ctx.fillRect(x, y, size, size);
-            }
-          }
-        }
-        return canvas.toDataURL();
-      }
-
-      function startPixelation() {
-        patternInterval = setInterval(function() {
-          overlay.style.backgroundImage = `url(${generatePixelatedPattern()})`;
-        }, 300);
-      }
-
-      function stopPixelation() {
-        clearInterval(patternInterval);
-        overlay.style.backgroundImage = 'none';
-      } */
-    }
-
     loadImages();
   </script>
 </body>
