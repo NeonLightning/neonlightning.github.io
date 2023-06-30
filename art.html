@@ -124,12 +124,17 @@
         currentImage.classList.remove('selected');
         currentImage = null;
         currentPlaceholder = null;
-        updateArrows();
+        leftArrow.style.display = 'none';
+        rightArrow.style.display = 'none';
       }
 
       document.addEventListener('keydown', function(event) {
         if (currentImage && event.key === 'Escape') {
           unzoom();
+        } else if (currentImage && event.key === 'ArrowLeft') {
+          navigateImage('left');
+        } else if (currentImage && event.key === 'ArrowRight') {
+          navigateImage('right');
         }
       });
 
@@ -169,8 +174,9 @@
       }
 
       function updateArrows() {
-        leftArrow.style.display = currentImage ? 'block' : 'none';
-        rightArrow.style.display = currentImage ? 'block' : 'none';
+        var currentIndex = images.indexOf(currentImage);
+        leftArrow.style.display = 'block';
+        rightArrow.style.display = 'block';
       }
     }
 
