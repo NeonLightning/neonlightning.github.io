@@ -51,6 +51,7 @@
       color: purple;
       cursor: pointer;
       border: 2px solid purple;
+      z-index: 10000; /* Added z-index */
     }
   
     .arrow.left {
@@ -87,15 +88,11 @@
     .overlay.tinted-layer {
       background-color: rgba(128, 0, 128, 0.5);
     }
-  
-    .overlay.tinted-layer .arrow {
-      filter: none; /* Add this line to remove filter/tint effect */
-    }
-  </style>
+    </style>
 </head>
 <body>
   <div class="gallery"></div>
-  <div class="overlay"></div> <!-- Added overlay element -->
+  <div class="overlay"></div>
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
 
