@@ -17,11 +17,12 @@
     }
   
     .gallery img {
-      width: 150px;
-      height: 150px;
-      margin: 5px;
-      cursor: pointer;
-      border: 2px solid transparent;
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin: 5px;
+  cursor: pointer;
+      border: 2px dotted rgb(58,0,58);
     }
   
     .gallery img.fullsize {
@@ -50,8 +51,8 @@
       font-size: 76px;
       color: purple;
       cursor: pointer;
-      border: 2px dotted purple;
-      z-index: 10000;
+      border: 2px solid purple;
+      z-index: 10000; /* Added z-index */
     }
   
     .arrow.left {
@@ -84,33 +85,14 @@
     .overlay.fade-out {
       opacity: 0;
     }
-  
-    .overlay.tinted-layer {
-      background-color: rgba(20, 0, 20, 0.7);
-    }
 
-    .unzoom-button {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: black;
-      font-weight: bold;
-      font-size: 36px;
-      color: purple;
-      cursor: pointer;
-      border: 2px dotted purple;
-      z-index: 10001;
-    }
-  </style>
+    </style>
 </head>
 <body>
   <div class="gallery"></div>
   <div class="overlay"></div>
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
-  <div class="unzoom-button" id="unzoomButton">X</div>
-
   <script>
     function loadImages() {
       var gallery = document.querySelector('.gallery');
@@ -121,30 +103,28 @@
       var overlay = document.querySelector('.overlay');
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
-      var unzoomButton = document.getElementById('unzoomButton');
-      unzoomButton.style.display = 'none';
-      
+  
       for (var i = 1; i <= 95; i++) {
         var img = createImage('display/' + i + '.png');
         img.addEventListener('click', toggleFullsize);
         images.push(img);
         gallery.appendChild(img);
       }
-
+  
       var additionalImages = [
         'display/1.bmp',
         'display/watching your own world torn down.png',
         'display/lost and alone in the end.png',
         'display/digital sadness.png'
       ];
-
+  
       additionalImages.forEach(file => {
         var img = createImage(file);
         img.addEventListener('click', toggleFullsize);
         images.push(img);
         gallery.appendChild(img);
       });
-
+  
       function toggleFullsize(event) {
         var img = event.target;
         if (currentImage === img) {
@@ -162,26 +142,34 @@
           img.classList.add('selected');
           updateArrows();
           currentPlaceholder.addEventListener('click', unzoom);
+  
+          // Calculate average color and apply tint to the image
+          img.addEventListener('load', function() {
+            var averageColor = getAverageColor(currentImage);
+            var lighterTint = calculateLighterTint(averageColor, 0.4);
+            var darkerTint = calculateDarkerTint(averageColor, 0.6);
+            currentImage.style.borderColor = lighterTint;
+            overlay.style.backgroundColor = darkerTint;
+            overlay.style.opacity = 0.9;
+          });
+  
           overlay.classList.add('fade-in', 'tinted-layer');
-          unzoomButton.style.display = 'block';
         }
       }
-
+  
       function unzoom() {
-        currentImage.src = currentImage.src.replace('art', 'display');
-        currentImage.classList.remove('fullsize');
-        currentPlaceholder.style.display = 'none';
-        currentImage.classList.remove('selected');
-        currentImage = null;
-        currentPlaceholder = null;
-        leftArrow.style.display = 'none';
-        rightArrow.style.display = 'none';
-        overlay.classList.remove('fade-in', 'tinted-layer');
-        unzoomButton.style.display = 'none';
-      }
-
-      unzoomButton.addEventListener('click', unzoom); // Added event listener
-
+  currentImage.src = currentImage.src.replace('art', 'display');
+  currentImage.classList.remove('fullsize');
+  currentPlaceholder.style.display = 'none';
+  currentImage.classList.remove('selected');
+  currentImage.style.borderColor = ''; // Reset the border color
+  currentImage = null;
+  currentPlaceholder = null;
+  leftArrow.style.display = 'none';
+  rightArrow.style.display = 'none';
+  overlay.classList.remove('fade-in', 'tinted-layer');
+  overlay.style.opacity = 0;
+}
       document.addEventListener('keydown', function(event) {
         if (currentImage && event.key === 'Escape') {
           unzoom();
@@ -191,27 +179,37 @@
           navigateImage('right');
         }
       });
-
+  
       leftArrow.addEventListener('click', function() {
         navigateImage('left');
       });
-
+  
       rightArrow.addEventListener('click', function() {
         navigateImage('right');
       });
-
+  
       function navigateImage(direction) {
         var currentIndex = images.indexOf(currentImage);
         var newIndex;
-        if (direction === 'left') {
-          newIndex = (currentIndex - 1 + images.length) % images.length;
-        } else if (direction === 'right') {
-          newIndex = (currentIndex + 1) % images.length;
+  
+        if (!currentImage) {
+          if (direction === 'left') {
+            newIndex = images.length - 1;
+          } else if (direction === 'right') {
+            newIndex = 0;
+          }
+        } else {
+          if (direction === 'left') {
+            newIndex = (currentIndex - 1 + images.length) % images.length;
+          } else if (direction === 'right') {
+            newIndex = (currentIndex + 1) % images.length;
+          }
         }
+  
         var newImage = images[newIndex];
         toggleFullsize({ target: newImage });
       }
-
+  
       function createPlaceholder() {
         var placeholder = document.createElement('img');
         placeholder.src = currentImage.src;
@@ -220,21 +218,62 @@
         placeholder.style.border = '2px dotted green';
         return placeholder;
       }
-
+  
       function createImage(src) {
         var img = document.createElement('img');
         img.src = src.replace('art', 'display');
         return img;
       }
-
+  
+      function getAverageColor(image) {
+        var canvas = document.createElement('canvas');
+        canvas.width = image.width;
+        canvas.height = image.height;
+  
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(image, 0, 0);
+  
+        var imageData = ctx.getImageData(0, 0, image.width, image.height).data;
+        var r = 0,
+          g = 0,
+          b = 0;
+  
+        for (var i = 0; i < imageData.length; i += 4) {
+          r += imageData[i];
+          g += imageData[i + 1];
+          b += imageData[i + 2];
+        }
+  
+        var pixelCount = imageData.length / 4;
+        r = Math.floor(r / pixelCount);
+        g = Math.floor(g / pixelCount);
+        b = Math.floor(b / pixelCount);
+        return { r: r, g: g, b: b };
+      }
+  
+      function calculateLighterTint(color, factor) {
+        var r = Math.floor(color.r + (255 - color.r) * factor);
+        var g = Math.floor(color.g + (255 - color.g) * factor);
+        var b = Math.floor(color.b + (255 - color.b) * factor);
+        return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+      }
+  
+      function calculateDarkerTint(color, factor) {
+        var r = Math.floor(color.r * factor);
+        var g = Math.floor(color.g * factor);
+        var b = Math.floor(color.b * factor);
+        return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+      }
+  
       function updateArrows() {
         var currentIndex = images.indexOf(currentImage);
         leftArrow.style.display = 'block';
         rightArrow.style.display = 'block';
       }
     }
-
+  
     loadImages();
   </script>
+  
 </body>
 </html>
