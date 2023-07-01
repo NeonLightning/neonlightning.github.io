@@ -7,7 +7,7 @@
       background-color: black;
       transition: filter 0.3s ease-in-out;
     }
-
+  
     .gallery {
       display: flex;
       border: 5px solid purple;
@@ -15,7 +15,7 @@
       justify-content: center;
       transition: transform 0.3s ease-in-out;
     }
-
+  
     .gallery img {
       width: 150px;
       height: 150px;
@@ -23,7 +23,7 @@
       cursor: pointer;
       border: 2px solid transparent;
     }
-
+  
     .gallery img.fullsize {
       width: auto;
       height: auto;
@@ -35,11 +35,11 @@
       transform: translate(-50%, -50%);
       z-index: 9999;
     }
-
+  
     .gallery img.selected {
       border: 4px dashed purple;
     }
-
+  
     .arrow {
       display: none;
       position: fixed;
@@ -50,17 +50,17 @@
       font-size: 76px;
       color: purple;
       cursor: pointer;
-      border: 2px solid purple; /* Added border style */
+      border: 2px solid purple;
     }
-
+  
     .arrow.left {
       left: 70px;
     }
-
+  
     .arrow.right {
       right: 70px;
     }
-
+  
     .overlay {
       pointer-events: none;
       position: fixed;
@@ -75,21 +75,22 @@
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
     }
-
+  
     .overlay.fade-in {
       opacity: 1;
     }
-
+  
     .overlay.fade-out {
       opacity: 0;
     }
-
+  
     .overlay.tinted-layer {
       background-color: rgba(128, 0, 128, 0.5);
     }
+  
     .overlay.tinted-layer .arrow {
-    border-color: transparent;
-  }
+      filter: none; /* Add this line to remove filter/tint effect */
+    }
   </style>
 </head>
 <body>
