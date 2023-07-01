@@ -106,7 +106,7 @@
   <div class="overlay"></div>
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
-  <div class="unzoom-button" onclick="unzoom()">X</div> <!-- Updated onclick attribute -->
+  <div class="unzoom-button" id="unzoomButton">X</div> <!-- Updated id -->
 
   <script>
     function loadImages() {
@@ -118,7 +118,7 @@
       var overlay = document.querySelector('.overlay');
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
-      var unzoomButton = document.querySelector('.unzoom-button');
+      var unzoomButton = document.getElementById('unzoomButton'); // Updated reference
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('display/' + i + '.png');
@@ -175,6 +175,8 @@
         overlay.classList.remove('fade-in', 'tinted-layer');
         unzoomButton.style.display = 'none';
       }
+
+      unzoomButton.addEventListener('click', unzoom); // Added event listener
 
       document.addEventListener('keydown', function(event) {
         if (currentImage && event.key === 'Escape') {
