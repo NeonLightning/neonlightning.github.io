@@ -88,13 +88,25 @@
     .overlay.tinted-layer {
       background-color: rgba(128, 0, 128, 0.5);
     }
-    </style>
+
+  .unzoom-button {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10001; /* Added z-index */
+  }
+  </style>
 </head>
 <body>
   <div class="gallery"></div>
   <div class="overlay"></div>
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
+  <div class="unzoom-button" onclick="unzoom()">X</div> <!-- Added unzoom button -->
 
   <script>
     function loadImages() {
@@ -106,6 +118,7 @@
       var overlay = document.querySelector('.overlay');
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
+      var unzoomButton = document.querySelector('.unzoom-button'); // Added unzoom button element
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('display/' + i + '.png');
@@ -146,6 +159,7 @@
           updateArrows();
           currentPlaceholder.addEventListener('click', unzoom);
           overlay.classList.add('fade-in', 'tinted-layer');
+          unzoomButton.style.display = 'block'; // Show unzoom button
         }
       }
 
@@ -159,6 +173,7 @@
         leftArrow.style.display = 'none';
         rightArrow.style.display = 'none';
         overlay.classList.remove('fade-in', 'tinted-layer');
+        unzoomButton.style.display = 'none'; // Hide unzoom button
       }
 
       document.addEventListener('keydown', function(event) {
