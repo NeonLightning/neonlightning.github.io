@@ -94,9 +94,12 @@
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      color: white;
-      font-size: 24px;
+      background: black;
+      font-weight: bold;
+      font-size: 36px;
+      color: purple;
       cursor: pointer;
+      border: 2px solid purple;
       z-index: 10001;
     }
   </style>
@@ -106,7 +109,7 @@
   <div class="overlay"></div>
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
-  <div class="unzoom-button" id="unzoomButton">X</div> <!-- Updated id -->
+  <div class="unzoom-button" id="unzoomButton">X</div>
 
   <script>
     function loadImages() {
@@ -118,8 +121,9 @@
       var overlay = document.querySelector('.overlay');
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
-      var unzoomButton = document.getElementById('unzoomButton'); // Updated reference
-
+      var unzoomButton = document.getElementById('unzoomButton');
+      unzoomButton.style.display = 'none';
+      
       for (var i = 1; i <= 95; i++) {
         var img = createImage('display/' + i + '.png');
         img.addEventListener('click', toggleFullsize);
