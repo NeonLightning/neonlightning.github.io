@@ -51,7 +51,7 @@
       color: purple;
       cursor: pointer;
       border: 2px solid purple;
-      z-index: 10000; /* Added z-index */
+      z-index: 10000;
     }
   
     .arrow.left {
@@ -89,16 +89,15 @@
       background-color: rgba(128, 0, 128, 0.5);
     }
 
-  .unzoom-button {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 10001; /* Added z-index */
-  }
+    .unzoom-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 10001;
+    }
   </style>
 </head>
 <body>
@@ -106,7 +105,7 @@
   <div class="overlay"></div>
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
-  <div class="unzoom-button" onclick="unzoom()">X</div> <!-- Added unzoom button -->
+  <div class="unzoom-button" onclick="unzoom()">X</div> <!-- Updated onclick attribute -->
 
   <script>
     function loadImages() {
@@ -118,7 +117,7 @@
       var overlay = document.querySelector('.overlay');
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
-      var unzoomButton = document.querySelector('.unzoom-button'); // Added unzoom button element
+      var unzoomButton = document.querySelector('.unzoom-button');
 
       for (var i = 1; i <= 95; i++) {
         var img = createImage('display/' + i + '.png');
@@ -159,7 +158,7 @@
           updateArrows();
           currentPlaceholder.addEventListener('click', unzoom);
           overlay.classList.add('fade-in', 'tinted-layer');
-          unzoomButton.style.display = 'block'; // Show unzoom button
+          unzoomButton.style.display = 'block';
         }
       }
 
@@ -173,7 +172,7 @@
         leftArrow.style.display = 'none';
         rightArrow.style.display = 'none';
         overlay.classList.remove('fade-in', 'tinted-layer');
-        unzoomButton.style.display = 'none'; // Hide unzoom button
+        unzoomButton.style.display = 'none';
       }
 
       document.addEventListener('keydown', function(event) {
