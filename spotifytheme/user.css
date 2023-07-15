@@ -227,7 +227,7 @@
     stroke: var(--spice-button-active);
 }
 .main-trackList-playingIcon {
-    filter: grayscale(1) opacity(0.2)
+    filter: grayscale(1) opacity(1)
         drop-shadow(0 0 0 var(--spice-button-active))
         drop-shadow(0 0 0 var(--spice-button-active))
         drop-shadow(0 0 0 var(--spice-button-active));
@@ -715,7 +715,7 @@
 }
 .player-controls__buttons,
 .main-nowPlayingBar-extraControls {
-    opacity: 0.25;
+    opacity: 1;
 }
 .player-controls__buttons:hover,
 .main-nowPlayingBar-extraControls:hover {
@@ -757,7 +757,7 @@
     right: var(--panel-gap);
     bottom: var(--panel-gap);
     padding: 17px;
-    opacity: 0.25;
+    opacity: 1;
 }
 .main-devicePicker-indicator.main-devicePicker-connected {
     display: none;
