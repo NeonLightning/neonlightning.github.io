@@ -5159,3 +5159,529 @@ html:only-child > head + body div.app-3xd6d0 > div.app-2CXKsg > div.layers-OrUES
 }
 
 /* end of recolour */
+
+
+
+
+/* Make pronouns stand out more */
+[class*=pronouns] {
+  color: var(--text-normal);
+  font-size: 12px; font-weight: 800;
+  background: #ffffff20;
+  padding: 0.10rem 0.5rem; margin: 0.25rem 0 0 0;
+  border-radius: 1rem;
+}
+
+
+/* popout settings and such */
+
+
+.panels-3wFtMD div .flex-2S1XBF {
+  width: fit-content !important; 
+}
+
+.panels-3wFtMD div .avatarWrapper-1B9FTW {
+  width: 194px;
+  margin-right: 0px !important;
+}
+
+.panels-3wFtMD div .avatarWrapper-1B9FTW:hover {
+  margin-right: 8px !important;
+}
+
+.panels-3wFtMD div .flex-2S1XBF button[role="switch"] {
+  width: 0px;
+  overflow: hidden;
+  transition: all 0.3s;
+  left: 16px;
+}
+
+.panels-3wFtMD div .flex-2S1XBF:hover button[role="switch"] {
+  width: 32px;
+  overflow: visible;
+  transition: all 0.3s;
+  left: 0px;
+}
+
+.panels-3wFtMD div .flex-2S1XBF:not(:hover) button:not([role="switch"]) svg {
+  rotate: 360deg;
+  transition: rotate 0.3s;
+  background-color: var(--background-secondary-alt); /* might look off with some themes */
+}
+
+.panels-3wFtMD div .flex-2S1XBF:hover button:not([role="switch"]) svg {
+  rotate: 0deg;
+  transition: rotate 0.3s;
+}
+
+/* hide game activity button*/
+
+button[aria-label="Enable Game Activity"] {
+  display: none;
+}
+
+/**
+ * @name Greens Responsive Discord
+ * @author GreenMan36#0633
+ * @authorLink https://github.com/GreenMan36
+ * @version 12.02.23a
+ * @description A theme that tries to make Discord's sidebars adapt when resizing your window.
+*/
+
+/*
+  WARNING THIS WILL BREAK OTHER THEMES!
+  This was made originally for > Alexis Modern Theme < but now mainly supports Discord's default theme.
+  Be sure to have Alexis' theme as well and apply some minor settings changes. (Search the file for "modern discord")
+  It will not work with any other themes nor will I try to fix any issues.
+  I only _might_ fix issues if it isn't too hard to fix but support isn't guaranteed.
+  
+  (C) GreenMan36#0633
+*/
+
+@import url(https://greenman36.github.io/files/discord-mods/themes/snippets/fix-titlebar-dragarea.css);
+
+/* used for theme name and version, DO NOT TOUCH */
+:root {
+  --theme-name: "Greens Responsive Discord";
+  --version: "26.03.23a";
+}
+
+/* these can be customized. just copy/paste the whole thing into your custom CSS and mess around with it. */
+:root {
+  --max-message-timestamp: 0.9;
+  --min-message-timestamp: 0.2;
+  --sidebar-animation-speed: 0.2s;
+  --member-bar-top-offset: 0px; /* 48px for modern Discord */
+  --channel-bar-top-offset: 0; /* unused, might be handy */
+  --blur: blur(0px);
+  --blur-bg: rgb(0 0 0 / 100%);
+
+  --sidebars-transition: var(--sidebar-animation-speed) ease-out 0.1s;
+}
+
+/* Image carrousel */
+/* Modern Discord: blur the background card */
+.carouselModal-1eUFoq.zoomedCarouselModalRoot-beLNhM.root-g14mjS.fullscreenOnMobile-ixj0e3 {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* Modern Discord: remove channel list fade, bugs when panel expanded */
+/*.panels-3wFtMD:before {
+    background: none !important;
+}*/
+
+/* styling for the theme name and version */
+.info-3pQQBb::after {
+  border-top: 1px solid var(--text-muted);
+  border-radius: 4px;
+  content: var(--theme-name);
+  text-align: center;
+  display: block;
+  color: var(--text-muted);
+  font-family: var(--font-primary);
+  font-size: 12px;
+  line-height: 16px;
+  text-rendering: optimizeLegibility;
+  padding-top: 4px;
+  margin-top: 12px;
+}
+
+/* play animation on hover */
+.info-3pQQBb:hover:after {
+  content: var(--theme-name);
+  animation: versionhover 16s ease-in infinite running;
+  filter: blur(0px);
+  opacity: 1;
+}
+
+/* version hover animation */
+@keyframes versionhover {
+  0% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+  3% {
+    opacity: 0;
+    filter: blur(32px);
+  }
+  3.1% {
+    opacity: 0;
+    content: "Theme Version " var(--version);
+    filter: blur(0px);
+  }
+  17% {
+    opacity: 1;
+    content: "Theme Version " var(--version);
+    filter: blur(0px);
+  }
+  50% {
+    opacity: 1;
+    content: "Theme Version " var(--version);
+    filter: blur(0px);
+  }
+  52% {
+    opacity: 0;
+    content: "Theme Version " var(--version);
+    filter: blur(32px);
+  }
+  52.1% {
+    opacity: 0;
+    filter: blur(0px);
+    content: var(--theme-name);
+  }
+  67% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+  100% {
+  }
+}
+
+/* animations */
+.container-2o3qEW,
+.sidebar-1tnWFu {
+  transition: max-width var(--sidebars-transition);
+} /* change fullscreen popout background */
+.backdrop-2ByYRN.withLayer-2VVmpp {
+  transition: all 0.2s ease-in-out;
+  opacity: 1 !important;
+  background-color: rgb(0 0 0 / 50%) !important;
+  backdrop-filter: blur(4px) saturate(0.5);
+}
+
+/* force message timestamps to be visible */
+/* override first message timestamp */
+.keyboard-mode .wrapper-30-Nkg:focus .timestamp-p1Df1m,
+.mouse-mode .wrapper-30-Nkg:hover .timestamp-p1Df1m,
+/* override subsequent message timestamps for other themes */
+.keyboard-mode .wrapper-30-Nkg:focus .timestampVisibleOnHover-9PEuZS,
+.mouse-mode .wrapper-30-Nkg:hover .timestampVisibleOnHover-9PEuZS {
+  transition: opacity 0.2s ease-out;
+  opacity: var(--max-message-timestamp);
+}
+
+.timestampVisibleOnHover-9PEuZS,
+.timestamp-p1Df1m {
+  opacity: var(--min-message-timestamp);
+}
+
+/* fix the app directory 
+(come on Discord, at least ship a working page after you've tested for weeks on end) */
+.directoryModal-YJsOMv.thin-31rlnD.scrollerBase-_bVAAt {
+  transition: padding 0.5s ease-out;
+}
+
+/* hide some useless buttons */
+a.anchor-1MIwyf.anchorUnderlineOnHover-2qPutX > div[aria-label="Help"],
+a.anchor-1MIwyf.anchorUnderlineOnHover-2qPutX.snowsgivingLink-1TZi3c {
+  display: none;
+}
+
+@media (max-width: 1320px) {
+  .directoryModal-YJsOMv.thin-31rlnD.scrollerBase-_bVAAt {
+    padding: 32px 16px 32px 16px;
+    margin: 0;
+  }
+
+  /* hide the help article in the app directory */
+  div.header-XAevvr
+    > div.titleContainer-1P_BAz
+    > a.anchor-1MIwyf.anchorUnderlineOnHover-2qPutX {
+    display: none;
+  }
+}
+
+/* resize inbox */
+.recentMentionsPopout-2bI1ZN {
+  width: 100%;
+  height: 100%;
+  min-height: 80vh;
+  min-width: 50vw;
+  transition: all 0.5s ease-out;
+  transition-property: max-height, max-width, width, height;
+}
+/* fix inbox header */
+.channelHeader-DFRX8q {
+  top: -1px;
+}
+
+@media (max-width: 1400px) {
+  .recentMentionsPopout-2bI1ZN {
+    width: 100%;
+    height: 100%;
+    max-height: 90vh;
+    max-width: 60vw;
+  }
+}
+
+/* colapsing friendlist right side bars */
+@media (max-width: 1921px) {
+  .nowPlayingColumn-1eCBCN {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: -194px;
+    bottom: 0;
+    z-index: 2;
+    transition: right var(--sidebars-transition);
+  }
+
+  aside.container-1oAagU {
+    max-width: 164px;
+    transition: max-width var(--sidebars-transition);
+  }
+
+  /* make the scrollable container take less space */
+  .scroller-hE2gWq.thin-31rlnD.scrollerBase-_bVAAt {
+    padding-left: 8px;
+    padding-right: 0 !important;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  /* make the outer activity card take less horizontal space */
+  .itemCard-3Etziu.wrapper-2RrXDg.outer-2JOHae.padded-2NSY6O.interactive-2zD88a {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  /* activity inside card */
+  section.section-3G9aLW {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* music and app art */
+  .activitySectionAssets-1wpe42 {
+    padding-left: 6px;
+  }
+
+  .nowPlayingColumn-1eCBCN:hover {
+    right: 0;
+    transition: right 0s;
+  }
+
+  aside.container-1oAagU:hover {
+    max-width: 358px;
+    transition: max-width 0s;
+  }
+
+  .peopleColumn-1wMU14 {
+    padding-right: 164px;
+  }
+}
+
+.sidebar-1tnWFu:not(:hover) .container-1NXEtd div ul li.wrapper-NhbLHG .link-1_kTxV div div svg {
+
+    transition: transform var(--sidebar-animation-speed) ease;
+  }
+
+  .sidebar-1tnWFu:not(:hover) .container-1NXEtd div ul li div div a * > .iconContainer-21RCa3 {
+    transition: transform var(--sidebar-animation-speed) ease;
+  }
+
+/* only enable colapsing left side bars when below this window size */
+@media (max-width: 1921px) {
+  .sidebar-1tnWFu {
+    max-width: 62px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+  }
+
+  .chat-2ZfjoI {
+    margin-left: 48px;
+  }
+
+  /* force the browse channels text to not wrap around */
+  .name-28HaxV {
+    white-space: nowrap;
+  }
+
+  div#channels:not(:hover) {
+    padding-right: 0px !important;
+    transition: padding-right var(--sidebars-transition);
+  }
+
+  /* expand channelbar on hover */
+  .sidebar-1tnWFu:hover {
+    transition: max-width 0s;
+    max-width: 240px;
+  }
+
+  .sidebar-1tnWFu:not(:hover) .container-1NXEtd * > .children-1MGS9G,
+  .sidebar-1tnWFu:not(:hover) .container-1NXEtd * > .children-3MeUvj {
+    display: none;
+  }
+
+  /* for mini sidebar */
+  .sidebar-1tnWFu:not(:hover) .container-1NXEtd div ul li.wrapper-NhbLHG .link-1_kTxV div div svg {
+    transform: translateX(-2px);
+  }
+
+  .sidebar-1tnWFu:not(:hover) .container-1NXEtd div ul li div div a * > .iconContainer-21RCa3 {
+    transform: translateX(5px);
+  }
+
+  /* fix tab offsets.  */
+  .applicationStore-2nk7Lo, /* friends tab */
+    main.container-2cd8Mz, /* nitro upsell */
+    .scroller-3j5xK2.auto-2K3UW5.scrollerBase-_bVAAt, /* discover tab */
+    .scroller-RfJjkV.thin-31rlnD.scrollerBase-_bVAAt /* discover student hub */ {
+    padding-left: 128px;
+  }
+}
+
+.container-3wLKDe {
+  padding-right: 0px;
+}
+
+/* only enable colapsing member bar when below this window size */
+@media (max-width: 1921px) {
+  .container-2o3qEW {
+    max-width: 60px;
+    position: absolute;
+    top: var(--member-bar-top-offset);
+    bottom: 0;
+    right: 0;
+    /* fixes a weird bug that sometimes happens when doing a big paste in the textbox */
+    height: calc(100% - var(--member-bar-top-offset));
+  }
+
+  /* fixes the layering of the sidebar */
+  .sidebar-1tnWFu {
+    z-index: 101;
+    /* optional, might be useful in the future */
+    top: var(--channel-bar-top-offset);
+  }
+
+  /* only set the chat width in actual channels */
+  main.chatContent-3KubbW:not([aria-label=" (channel)"]) {
+    max-width: calc(100% - 60px);
+  }
+
+  /* this button just breaks how the theme looks when used and the bar is collapsed */
+  [aria-label="Hide Member List"] {
+    display: none !important;
+  }
+
+  /* expand memberlist on hover */
+  .container-2o3qEW:hover {
+    transition: max-width 0s;
+    max-width: 240px;
+  }
+
+  div:not(.threadSidebarOpen-1LSXvU) > div > .container-3wLKDe {
+    padding-right: 60px;
+  }
+}
+
+@media (max-width: 1290px) {
+  /* fix forum */
+  .container-3XgAHv /*:not(.chatTarget-3H6mpC)*/ {
+    position: absolute;
+    right: -440px;
+    bottom: 0;
+    top: 0;
+    transition: right var(--sidebars-transition);
+    transition-delay: 0.5s;
+    width: 500px !important;
+  }
+
+  .chatLayerWrapper-2mgEK- > .container-3XgAHv:hover {
+    right: 0;
+    transition: right var(--sidebars-transition);
+    transition-duration: 0.05s;
+  }
+
+  .threadSidebarOpen-1LSXvU ~ .resizeHandle-PBRzPC {
+    display: none;
+  }
+
+  .threadSidebarOpen-1LSXvU
+    > .title-31SJ6t.container-ZMc96U.themed-Hp1KC_
+    > .toolbar-3_r2xA {
+    padding-right: 60px;
+  }
+
+  div.threadSidebarOpen-1LSXvU > div > .container-3wLKDe {
+    padding-right: 60px;
+  }
+}
+
+/* removes small space to the right of a message */
+.cozy-VmLDNB.wrapper-30-Nkg {
+  margin-right: 0px !important;
+}
+
+/* fix call button overflow */
+.platform-win .sidebar-1tnWFu {
+  overflow: hidden !important;
+}
+
+/* make the buttons more visible */
+button.arrowContainer-2wpC4q {
+  background: var(--background-floating);
+  opacity: 0.85;
+  border-radius: 8px;
+}
+
+/* blur unread messages bar */
+.barButtonAlt-TQoCdZ,
+.barButtonMain-2GIx4o,
+/* .jumpToPresentBar-1cEnH0 */ .barBase-3xxDXu {
+  background-color: var(--blur-bg) !important;
+  backdrop-filter: var(--blur);
+}
+
+.grid-21dB-S,
+.list-3FIpnh > .content-2a4AW9 {
+  background-color: var(--background-primary);
+}
+
+.mainCard-3KBsBI {
+  background: var(--background-secondary);
+}
+
+/* fix fade on grid item */
+.theme-dark .textContentFooter-2JnNv8 {
+  background: linear-gradient(
+      0deg,
+      var(--background-secondary) 25%,
+      transparent
+    )
+    100%;
+}
+
+/* patch the images in the user call area */
+button.button-1EGGcP {
+  padding: 0;
+}
+
+/* fix the call area when chat is open */
+@media only screen and (max-width: 1312px) {
+  .chat-2ZfjoI:has(.chatSidebarOpen--YCxhs) {
+    background: transparent !important;
+    padding-right: 60px;
+  }
+
+  .container-3XgAHv.floating-3M3WeH {
+    transition: right var(--sidebars-transition);
+    transition-delay: 0.5s;
+    right: -390px;
+  }
+
+  .container-3XgAHv.floating-3M3WeH:hover {
+    transition: right 0s;
+    right: 0;
+  }
+}
+
+@media only screen and (max-width: 1290px) {
+  .container-3XgAHv.floating-3M3WeH {
+    right: -440px;
+  }
+}
