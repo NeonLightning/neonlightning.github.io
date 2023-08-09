@@ -27,15 +27,16 @@
     --font-family: 'VT323', monospace;
     */
     --font-size: 14px;
+    --font-size-lyrics: 14px; /* 1.5em (default) */
     --font-weight: 400; /* 200 : 900 */
     --line-height: 1.2;
 
     --display-card-image: block; /* none | block */
-    --display-coverart-image: none !important; /* none | block */
-    --display-header-image: block !important; /* none | block */
+    --display-coverart-image: block !important; /* none | block */
+    --display-header-image: none !important; /* none | block */
     --display-library-image: block !important; /* none | block */
     --display-tracklist-image: block !important; /* none | block */
-
+	--spice-bg-pic: url('https://github.com/NeonLightning/neonlightning.github.io/blob/main/spotifytheme/transblackbg.gif?raw=true');
     --border-radius: 0px;
 }
 
@@ -45,6 +46,10 @@
     font-size: var(--font-size) !important;
     font-weight: var(--font-weight) !important;
     line-height: var(--line-height);
+}
+
+.lyrics-lyricsContent-lyric {
+    font-size: var(--font-size-lyrics) !important;
 }
 
 /* images */
@@ -75,7 +80,9 @@
 .Root__top-container {
     --panel-gap: 16px !important;
 }
-.Root__main-view {
+.Root__main-view,
+.Root__nav-bar,
+.Root__now-playing-bar {
     overflow: visible;
 }
 .main-view-container {
@@ -88,17 +95,9 @@
 .main-topBar-background,
 .main-topBar-overlay,
 .main-home-homeHeader {
-    background-color: var(--spice-main) !important;
+	background-color: var(--spice-main) !important;
     background-image: none;
 }
-/* .main-rootlist-wrapper,
-.main-rootlist-topSentinel,
-.main-rootlist-bottomSentinel,
-.main-rootlist-topSentinel div,
-.main-rootlist-bottomSentinel div {
-    height: auto !important;
-    contain: unset;
-} */
 .main-trackList-rowPlayCount {
     width: 17ch;
 }
@@ -118,6 +117,11 @@
 }
 .mbUrqWP55sK6zhspiR72 {
     height: auto;
+}
+
+.Root__right-sidebar > section,
+section.main-buddyFeed-container {
+    width: auto !important;
 }
 
 /* 1.2.11 backwards compatibility - for linux */
@@ -181,6 +185,7 @@
     #background-image: none;
 }
 .Root__nav-bar {
+    overflow: visible;
     gap: var(--panel-gap) !important;
 }
 .spotify__os--is-linux .Root__top-container {
@@ -213,7 +218,10 @@
 }
 .Root__top-container,
 .Root__nav-bar {
-    background-color: var(--spice-main);
+    background-color: var(--spice-inactive);
+	background-image: var(--spice-bg-pic);
+    background-repeat: repeat;
+    background-blend-mode: normal, transparent;
 }
 .main-playPauseButton-button {
     background-color: transparent;
@@ -242,7 +250,9 @@
 .main-entityHeader-background,
 .main-entityHeader-backgroundColor,
 .main-entityHeader-overlay,
-.main-actionBarBackground-background {
+.main-actionBarBackground-background,
+.main-buddyFeed-container,
+.main-nowPlayingView-content.main-nowPlayingView-gradient {
     background-color: transparent !important;
     background: transparent;
     background-image: none;
@@ -257,7 +267,8 @@
     color: var(--spice-button-active);
 }
 .main-trackList-placeholder,
-.Pns6F5g4OEwEpdmOWTLg {
+.Pns6F5g4OEwEpdmOWTLg,
+.eldivguzYznZgQoShJbe {
     opacity: 0.05;
     filter: contrast(0.1);
 }
@@ -307,7 +318,7 @@
 /* pane borders */
 .main-yourLibraryX-entryPoints,
 .Root__main-view,
-.Root__right-sidebar aside {
+.Root__right-sidebar .main-buddyFeed-container {
 	border-top-style: dotted;
 	border-left-style: dotted;
 	border-right-style: solid;
@@ -326,7 +337,7 @@
 }
 .main-yourLibraryX-entryPoints:hover,
 .Root__main-view:hover,
-.Root__right-sidebar aside:hover {
+.Root__right-sidebar .main-buddyFeed-container:hover {
 	border-top-style: dotted;
 	border-left-style: dotted;
 	border-right-style: solid;
@@ -353,7 +364,6 @@
     margin: -10px 4px;
     background: var(--spice-main);
     padding: 0 3px;
-    z-index: 9;
 	border-style: dotted;
 	border-width: 1px;
 	border-color: var(--spice-border-inactive);
@@ -371,7 +381,7 @@
 .Root__nav-bar .main-yourLibraryX-entryPoints:hover::before,
 .Root__main-view:hover::before,
 .Root__now-playing-bar:hover::before,
-.Root__right-sidebar:hover::before {
+.Root__right-sidebar section:not(:empty):hover::before {
     color: var(--spice-header);
 }
 
@@ -587,11 +597,16 @@
     top: unset;
 }
 
-/* lyrics page */
+/* lyrics page and sidebar */
 .lyrics-lyrics-background {
     background-color: var(--spice-main);
 }
-.lyrics-lyrics-contentContainer {
+
+.main-nowPlayingView-sectionHeaderSpacing.main-nowPlayingView-lyricsGradient {
+    background-color: var(--background-tinted-base);
+}
+
+.lyrics-lyrics-container, .main-nowPlayingView-section {
     justify-content: start;
 }
 .lyrics-lyrics-container.lyrics-lyrics-coverTopBar {
@@ -602,12 +617,14 @@
 }
 .lyrics-lyricsContent-lyric {
     opacity: 0.3;
+    display: flex;
+    flex-direction: row;
 }
 .lyrics-lyricsContent-lyric.lyrics-lyricsContent-highlight {
     opacity: 0.7;
     transition: none;
 }
-.lyrics-lyricsContent-lyric.lyrics-lyricsContent-isInteractive.lyrics-lyricsContent-active:not(
+.lyrics-lyricsContent-lyric.lyrics-lyricsContent-active:not(
         :empty
     ) {
     background-color: var(--lyrics-color-background);
@@ -617,13 +634,20 @@
 }
 .lyrics-lyricsContent-lyric:not(:empty)::before {
     content: ">> ";
+    white-space: break-spaces;
     opacity: 0;
 }
-.lyrics-lyricsContent-lyric.lyrics-lyricsContent-isInteractive.lyrics-lyricsContent-active:not(
+.lyrics-lyricsContent-lyric.lyrics-lyricsContent-active:not(
         :empty
     )::before {
     content: ">> ";
     opacity: 1;
+    white-space: break-spaces;
+}
+
+/* lyrics cinema */
+.main-lyricsCinema-lyricsCinemaVisible {
+    border: var(--border-width) var(--border-style) transparent;
 }
 
 /*neon's lyric page changes*/
@@ -835,20 +859,77 @@ a {
 }
  .Root__right-sidebar::before {
     content: 'Sidebar';
+    z-index: 101 !important;
+}
+
+.spotify__container--is-desktop .Root__top-container {
+	background-color: var(--spice-background) !important;
+}
+
+.lyrics-lyrics-contentWrapper>*:not(.lyrics-lyricsContent-active, .lyrics-lyricsContent-highlight, .lyrics-lyricsContent-provider, .lyrics-lyricsContent-description, .lyrics-lyricsContent-unsynced) {
+	filter: none !important;
+}
+
+.lyrics-lyricsContent-active, .lyrics-lyricsContent-highlight, .lyrics-lyricsContent-provider, .lyrics-lyricsContent-description, .lyrics-lyricsContent-unsynced {
+	filter: none !important;
+}
+
+.main-trackList-rowMarker:has(img)::before {
+    content: "";
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    background-image: url(https://online.reaconverter.com/s/189b1f84-2fb0-4000-8ccb-1fd402918100/1-CRT-Precision/CRT-Precision.gif); 
+    /* you can put anything really */
+    background-size: contain;
+    transform: scale(2);
+    filter: opacity(.8)
+        drop-shadow(0 0 0 var(--spice-button-active))
+        drop-shadow(0 0 0 var(--spice-button-active))
+        drop-shadow(0 0 0 var(--spice-button-active))
+        sepia(40%) saturate(5) hue-rotate(278deg) brightness(90%) contrast(110%);
+    
+        
+        
+}
+.main-trackList-trackListRow:hover .main-trackList-rowMarker:has(img)::before,
+.main-trackList-trackListRow.main-trackList-selected
+    .main-trackList-rowMarker:has(img)::before,
+.main-trackList-playingIcon {
+    display: none;
 }
 
 img {
-    filter: url('data:image/svg+xml,\
+  filter: url('data:image/svg+xml,\
     <svg xmlns="http://www.w3.org/2000/svg">\
-      <filter id="pixelate" x="0" y="0">\
-      <feConvolveMatrix\
-         kernelMatrix="1  2  1 \
-                       2 -12 2 \
-                       1  2  1"\
-         order="3 3"\
-         bias="0"\
-         divisor="1"\
-         preserveAlpha="true" />\
+      <filter id="pixelate">\
+        <feConvolveMatrix kernelMatrix="1  2  1 \
+                                       2 -12 2 \
+                                       1  2  1" \
+                          order="3 3" \
+                          bias="0" \
+                          divisor="1" \
+                          preserveAlpha="true" />\
       </filter>\
-    </svg>#pixelate') !important;
+    </svg>#pixelate') sepia(40%) saturate(5) hue-rotate(278deg) brightness(90%) contrast(110%);
+}
+
+/* window controls background */
+body::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    z-index: 999;
+    backdrop-filter: brightness(2.12);
+    /* page zoom [ctrl][+] or [ctrl][-]
+       edit width and height accordingly
+        69%  = 194px 45px
+        76%  = 177px 40.5px
+        83%  = 162px 37.5px
+        91%  = 148px 34px
+        100% = 135px 31px (default)
+        110% = 123px 28.5px
+    */
+    width: 135px;
+    height: 31px;
 }
