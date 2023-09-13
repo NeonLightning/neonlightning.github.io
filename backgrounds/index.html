@@ -135,14 +135,15 @@
       var overlay = document.querySelector('.gallery .overlay');
       var leftArrow = document.querySelector('.arrow.left');
       var rightArrow = document.querySelector('.arrow.right');
-//SET NUMBER HERE//
+	  //******************//
+	  // SET IMAGES HERE //
+	  //*****************//
       for (var i = 1; i <= 76; i++) {
         var img = createImage('display/' + i + '.png');
         img.addEventListener('click', toggleFullsize);
         images.push(img);
         gallery.appendChild(img);
       }
-
       var additionalImages = [
       ];
 
