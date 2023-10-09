@@ -14,7 +14,7 @@ if not exist "%DESTINATION_FOLDER%" (
 )
 
 REM Set the path to the ImageMagick convert executable
-set "IM_CONVERT=D:\programs\imagemagick\convert.exe"
+set "IM_CONVERT=convert.exe"
 
 REM Change the current directory to the source folder
 cd "%SOURCE_FOLDER%"
