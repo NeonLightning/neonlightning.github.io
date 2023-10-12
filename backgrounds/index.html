@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta property="og:image" content="" id="random-image">
+  <meta property="og:image" content="https://neonlightning.netlify.app/backgrounds/display/77.png">
   <title>Image Gallery</title>
   <style>
     body {
@@ -126,14 +126,6 @@
   <div class="arrow left">&lt;</div>
   <div class="arrow right">&gt;</div>
   <script>
-  
-    // Generate a random number between 1 and 89
-    const randomNumber = Math.floor(Math.random() * 86) + 1;
-    // Construct the URL for the random image
-    const randomImageUrl = `https://neonlightning.netlify.app/backgrounds/display/${randomNumber}.png`;
-    // Set the content of the meta tag to the random image URL
-    document.getElementById("random-image").setAttribute("content", randomImageUrl);
-  
     function loadImages() {
       var gallery = document.querySelector('.gallery');
       var images = [];
