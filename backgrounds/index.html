@@ -138,7 +138,7 @@
 	  //******************//
 	  // SET IMAGES HERE //
 	  //*****************//
-      for (var i = 1; i <= 86; i++) {
+      for (var i = 1; i <= 98; i++) {
         var img = createImage('display/' + i + '.png');
         img.addEventListener('click', toggleFullsize);
         images.push(img);
@@ -181,7 +181,6 @@
       });
       overlay.classList.add('fade-in', 'tinted-layer');
 
-      // Rotate image if screen is taller than wide
       if (isTallerThanWide()) {
         img.style.transform = 'rotate(90deg)';
         centerRotatedImage(img);
