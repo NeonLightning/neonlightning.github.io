@@ -4,13 +4,15 @@ from discord.ext.commands import cooldown, BucketType
 from dotenv import load_dotenv
 
 # to make bot https://discord.com/developers/applications/
-# add DISCORD_TOKEN=(discordtoken) to .env file in same directory
+# add DISCORD_TOKEN=discordtoken to .env file in same directory
 # set your prefix aswell in .env as PREFIX=! or whatever you want instead of !
+# set your cooldown in .env with COOLDOWN=5 or whatever you want instead of 5 seconds
 
 load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 PREFIX = os.getenv('PREFIX')
+COOLDOWN = os.getenv('COOLDOWN')
 service_name = 'neonxkcdbot'
 script_path = os.path.abspath(__file__)
 response = None
@@ -53,7 +55,7 @@ async def on_command_error(ctx, error):
         raise error
 
 @bot.command(name='xkcd')
-@cooldown(1, 5, BucketType.channel)
+@cooldown(1, COOLDOWN, BucketType.channel)
 async def xkcd_command(ctx, comic_id: str = 'latest'):
     if comic_id == 'latest' or not comic_id:
         latest_response = requests.get('https://xkcd.com/info.0.json')
@@ -92,6 +94,8 @@ async def xkcd_command(ctx, comic_id: str = 'latest'):
             os._exit(0)
         else:
             await ctx.send('You are not the owner of this bot.')
+    elif comic_id == 'xyzzy':
+        await ctx.send('It does nothing')
     elif comic_id == 'serviceadd':
             if ctx.message.author.id == bot.owner_id:
                 service_file = f'/etc/systemd/system/{service_name}.service'
