@@ -1,5 +1,6 @@
 import discord,os,requests,io,random,subprocess
 from discord.ext import commands
+from discord.ext.commands import cooldown, BucketType
 from dotenv import load_dotenv
 
 # to make bot https://discord.com/developers/applications/
@@ -45,8 +46,15 @@ async def on_ready():
     app_info = await bot.application_info()
     bot.owner_id = app_info.owner.id
     print(f'Owner ID: {bot.owner_id}')
+async def on_command_error(ctx, error):
+    if isinstance(error, CommandOnCooldown):
+        pass
+    else:
+        raise error
+
 
 @bot.command(name='xkcd')
+@cooldown(1, 5, BucketType.channel)
 async def xkcd_command(ctx, comic_id: str = 'latest'):
     if comic_id == 'latest' or not comic_id:
         latest_response = requests.get('https://xkcd.com/info.0.json')
@@ -133,6 +141,7 @@ async def xkcd_command(ctx, comic_id: str = 'latest'):
         )
         if ctx.message.author.id == bot.owner_id:
             help_message += f"\nIf you are the bot owner, you can start or stop the service using `{PREFIX}xkcd serviceadd` or `{PREFIX}xkcd serviceremove`"
+            help_message += f"\nto kill the bot {PREFIX}xkcd killbot`"
         await ctx.send(help_message)
         return
 
