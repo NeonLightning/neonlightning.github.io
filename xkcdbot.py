@@ -52,7 +52,6 @@ async def on_command_error(ctx, error):
     else:
         raise error
 
-
 @bot.command(name='xkcd')
 @cooldown(1, 5, BucketType.channel)
 async def xkcd_command(ctx, comic_id: str = 'latest'):
@@ -141,7 +140,7 @@ async def xkcd_command(ctx, comic_id: str = 'latest'):
         )
         if ctx.message.author.id == bot.owner_id:
             help_message += f"\nIf you are the bot owner, you can start or stop the service using `{PREFIX}xkcd serviceadd` or `{PREFIX}xkcd serviceremove`"
-            help_message += f"\nto kill the bot {PREFIX}xkcd killbot`"
+            help_message += f"\nto kill the bot `{PREFIX}xkcd killbot`"
         await ctx.send(help_message)
         return
 
