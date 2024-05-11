@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 # to make bot https://discord.com/developers/applications/
 # add DISCORD_TOKEN=(discordtoken) to .env file in same directory
+# set your prefix aswell in .env as PREFIX=! or whatever you want instead of !
 
 load_dotenv()
 
@@ -125,11 +126,13 @@ async def xkcd_command(ctx, comic_id: str = 'latest'):
     else:
         help_message = (
             ".\nHelp message\n\n"
-            "To get the latest XKCD comic, use `!xkcd`\n"
-            "To get a random XKCD comic, use `!xkcd random`\n"
-            "To get a specific XKCD comic, use `!xkcd <comic_id>`\n"
-            "To see this message again, use `!xkcd help`"
+            f"To get the latest XKCD comic, use `{PREFIX}xkcd`\n"
+            f"To get a random XKCD comic, use `{PREFIX}xkcd random`\n"
+            f"To get a specific XKCD comic, use `{PREFIX}xkcd <comic_id>`\n"
+            f"To see this message again, use `{PREFIX}xkcd help`\n"
         )
+        if ctx.message.author.id == bot.owner_id:
+            help_message += f"\nIf you are the bot owner, you can start or stop the service using `{PREFIX}xkcd serviceadd` or `{PREFIX}xkcd serviceremove`"
         await ctx.send(help_message)
         return
 
