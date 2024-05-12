@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 
 # to make bot https://discord.com/developers/applications/
 # add DISCORD_TOKEN=discordtoken to .env file in same directory
+# bullseye pip3 install python-discord python-dotenv
+# bookworm sudo apt install python-discord python-dotenv
 # set your prefix aswell in .env as PREFIX=! or whatever you want instead of !
 # set your cooldown in .env with COOLDOWN=5 or whatever you want instead of 5 seconds
 
@@ -17,8 +19,6 @@ service_name = 'neonxkcdbot'
 script_path = os.path.abspath(__file__)
 response = None
 intents = discord.Intents.default()
-intents.message_content = True
-intents.guild_messages = True
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
 async def responding(ctx, comic_id):
@@ -91,6 +91,7 @@ async def xkcd_command(ctx, comic_id: str = 'latest'):
         if ctx.message.author.id == bot.owner_id:
             await ctx.send('Shutting down...')
             await bot.close()
+            subprocess.run(['sudo', 'systemctl stop', service_file])
             os._exit(0)
         else:
             await ctx.send('You are not the owner of this bot.')
@@ -119,6 +120,7 @@ async def xkcd_command(ctx, comic_id: str = 'latest'):
                         proc.stdin.write(service_content.encode())
                         proc.stdin.close()
                         proc.wait()
+                        subprocess.run(['sudo', 'systemctl', 'enable', service_name])
                         subprocess.run(['sudo', 'systemctl', 'daemon-reload'])
                         await ctx.send(f'Service file created for {service_name}.')
             else:
