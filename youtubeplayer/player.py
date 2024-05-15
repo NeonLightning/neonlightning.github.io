@@ -6,35 +6,26 @@ def check_and_install_package(package_name, apt_name=None):
         return True
     except pkg_resources.DistributionNotFound:
         pass
-
-    # Check if package is installed via apt
     if apt_name:
         apt_check = subprocess.run(['dpkg', '-s', apt_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         apt_installed = apt_check.returncode == 0 and "Status: install ok installed" in apt_check.stdout.decode()
     else:
         apt_installed = False
-
-    # Check if package is installed via pip3
     pip_check = subprocess.run(['pip3', 'show', package_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     pip_installed = pip_check.returncode == 0
-
     if apt_installed or pip_installed:
         return True
-
     if apt_name:
         try:
             subprocess.check_call(['sudo', 'apt', 'install', '-y', apt_name])
             return True
         except subprocess.CalledProcessError:
             pass
-
-    # Special handling for VLC
     if package_name == 'vlc':
         vlc_check = subprocess.run(['vlc', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         vlc_installed = vlc_check.returncode == 0
         if vlc_installed:
             return True
-
     return False
 
 def setup():
@@ -66,7 +57,8 @@ setup()
 from flask import Flask, render_template, request, redirect, url_for
 from pytube import Search, YouTube
 from pytube.innertube import _default_clients
-import time, threading, pygame
+from pytube.exceptions import AgeRestrictedError
+import time, threading, pygame, pytube
 
 _default_clients["ANDROID"]["context"]["client"]["clientVersion"] = "19.08.35"
 _default_clients["IOS"]["context"]["client"]["clientVersion"] = "19.08.35"
@@ -77,6 +69,8 @@ _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 os.environ['DISPLAY'] = ':0'
 app = Flask(__name__)
 app.config['VIDEO_QUEUE'] = []
+cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
+sys.path.append(cache_dir)
 
 def display_black_screen():
     pygame.init()
@@ -144,14 +138,22 @@ def play_video_from_queue():
             app.config['next_video_title'] = f"{video_info['title']}      loading..."
             video_url = f'https://www.youtube.com/watch?v={video_info["video_id"]}'
             videopath = "/tmp/ytvid.mp4"
-            stream = YouTube(video_url).streams.get_highest_resolution()
-            stream.download(output_path="/tmp", filename="ytvid.mp4")
-            process = subprocess.Popen(["vlc", "-f", "--play-and-exit", "--extraintf", "--no-embedded-video", "--no-mouse-events", "--video-on-top", "--intf", "dummy", "--no-video-title-show", "--mouse-hide-timeout", "0", videopath])
+            try:
+                stream = YouTube(video_url, use_oauth=True).streams.get_highest_resolution()
+                stream.download(output_path="/tmp", filename="ytvid.mp4")
+            except AgeRestrictedError as e:
+                print(f"Age restricted video '{video_info['title']}': {e}")
+                app.config['next_video_title'] = None
+                continue
+            
+            user = os.getenv('SUDO_USER') or os.getenv('USER')
+            process = subprocess.Popen(["sudo", "-u", user, "vlc", "-f", "--play-and-exit", "--extraintf", "--no-embedded-video", "--no-mouse-events", "--video-on-top", "--intf", "dummy", "--no-video-title-show", "--mouse-hide-timeout", "0", videopath])
             while True:
                 if process.poll() is not None:
                     break
                 time.sleep(1)
             app.config['next_video_title'] = None
+            subprocess.Popen(["sudo", "rm", "-rf", videopath])
         else:
             break
 
@@ -160,6 +162,8 @@ def play():
     if not app.config.get('is_playing', False):
         app.config['is_playing'] = True
         threading.Thread(target=play_video_from_queue).start()
+    elif not app.config['VIDEO_QUEUE']:
+        app.config['is_playing'] = False
     return redirect(url_for('index'))
 
 @app.route('/skip', methods=['POST'])
