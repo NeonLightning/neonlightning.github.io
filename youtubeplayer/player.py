@@ -75,6 +75,7 @@ app = Flask(__name__)
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 app.config['VIDEO_QUEUE'] = []
+app.config['ready_for_new_queue'] = True
 
 def get_ip_address(interface):
     try:
@@ -111,8 +112,8 @@ def display_black_screen():
         ip_wlan0 = get_ip_address('wlan0')
         ip_address = ip_eth0 if ip_eth0 is not None else ip_wlan0
         label_ip.config(text=f"IP: {ip_address or 'Not available'}:5000")
+        root.after(200, update_text)
     update_text()
-    root.after(200, update_text)
     subprocess.run(['xset', 's', 'off'])
     subprocess.run(['xset', '-dpms'])    
     root.mainloop()
@@ -147,8 +148,8 @@ def queue():
     return redirect(url_for('index'))
 
 def play_video_from_queue():
-    while True:
-        if app.config['VIDEO_QUEUE']:
+    while app.config.get('is_playing', False):
+        while app.config['VIDEO_QUEUE']:
             video_info = app.config['VIDEO_QUEUE'].pop(0)
             app.config['next_video_title'] = f"{video_info['title']}      loading..."
             video_url = f'https://www.youtube.com/watch?v={video_info["video_id"]}'
@@ -166,16 +167,20 @@ def play_video_from_queue():
                 time.sleep(1)
             app.config['next_video_title'] = None
             subprocess.Popen(["rm", "-rf", videopath])
-        else:
-            break
+        app.config['ready_for_new_queue'] = True
+        break
 
 @app.route('/play', methods=['POST', 'GET'])
 def play():
     if not app.config.get('is_playing', False):
         app.config['is_playing'] = True
         threading.Thread(target=play_video_from_queue).start()
-    elif not app.config['VIDEO_QUEUE']:
-        app.config['is_playing'] = False
+    elif app.config['ready_for_new_queue']:
+        if not app.config['VIDEO_QUEUE']:
+            app.config['is_playing'] = False  # Set is_playing to False to stop playing
+        else:
+            app.config['ready_for_new_queue'] = False  # Reset the flag
+            threading.Thread(target=play_video_from_queue).start()
     return redirect(url_for('index'))
 
 @app.route('/skip', methods=['POST'])
