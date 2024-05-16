@@ -63,7 +63,7 @@
         </form>
         <h1>YouTube Player</h1>
         <form action="/" method="post">
-            <label for="search_term">Search Term:</label>
+            <label for="search_term">Search:</label>
             <input type="text" id="search_term" name="search_term">
             <button type="submit">Search</button>
         </form>
@@ -71,7 +71,7 @@
             <p>{{ message }}</p>
         {% endif %}
         <form action="{{ url_for('add_to_queue') }}" method="post">
-            <label for="video_url">Video URL:</label>
+            <label for="video_url">URL:</label>
             <input type="text" id="video_url" name="video_url" required>
             <button type="submit">Add to Queue</button>
         </form>
