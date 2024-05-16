@@ -107,6 +107,13 @@ def display_black_screen():
             label.config(text=next_video_title)
         else:
             label.config(text="No video playing")
+        
+        # Update the IP address label
+        ip_eth0 = get_ip_address('eth0')
+        ip_wlan0 = get_ip_address('wlan0')
+        ip_address = ip_eth0 if ip_eth0 is not None else ip_wlan0
+        label_ip.config(text=f"IP: {ip_address or 'Not available'}:5000")
+        
         root.after(200, update_text)
     update_text()
     root.mainloop()
