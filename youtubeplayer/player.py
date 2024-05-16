@@ -55,7 +55,7 @@ def setup():
 setup()
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-from pytube import Search, YouTube, innertube
+from pytube import Search, YouTube, innertube, Playlist
 from pytube.innertube import _default_clients
 from pytube.exceptions import AgeRestrictedError
 import tkinter as tk
@@ -165,15 +165,49 @@ def index():
             return render_template('index.html', message='No search results found.', app=app)
     return render_template('index.html', app=app)
 
+def extract_playlist_id(url):
+    query = url.split('?')[1]
+    params = query.split('&')
+    for param in params:
+        key, value = param.split('=')
+        print(f'{key}, {value}')
+        if key == 'list':
+            return value
+    return None
+
 @app.route('/add_to_queue', methods=['POST'])
 def add_to_queue():
     video_url = request.form['video_url']
-    yt = YouTube(video_url)
-    video_info = {
-        'title': yt.title,
-        'video_id': yt.video_id,
-    }
-    app.config['VIDEO_QUEUE'].append(video_info)
+    if '&list=' in video_url and 'watch?v=' in video_url:
+        # This is a playlist URL that starts with a video
+        playlist_id = extract_playlist_id(video_url)
+        playlist_url = f'https://www.youtube.com/playlist?list={playlist_id}'
+        playlist = Playlist(playlist_url)
+        for video in playlist.videos:
+            video_info = {
+                'title': video.title,
+                'video_id': video.video_id,
+            }
+            app.config['VIDEO_QUEUE'].append(video_info)
+    elif '?list=' in video_url:
+        # This is a regular playlist URL
+        playlist_id = extract_playlist_id(video_url)
+        playlist_url = f'https://www.youtube.com/playlist?list={playlist_id}'
+        playlist = Playlist(playlist_url)
+        for video in playlist.videos:
+            video_info = {
+                'title': video.title,
+                'video_id': video.video_id,
+            }
+            app.config['VIDEO_QUEUE'].append(video_info)
+    else:
+        # This is a single video URL
+        yt = YouTube(video_url)
+        video_info = {
+            'title': yt.title,
+            'video_id': yt.video_id,
+        }
+        app.config['VIDEO_QUEUE'].append(video_info)
     return redirect(url_for('index'))
 
 @app.route('/close', methods=['POST'])
