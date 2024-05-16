@@ -143,6 +143,17 @@ def index():
             return render_template('index.html', message='No search results found.', app=app)
     return render_template('index.html', app=app)
 
+@app.route('/add_to_queue', methods=['POST'])
+def add_to_queue():
+    video_url = request.form['video_url']
+    yt = YouTube(video_url)
+    video_info = {
+        'title': yt.title,
+        'video_id': yt.video_id,
+    }
+    app.config['VIDEO_QUEUE'].append(video_info)
+    return redirect(url_for('index'))
+
 @app.route('/queue', methods=['POST'])
 def queue():
     video_url = request.form['video_url']

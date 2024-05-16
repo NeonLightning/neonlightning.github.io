@@ -23,46 +23,75 @@
             padding: 0;
             margin: 0;
         }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 10px; /* Adjust as needed */
+        }
+
+        label {
+            margin-bottom: 5px; /* Adjust as needed */
+        }
+
+        input {
+            margin-bottom: 10px; /* Adjust as needed */
+        }
+
+        button {
+            margin-top: 10px; /* Adjust as needed */
+        }
+
+        .centered {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
-    <center>
-    <form action="/close" method="post">
-        <button type="submit">Close Player</button>
-    </form>
-    <h1>YouTube Player</h1>
-    <form action="/" method="post">
-        <label for="search_term">Search Term:</label>
-        <input type="text" id="search_term" name="search_term">
-        <button type="submit">Search</button>
-    </form>
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
-    <h2>Queue</h2>
-    <ul>
-        {% for video_info in app.config['VIDEO_QUEUE'] %}
-            <li>
-                {{ video_info['title'] }} 
-                <form action="/remove" method="post" style="display:inline;">
-                    <input type="hidden" name="index" value="{{ loop.index0 }}">
-                    <button type="submit">Remove</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
-    <h2>Search Results</h2>
-    <ul>
-        {% for result in results %}
-            <li>{{ result.title }} <form action="/queue" method="post"><input type="hidden" name="video_url" value="{{ result.video_url }}"><button type="submit">Queue</button></form></li>
-        {% endfor %}
-    </ul>
-    <form action="/play" method="post">
-        <button type="submit">Play</button>
-    </form>
-    <form action="/skip" method="post">
-        <button type="submit">Skip</button>
-    </form>
-    </center>
+    <div class="centered">
+        <form action="/close" method="post">
+            <button type="submit">Close Player</button>
+        </form>
+        <h1>YouTube Player</h1>
+        <form action="/" method="post">
+            <label for="search_term">Search Term:</label>
+            <input type="text" id="search_term" name="search_term">
+            <button type="submit">Search</button>
+        </form>
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+        <form action="{{ url_for('add_to_queue') }}" method="post">
+            <label for="video_url">Video URL:</label>
+            <input type="text" id="video_url" name="video_url" required>
+            <button type="submit">Add to Queue</button>
+        </form>
+        <h2>Queue</h2>
+        <ul>
+            {% for video_info in app.config['VIDEO_QUEUE'] %}
+                <li>
+                    {{ video_info['title'] }} 
+                    <form action="/remove" method="post" style="display:inline;">
+                        <input type="hidden" name="index" value="{{ loop.index0 }}">
+                        <button type="submit">Remove</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <h2>Search Results</h2>
+        <ul>
+            {% for result in results %}
+                <li>{{ result.title }} <form action="/queue" method="post"><input type="hidden" name="video_url" value="{{ result.video_url }}"><button type="submit">Queue</button></form></li>
+            {% endfor %}
+        </ul>
+        <form action="/play" method="post">
+            <button type="submit">Play</button>
+        </form>
+        <form action="/skip" method="post">
+            <button type="submit">Skip</button>
+        </form>
+    </div>
 </body>
 </html>
