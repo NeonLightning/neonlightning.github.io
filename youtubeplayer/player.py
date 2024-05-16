@@ -101,6 +101,7 @@ def display_black_screen():
     label_ip.pack(anchor='nw')
     label = tk.Label(root, text="No video playing", fg="white", bg="black", font=font)
     label.pack(expand=True)
+    
     def update_text():
         if app.config.get('next_video_title'):
             next_video_title = app.config['next_video_title']
@@ -113,9 +114,14 @@ def display_black_screen():
         ip_wlan0 = get_ip_address('wlan0')
         ip_address = ip_eth0 if ip_eth0 is not None else ip_wlan0
         label_ip.config(text=f"IP: {ip_address or 'Not available'}:5000")
-        
-        root.after(200, update_text)
+    
+    # Call update_text once to start the continuous update loop
     update_text()
+    
+    # Start the continuous update loop
+    root.after(200, update_text)
+    subprocess.run(['xset', 's', 'off'])
+    subprocess.run(['xset', '-dpms'])    
     root.mainloop()
 
 @app.route('/', methods=['GET', 'POST'])
