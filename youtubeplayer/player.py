@@ -70,7 +70,7 @@ innertube._default_clients["IOS_EMBED"]["context"]["client"]["clientVersion"] = 
 innertube._default_clients["IOS_MUSIC"]["context"]["client"]["clientVersion"] = "6.41"
 innertube._default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 os.environ['DISPLAY'] = ':0'
-app = Flask(__name__)
+app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__)))
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 app.config['VIDEO_QUEUE'] = []
