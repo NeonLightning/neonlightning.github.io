@@ -54,7 +54,7 @@ def setup():
             config.write(configfile)
 setup()
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from pytube import Search, YouTube, innertube
 from pytube.innertube import _default_clients
 from pytube.exceptions import AgeRestrictedError
@@ -182,6 +182,12 @@ def close():
         subprocess.Popen(["rm", "-rf", "/tmp/ytvid.mp4"])
     subprocess.run(["pkill", "vlc"])
     os.system('kill %d' % os.getpid())
+    
+
+@app.route('/get_queue')
+def get_queue():
+    queue_data = app.config['VIDEO_QUEUE']
+    return jsonify(queue_data)
 
 @app.route('/play', methods=['POST', 'GET'])
 def play():

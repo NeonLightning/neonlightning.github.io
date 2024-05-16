@@ -69,7 +69,7 @@
             <button type="submit">Add to Queue</button>
         </form>
         <h2>Queue</h2>
-        <ul>
+        <ul id="queueList">
             {% for video_info in app.config['VIDEO_QUEUE'] %}
                 <li>
                     {{ video_info['title'] }} 
@@ -81,7 +81,7 @@
             {% endfor %}
         </ul>
         <h2>Search Results</h2>
-        <ul>
+        <ul id="searchResults">
             {% for result in results %}
                 <li>{{ result.title }} <form action="/queue" method="post"><input type="hidden" name="video_url" value="{{ result.video_url }}"><button type="submit">Queue</button></form></li>
             {% endfor %}
@@ -93,5 +93,43 @@
             <button type="submit">Skip</button>
         </form>
     </div>
+
+    <script>
+        function updateQueue() {
+            fetch('/get_queue')
+                .then(response => response.json())
+                .then(data => {
+                    const queueList = document.getElementById('queueList');
+                    queueList.innerHTML = '';
+                    data.forEach(videoInfo => {
+                        const li = document.createElement('li');
+                        li.textContent = videoInfo.title;
+
+                        const form = document.createElement('form');
+                        form.setAttribute('action', '/remove');
+                        form.setAttribute('method', 'post');
+                        form.setAttribute('style', 'display:inline;');
+
+                        const input = document.createElement('input');
+                        input.setAttribute('type', 'hidden');
+                        input.setAttribute('name', 'index');
+                        input.setAttribute('value', videoInfo.index);
+
+                        const button = document.createElement('button');
+                        button.setAttribute('type', 'submit');
+                        button.textContent = 'Remove';
+
+                        form.appendChild(input);
+                        form.appendChild(button);
+
+                        li.appendChild(form);
+                        queueList.appendChild(li);
+                    });
+                });
+        }
+
+        setInterval(updateQueue, 300);
+        updateQueue(); // Initial call to populate the queue list
+    </script>
 </body>
 </html>
