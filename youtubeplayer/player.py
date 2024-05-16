@@ -59,7 +59,6 @@ from pytube import Search, YouTube, innertube
 from pytube.innertube import _default_clients
 from pytube.exceptions import AgeRestrictedError
 import tkinter as tk
-import pytube
 
 innertube._cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
 innertube._token_file = os.path.join(innertube._cache_dir, 'tokens.json')
