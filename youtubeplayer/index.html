@@ -87,24 +87,8 @@
 			</form>
 		</div>
 		<ul id="queueList">
-			{% for video_info in app.config['VIDEO_QUEUE'] %}
-				<li>
-					<form action="/move_up" method="post" style="display:inline-block;">
-						<input type="hidden" name="index" value="{{ loop.index0 }}">
-						<button type="submit">&#9650;</button>
-					</form>
-					<form action="/move_down" method="post" style="display:inline-block;">
-						<input type="hidden" name="index" value="{{ loop.index0 }}">
-						<button type="submit">&#9660;</button>
-					</form>
-					<form action="/remove" method="post" style="display:inline-block;">
-						<input type="hidden" name="index" value="{{ loop.index0 }}">
-						<button type="submit">Remove</button>
-					</form>
-					{{ video_info['title'] }} 
-				</li>
-			{% endfor %}
-		</ul>        {% if results %}
+		</ul>
+        {% if results %}
             <h2>Search Results</h2>
             <ul id="searchResults">
                 {% for result in results %}
@@ -122,6 +106,20 @@
 					queueList.innerHTML = '';
 					data.forEach((videoInfo, index) => {
 						const li = document.createElement('li');
+					    const toTopForm = document.createElement('form');
+						toTopForm.setAttribute('action', '/move_to_top');
+						toTopForm.setAttribute('method', 'post');
+						toTopForm.setAttribute('style', 'display:inline-block;');
+						const toTopInput = document.createElement('input');
+						toTopInput.setAttribute('type', 'hidden');
+						toTopInput.setAttribute('name', 'index');
+						toTopInput.setAttribute('value', index);
+						const toTopButton = document.createElement('button');
+						toTopButton.setAttribute('type', 'submit');
+						toTopButton.textContent = '⇑';
+						toTopForm.appendChild(toTopInput);
+						toTopForm.appendChild(toTopButton);
+						li.appendChild(toTopForm);
 						const upForm = document.createElement('form');
 						upForm.setAttribute('action', '/move_up');
 						upForm.setAttribute('method', 'post');
@@ -150,6 +148,20 @@
 						downForm.appendChild(downInput);
 						downForm.appendChild(downButton);
 						li.appendChild(downForm);
+						const toBottomForm = document.createElement('form');
+						toBottomForm.setAttribute('action', '/move_to_bottom');
+						toBottomForm.setAttribute('method', 'post');
+						toBottomForm.setAttribute('style', 'display:inline-block;');
+						const toBottomInput = document.createElement('input');
+						toBottomInput.setAttribute('type', 'hidden');
+						toBottomInput.setAttribute('name', 'index');
+						toBottomInput.setAttribute('value', index);
+						const toBottomButton = document.createElement('button');
+						toBottomButton.setAttribute('type', 'submit');
+						toBottomButton.textContent = '⇓';
+						toBottomForm.appendChild(toBottomInput);
+						toBottomForm.appendChild(toBottomButton);
+						li.appendChild(toBottomForm);
 						const removeForm = document.createElement('form');
 						removeForm.setAttribute('action', '/remove');
 						removeForm.setAttribute('method', 'post');
