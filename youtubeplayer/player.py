@@ -1,4 +1,4 @@
-import configparser, subprocess, pkg_resources, sys, os
+import configparser, subprocess, pkg_resources, sys, os, logging, time, threading
 
 def check_and_install_package(package_name, apt_name=None):
     try:
@@ -55,12 +55,11 @@ def setup():
 setup()
 
 from flask import Flask, render_template, request, redirect, url_for
-from pytube import Search, YouTube
+from pytube import Search, YouTube, innertube
 from pytube.innertube import _default_clients
 from pytube.exceptions import AgeRestrictedError
-from pytube import innertube
 import tkinter as tk
-import time, threading, pytube, logging
+import pytube
 
 innertube._cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
 innertube._token_file = os.path.join(innertube._cache_dir, 'tokens.json')
@@ -95,19 +94,27 @@ def display_black_screen():
     root.attributes('-fullscreen', True)
     root.configure(background='black')
     font = ('Helvetica', 24)
+    main_frame = tk.Frame(root, bg='black')
+    main_frame.pack(expand=True)
     ip_eth0 = get_ip_address('eth0')
     ip_wlan0 = get_ip_address('wlan0')
     ip_address = ip_eth0 if ip_eth0 is not None else ip_wlan0
-    label_ip = tk.Label(root, text=f"IP: {ip_address or 'Not available'}:5000", fg="white", bg="black", font=font)
+    label_ip = tk.Label(text=f"IP: {ip_address or 'Not available'}:5000", fg="white", bg="black", font=font)
     label_ip.pack(anchor='nw')
-    label = tk.Label(root, text="No video playing", fg="white", bg="black", font=font)
+    title_frame = tk.Frame(main_frame, bg='black')
+    title_frame.pack(expand=True)
+    label = tk.Label(title_frame, text="No video playing", fg="white", bg="black", font=font)
     label.pack(expand=True)
+    loading_label = tk.Label(title_frame, text="", fg="white", bg="black", font=font)
+    loading_label.pack(expand=True)
     def update_text():
         if app.config.get('next_video_title'):
             next_video_title = app.config['next_video_title']
             label.config(text=next_video_title)
+            loading_label.config(text="Loading...")
         else:
             label.config(text="No video playing")
+            loading_label.config(text="")
         ip_eth0 = get_ip_address('eth0')
         ip_wlan0 = get_ip_address('wlan0')
         ip_address = ip_eth0 if ip_eth0 is not None else ip_wlan0
@@ -151,7 +158,7 @@ def play_video_from_queue():
     while app.config.get('is_playing', False):
         while app.config['VIDEO_QUEUE']:
             video_info = app.config['VIDEO_QUEUE'].pop(0)
-            app.config['next_video_title'] = f"{video_info['title']}      loading..."
+            app.config['next_video_title'] = f"{video_info['title']}"
             video_url = f'https://www.youtube.com/watch?v={video_info["video_id"]}'
             videopath = "/tmp/ytvid.mp4"
             try:
@@ -177,9 +184,9 @@ def play():
         threading.Thread(target=play_video_from_queue).start()
     elif app.config['ready_for_new_queue']:
         if not app.config['VIDEO_QUEUE']:
-            app.config['is_playing'] = False  # Set is_playing to False to stop playing
+            app.config['is_playing'] = False
         else:
-            app.config['ready_for_new_queue'] = False  # Reset the flag
+            app.config['ready_for_new_queue'] = False
             threading.Thread(target=play_video_from_queue).start()
     return redirect(url_for('index'))
 
@@ -203,13 +210,12 @@ def remove():
 
 @app.route('/close', methods=['POST'])
 def close():
-    if os.path.exists("/tmp/ytdl.mp4"):
-        subprocess.Popen(["rm", "-rf", "/tmp/ytdl.mp4"])
+    if os.path.exists("/tmp/ytvid.mp4"):
+        subprocess.Popen(["rm", "-rf", "/tmp/ytvid.mp4"])
     subprocess.run(["pkill", "vlc"])
     os.system('kill %d' % os.getpid())
 
 if __name__ == '__main__':
     gui_thread = threading.Thread(target=display_black_screen)
     gui_thread.start()
-    #subprocess.Popen(["flask", "run", "--port", str(5000)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     app.run(host='0.0.0.0', port=5000, use_reloader=False)

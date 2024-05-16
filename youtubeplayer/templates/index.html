@@ -4,10 +4,33 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Downloader</title>
+    <title>YouTube Player</title>
+    <style>
+        body {
+            background-color: #550055;
+            color: #aaffaa;
+        }
+        button {
+            background-color: black;
+            color: #aaffaa;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #330033;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-    <h1>YouTube Downloader</h1>
+    <center>
+    <form action="/close" method="post">
+        <button type="submit">Close Player</button>
+    </form>
+    <h1>YouTube Player</h1>
     <form action="/" method="post">
         <label for="search_term">Search Term:</label>
         <input type="text" id="search_term" name="search_term">
@@ -16,18 +39,18 @@
     {% if message %}
         <p>{{ message }}</p>
     {% endif %}
-	<h2>Queue</h2>
-	<ul>
-		{% for video_info in app.config['VIDEO_QUEUE'] %}
-			<li>
+    <h2>Queue</h2>
+    <ul>
+        {% for video_info in app.config['VIDEO_QUEUE'] %}
+            <li>
                 {{ video_info['title'] }} 
                 <form action="/remove" method="post" style="display:inline;">
                     <input type="hidden" name="index" value="{{ loop.index0 }}">
                     <button type="submit">Remove</button>
                 </form>
             </li>
-		{% endfor %}
-	</ul>
+        {% endfor %}
+    </ul>
     <h2>Search Results</h2>
     <ul>
         {% for result in results %}
@@ -37,8 +60,9 @@
     <form action="/play" method="post">
         <button type="submit">Play</button>
     </form>
-	<form action="/skip" method="post">
-		<button type="submit">Skip</button>
-	</form>
+    <form action="/skip" method="post">
+        <button type="submit">Skip</button>
+    </form>
+    </center>
 </body>
 </html>
