@@ -86,7 +86,7 @@ def display_black_screen():
     ip_eth0 = get_ip_address('eth0')
     ip_wlan0 = get_ip_address('wlan0')
     ip_address = ip_eth0 if ip_eth0 is not None else ip_wlan0
-    label_ip = tk.Label(text=f"IP: {ip_address if ip_address else 'Not available'}{':5000' if ip_address else ''}", fg="white", bg="black", font=font)
+    label_ip = tk.Label(text=f"http://{ip_address if ip_address else 'Not available'}{':5000' if ip_address else ''}", fg="purple", bg="black", font=font)
     label_ip.pack(anchor='nw')
     title_frame = tk.Frame(main_frame, bg='black')
     title_frame.pack(expand=True)
@@ -105,7 +105,7 @@ def display_black_screen():
         ip_eth0 = get_ip_address('eth0')
         ip_wlan0 = get_ip_address('wlan0')
         ip_address = ip_eth0 if ip_eth0 is not None else ip_wlan0
-        label_ip.config(text=f"IP: {ip_address or 'Not available'}:5000")
+        label_ip.config(text=f"http://{ip_address if ip_address else 'Not available'}{':5000' if ip_address else ''}")
         root.after(200, update_text)
     update_text()
     subprocess.run(['xset', 's', 'off'])
