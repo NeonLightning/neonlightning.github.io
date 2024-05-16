@@ -60,7 +60,7 @@ from pytube.innertube import _default_clients
 from pytube.exceptions import AgeRestrictedError
 from pytube import innertube
 import tkinter as tk
-import time, threading, pytube
+import time, threading, pytube, logging
 
 innertube._cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
 innertube._token_file = os.path.join(innertube._cache_dir, 'tokens.json')
@@ -72,7 +72,21 @@ _default_clients["IOS_MUSIC"]["context"]["client"]["clientVersion"] = "6.41"
 _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 os.environ['DISPLAY'] = ':0'
 app = Flask(__name__)
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 app.config['VIDEO_QUEUE'] = []
+
+def get_ip_address(interface):
+    try:
+        result = subprocess.run(['ip', '-4', 'addr', 'show', interface], check=True, stdout=subprocess.PIPE)
+        lines = result.stdout.decode().split('\n')
+        for line in lines:
+            if 'inet ' in line:
+                ip = line.strip().split()[1].split('/')[0]
+                return ip
+        return None
+    except subprocess.CalledProcessError:
+        return None
 
 def display_black_screen():
     global root
@@ -80,9 +94,13 @@ def display_black_screen():
     root.attributes('-fullscreen', True)
     root.configure(background='black')
     font = ('Helvetica', 24)
+    ip_eth0 = get_ip_address('eth0')
+    ip_wlan0 = get_ip_address('wlan0')
+    ip_address = ip_eth0 if ip_eth0 is not None else ip_wlan0
+    label_ip = tk.Label(root, text=f"IP: {ip_address or 'Not available'}:5000", fg="white", bg="black", font=font)
+    label_ip.pack(anchor='nw')
     label = tk.Label(root, text="No video playing", fg="white", bg="black", font=font)
     label.pack(expand=True)
-
     def update_text():
         if app.config.get('next_video_title'):
             next_video_title = app.config['next_video_title']
@@ -139,7 +157,7 @@ def play_video_from_queue():
                 print(f"Age restricted video '{video_info['title']}': {e}")
                 app.config['next_video_title'] = None
                 continue
-            process = subprocess.Popen(["vlc", "-f", "--play-and-exit", "--extraintf", "--no-embedded-video", "--no-mouse-events", "--video-on-top", "--intf", "dummy", "--no-video-title-show", "--mouse-hide-timeout", "0", videopath])
+            process = subprocess.Popen(["vlc", "-fq", "--play-and-exit", "--extraintf", "--no-mouse-events", "--video-on-top", "--intf", "dummy", "--no-video-title-show", "--mouse-hide-timeout", "0", videopath])
             while True:
                 if process.poll() is not None:
                     break
@@ -186,4 +204,5 @@ def close():
 if __name__ == '__main__':
     gui_thread = threading.Thread(target=display_black_screen)
     gui_thread.start()
-    app.run(host='0.0.0.0', port=5000, use_reloader=False)
+    subprocess.Popen(["flask", "run", "--port", str(5000)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    #app.run(host='0.0.0.0', port=5000, use_reloader=False)
