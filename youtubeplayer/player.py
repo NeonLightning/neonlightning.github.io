@@ -144,6 +144,7 @@ def play_video_from_queue():
                 stream = YouTube(video_url).streams.get_highest_resolution()
                 stream.download(output_path="/tmp", filename="ytvid.mp4")
             except AgeRestrictedError as e:
+                app.config['next_video_title'] = f"THIS VIDEO IS AGE RESTRICTED {video_info['title']}"
                 stream = YouTube(video_url, use_oauth=True).streams.get_highest_resolution()
                 stream.download(output_path="/tmp", filename="ytvid.mp4")
             process = subprocess.Popen(["vlc", "-fq", "--play-and-exit", "--extraintf", "--no-mouse-events", "--video-on-top", "--intf", "dummy", "--no-video-title-show", "--mouse-hide-timeout", "0", videopath])
