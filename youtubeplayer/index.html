@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Player</title>
     <style>
+		a {
+			color: #ff00ff;
+		}
         body {
             background-color: #550055;
             color: #aaffaa;
@@ -91,9 +91,14 @@
         {% if results %}
             <h2>Search Results</h2>
             <ul id="searchResults">
-                {% for result in results %}
-                    <li>{{ result.title }} <form action="/queue" method="post"><input type="hidden" name="video_url" value="{{ result.video_url }}"><button type="submit">Queue</button></form></li>
-                {% endfor %}
+			{% for result in results %}
+				<li><a href="https://www.youtube.com/watch?v={{ result.video_url }}" target="_blank">{{ result.title }}</a>
+					<form action="/queue" method="post">
+						<input type="hidden" name="video_url" value="{{ result.video_url }}">
+						<button type="submit">Queue</button>
+					</form>
+				</li>
+			{% endfor %}
             </ul>
         {% endif %}
     </div>
@@ -176,7 +181,11 @@
 						removeForm.appendChild(removeInput);
 						removeForm.appendChild(removeButton);
 						li.appendChild(removeForm);
-						li.appendChild(document.createTextNode(videoInfo.title));
+						const link = document.createElement('a');
+						link.setAttribute('href', `https://www.youtube.com/watch?v=${videoInfo.video_id}`);
+						link.setAttribute('target', '_blank');
+						link.textContent = videoInfo.title;
+						li.appendChild(link);
 						queueList.appendChild(li);
 					});
 				});
