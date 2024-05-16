@@ -80,12 +80,14 @@
                 </li>
             {% endfor %}
         </ul>
-        <h2>Search Results</h2>
-        <ul id="searchResults">
-            {% for result in results %}
-                <li>{{ result.title }} <form action="/queue" method="post"><input type="hidden" name="video_url" value="{{ result.video_url }}"><button type="submit">Queue</button></form></li>
-            {% endfor %}
-        </ul>
+        {% if results %}
+            <h2>Search Results</h2>
+            <ul id="searchResults">
+                {% for result in results %}
+                    <li>{{ result.title }} <form action="/queue" method="post"><input type="hidden" name="video_url" value="{{ result.video_url }}"><button type="submit">Queue</button></form></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         <form action="/play" method="post">
             <button type="submit">Play</button>
         </form>
