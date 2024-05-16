@@ -58,8 +58,10 @@ from flask import Flask, render_template, request, redirect, url_for
 from pytube import Search, YouTube
 from pytube.innertube import _default_clients
 from pytube.exceptions import AgeRestrictedError
+from pytube import innertube
 import time, threading, pygame, pytube
-
+innertube._cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
+innertube._token_file = os.path.join(innertube._cache_dir, 'tokens.json')
 _default_clients["ANDROID"]["context"]["client"]["clientVersion"] = "19.08.35"
 _default_clients["IOS"]["context"]["client"]["clientVersion"] = "19.08.35"
 _default_clients["ANDROID_EMBED"]["context"]["client"]["clientVersion"] = "19.08.35"
@@ -69,8 +71,8 @@ _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 os.environ['DISPLAY'] = ':0'
 app = Flask(__name__)
 app.config['VIDEO_QUEUE'] = []
-cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
-sys.path.append(cache_dir)
+#cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
+#sys.path.append(cache_dir)
 
 def display_black_screen():
     pygame.init()
