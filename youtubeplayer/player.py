@@ -154,15 +154,11 @@ def play_video_from_queue():
             video_url = f'https://www.youtube.com/watch?v={video_info["video_id"]}'
             videopath = "/tmp/ytvid.mp4"
             try:
-                if 'age_restricted' in video_info and video_info['age_restricted']:
-                    stream = YouTube(video_url, use_oauth=True).streams.get_highest_resolution()
-                else:
-                    stream = YouTube(video_url).streams.get_highest_resolution()
+                stream = YouTube(video_url).streams.get_highest_resolution()
                 stream.download(output_path="/tmp", filename="ytvid.mp4")
             except AgeRestrictedError as e:
-                print(f"Age restricted video '{video_info['title']}': {e}")
-                app.config['next_video_title'] = None
-                continue
+                stream = YouTube(video_url, use_oauth=True).streams.get_highest_resolution()
+                stream.download(output_path="/tmp", filename="ytvid.mp4")
             process = subprocess.Popen(["vlc", "-fq", "--play-and-exit", "--extraintf", "--no-mouse-events", "--video-on-top", "--intf", "dummy", "--no-video-title-show", "--mouse-hide-timeout", "0", videopath])
             while True:
                 if process.poll() is not None:
@@ -210,5 +206,5 @@ def close():
 if __name__ == '__main__':
     gui_thread = threading.Thread(target=display_black_screen)
     gui_thread.start()
-    subprocess.Popen(["flask", "run", "--port", str(5000)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    #app.run(host='0.0.0.0', port=5000, use_reloader=False)
+    #subprocess.Popen(["flask", "run", "--port", str(5000)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    app.run(host='0.0.0.0', port=5000, use_reloader=False)
