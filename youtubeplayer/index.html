@@ -41,6 +41,11 @@
             flex-direction: column;
             align-items: center;
         }
+		.queueListBorder {
+			border: 2px solid #aaffaa;
+			padding: 10px;
+			margin-top: 20px;
+		}
 		#controlButtons {
 			display: flex;
 			justify-content: center;
@@ -86,7 +91,7 @@
 				<button type="submit">Skip</button>
 			</form>
 		</div>
-		<ul id="queueList">
+		<ul id="queueList" class="{% if app.config['VIDEO_QUEUE'] %}queueListBorder{% endif %}">
 		</ul>
         {% if results %}
             <h2>Search Results</h2>
