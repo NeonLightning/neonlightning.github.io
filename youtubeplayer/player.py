@@ -76,18 +76,6 @@ log.setLevel(logging.ERROR)
 app.config['VIDEO_QUEUE'] = []
 app.config['ready_for_new_queue'] = True
 
-def get_ip_address(interface):
-    try:
-        result = subprocess.run(['ip', '-4', 'addr', 'show', interface], check=True, stdout=subprocess.PIPE)
-        lines = result.stdout.decode().split('\n')
-        for line in lines:
-            if 'inet ' in line:
-                ip = line.strip().split()[1].split('/')[0]
-                return ip
-        return None
-    except subprocess.CalledProcessError:
-        return None
-
 def display_black_screen():
     global root
     root = tk.Tk()
@@ -125,6 +113,41 @@ def display_black_screen():
     subprocess.run(['xset', '-dpms'])    
     root.mainloop()
 
+def get_ip_address(interface):
+    try:
+        result = subprocess.run(['ip', '-4', 'addr', 'show', interface], check=True, stdout=subprocess.PIPE)
+        lines = result.stdout.decode().split('\n')
+        for line in lines:
+            if 'inet ' in line:
+                ip = line.strip().split()[1].split('/')[0]
+                return ip
+        return None
+    except subprocess.CalledProcessError:
+        return None
+
+def play_video_from_queue():
+    while app.config.get('is_playing', False):
+        while app.config['VIDEO_QUEUE']:
+            video_info = app.config['VIDEO_QUEUE'].pop(0)
+            app.config['next_video_title'] = f"{video_info['title']}"
+            video_url = f'https://www.youtube.com/watch?v={video_info["video_id"]}'
+            videopath = "/tmp/ytvid.mp4"
+            try:
+                stream = YouTube(video_url).streams.get_highest_resolution()
+                stream.download(output_path="/tmp", filename="ytvid.mp4")
+            except AgeRestrictedError as e:
+                stream = YouTube(video_url, use_oauth=True).streams.get_highest_resolution()
+                stream.download(output_path="/tmp", filename="ytvid.mp4")
+            process = subprocess.Popen(["vlc", "-fq", "--play-and-exit", "--extraintf", "--no-mouse-events", "--video-on-top", "--intf", "dummy", "--no-video-title-show", "--mouse-hide-timeout", "0", videopath])
+            while True:
+                if process.poll() is not None:
+                    break
+                time.sleep(1)
+            app.config['next_video_title'] = None
+            subprocess.Popen(["rm", "-rf", videopath])
+        app.config['ready_for_new_queue'] = True
+        break
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -154,39 +177,12 @@ def add_to_queue():
     app.config['VIDEO_QUEUE'].append(video_info)
     return redirect(url_for('index'))
 
-@app.route('/queue', methods=['POST'])
-def queue():
-    video_url = request.form['video_url']
-    yt = YouTube(video_url)
-    video_info = {
-        'title': yt.title,
-        'video_id': yt.video_id,
-    }
-    app.config['VIDEO_QUEUE'].append(video_info)
-    return redirect(url_for('index'))
-
-def play_video_from_queue():
-    while app.config.get('is_playing', False):
-        while app.config['VIDEO_QUEUE']:
-            video_info = app.config['VIDEO_QUEUE'].pop(0)
-            app.config['next_video_title'] = f"{video_info['title']}"
-            video_url = f'https://www.youtube.com/watch?v={video_info["video_id"]}'
-            videopath = "/tmp/ytvid.mp4"
-            try:
-                stream = YouTube(video_url).streams.get_highest_resolution()
-                stream.download(output_path="/tmp", filename="ytvid.mp4")
-            except AgeRestrictedError as e:
-                stream = YouTube(video_url, use_oauth=True).streams.get_highest_resolution()
-                stream.download(output_path="/tmp", filename="ytvid.mp4")
-            process = subprocess.Popen(["vlc", "-fq", "--play-and-exit", "--extraintf", "--no-mouse-events", "--video-on-top", "--intf", "dummy", "--no-video-title-show", "--mouse-hide-timeout", "0", videopath])
-            while True:
-                if process.poll() is not None:
-                    break
-                time.sleep(1)
-            app.config['next_video_title'] = None
-            subprocess.Popen(["rm", "-rf", videopath])
-        app.config['ready_for_new_queue'] = True
-        break
+@app.route('/close', methods=['POST'])
+def close():
+    if os.path.exists("/tmp/ytvid.mp4"):
+        subprocess.Popen(["rm", "-rf", "/tmp/ytvid.mp4"])
+    subprocess.run(["pkill", "vlc"])
+    os.system('kill %d' % os.getpid())
 
 @app.route('/play', methods=['POST', 'GET'])
 def play():
@@ -201,14 +197,16 @@ def play():
             threading.Thread(target=play_video_from_queue).start()
     return redirect(url_for('index'))
 
-@app.route('/skip', methods=['POST'])
-def skip():
-    try:
-        if app.config.get('is_playing', False):
-            subprocess.run(["pkill", "vlc"])
-        return redirect(url_for('index'))
-    except Exception as e:
-        return f"An error occurred: {e}"
+@app.route('/queue', methods=['POST'])
+def queue():
+    video_url = request.form['video_url']
+    yt = YouTube(video_url)
+    video_info = {
+        'title': yt.title,
+        'video_id': yt.video_id,
+    }
+    app.config['VIDEO_QUEUE'].append(video_info)
+    return redirect(url_for('index'))
 
 @app.route('/remove', methods=['POST'])
 def remove():
@@ -219,12 +217,14 @@ def remove():
             app.config['next_video_title'] = None
     return redirect(url_for('index'))
 
-@app.route('/close', methods=['POST'])
-def close():
-    if os.path.exists("/tmp/ytvid.mp4"):
-        subprocess.Popen(["rm", "-rf", "/tmp/ytvid.mp4"])
-    subprocess.run(["pkill", "vlc"])
-    os.system('kill %d' % os.getpid())
+@app.route('/skip', methods=['POST'])
+def skip():
+    try:
+        if app.config.get('is_playing', False):
+            subprocess.run(["pkill", "vlc"])
+        return redirect(url_for('index'))
+    except Exception as e:
+        return f"An error occurred: {e}"
 
 if __name__ == '__main__':
     gui_thread = threading.Thread(target=display_black_screen)
