@@ -57,6 +57,7 @@
     </style>
 </head>
 <body>
+<a href=https://github.com/NeonLightning/>NeonLightning's github</a>
     <div class="centered">
         <form action="/close" method="post">
             <button type="submit">Close Player</button>
@@ -97,12 +98,13 @@
             <h2>Search Results</h2>
             <ul id="searchResults">
 			{% for result in results %}
-				<li><a href="https://www.youtube.com/watch?v={{ result.video_url }}" target="_blank">{{ result.title }}</a>
-					<form action="/queue" method="post">
-						<input type="hidden" name="video_url" value="{{ result.video_url }}">
-						<button type="submit">Queue</button>
-					</form>
-				</li>
+			<li style="display: flex;">
+				<form action="/queue" method="post">
+					<input type="hidden" name="video_url" value="{{ result.video_url }}">
+					<button type="submit">Queue</button>
+				</form>
+				<a href="https://www.youtube.com/watch?v={{ result.video_url }}" target="_blank">{{ result.title }}</a>
+			</li>
 			{% endfor %}
             </ul>
         {% endif %}
