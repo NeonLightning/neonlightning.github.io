@@ -70,26 +70,6 @@
             <input type="text" id="video_url" name="video_url" required>
             <button type="submit">Add to Queue</button>
         </form>
-        <h2>Queue</h2>
-        <ul id="queueList">
-			{% for video_info in app.config['VIDEO_QUEUE'] %}
-				<li>
-					{{ video_info['title'] }} 
-					<form action="/remove" method="post" style="display:inline;">
-						<input type="hidden" name="index" value="{{ loop.index0 }}">
-						<button type="submit">Remove</button>
-					</form>
-				</li>
-			{% endfor %}
-        </ul>
-        {% if results %}
-            <h2>Search Results</h2>
-            <ul id="searchResults">
-                {% for result in results %}
-                    <li>{{ result.title }} <form action="/queue" method="post"><input type="hidden" name="video_url" value="{{ result.video_url }}"><button type="submit">Queue</button></form></li>
-                {% endfor %}
-            </ul>
-        {% endif %}
 		<div id="controlButtons">
 			{% if app.config['VIDEO_QUEUE'] %}
 			<form action="/play" method="post">
@@ -106,8 +86,33 @@
 				<button type="submit">Skip</button>
 			</form>
 		</div>
+		<ul id="queueList">
+			{% for video_info in app.config['VIDEO_QUEUE'] %}
+				<li>
+					<form action="/move_up" method="post" style="display:inline-block;">
+						<input type="hidden" name="index" value="{{ loop.index0 }}">
+						<button type="submit">&#9650;</button>
+					</form>
+					<form action="/move_down" method="post" style="display:inline-block;">
+						<input type="hidden" name="index" value="{{ loop.index0 }}">
+						<button type="submit">&#9660;</button>
+					</form>
+					<form action="/remove" method="post" style="display:inline-block;">
+						<input type="hidden" name="index" value="{{ loop.index0 }}">
+						<button type="submit">Remove</button>
+					</form>
+					{{ video_info['title'] }} 
+				</li>
+			{% endfor %}
+		</ul>        {% if results %}
+            <h2>Search Results</h2>
+            <ul id="searchResults">
+                {% for result in results %}
+                    <li>{{ result.title }} <form action="/queue" method="post"><input type="hidden" name="video_url" value="{{ result.video_url }}"><button type="submit">Queue</button></form></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
-
     <script>
 		function updateQueue() {
 			fetch('/get_queue')
@@ -115,36 +120,57 @@
 				.then(data => {
 					const queueList = document.getElementById('queueList');
 					queueList.innerHTML = '';
-					data.forEach((videoInfo, index) => { // Use index provided by forEach
+					data.forEach((videoInfo, index) => {
 						const li = document.createElement('li');
-						li.textContent = videoInfo.title;
-
-						const form = document.createElement('form');
-						form.setAttribute('action', '/remove');
-						form.setAttribute('method', 'post');
-						form.setAttribute('style', 'display:inline;');
-
-						const input = document.createElement('input');
-						input.setAttribute('type', 'hidden');
-						input.setAttribute('name', 'index');
-						input.setAttribute('value', index); // Use the index value from forEach
-
-						const button = document.createElement('button');
-						button.setAttribute('type', 'submit');
-						button.textContent = 'Remove';
-
-						form.appendChild(input);
-						form.appendChild(button);
-
-						li.appendChild(form);
+						const upForm = document.createElement('form');
+						upForm.setAttribute('action', '/move_up');
+						upForm.setAttribute('method', 'post');
+						upForm.setAttribute('style', 'display:inline-block;');
+						const upInput = document.createElement('input');
+						upInput.setAttribute('type', 'hidden');
+						upInput.setAttribute('name', 'index');
+						upInput.setAttribute('value', index);
+						const upButton = document.createElement('button');
+						upButton.setAttribute('type', 'submit');
+						upButton.textContent = '▲';
+						upForm.appendChild(upInput);
+						upForm.appendChild(upButton);
+						li.appendChild(upForm);
+						const downForm = document.createElement('form');
+						downForm.setAttribute('action', '/move_down');
+						downForm.setAttribute('method', 'post');
+						downForm.setAttribute('style', 'display:inline-block;');
+						const downInput = document.createElement('input');
+						downInput.setAttribute('type', 'hidden');
+						downInput.setAttribute('name', 'index');
+						downInput.setAttribute('value', index);
+						const downButton = document.createElement('button');
+						downButton.setAttribute('type', 'submit');
+						downButton.textContent = '▼';
+						downForm.appendChild(downInput);
+						downForm.appendChild(downButton);
+						li.appendChild(downForm);
+						const removeForm = document.createElement('form');
+						removeForm.setAttribute('action', '/remove');
+						removeForm.setAttribute('method', 'post');
+						removeForm.setAttribute('style', 'display:inline;');
+						const removeInput = document.createElement('input');
+						removeInput.setAttribute('type', 'hidden');
+						removeInput.setAttribute('name', 'index');
+						removeInput.setAttribute('value', index);
+						const removeButton = document.createElement('button');
+						removeButton.setAttribute('type', 'submit');
+						removeButton.textContent = 'Remove';
+						removeForm.appendChild(removeInput);
+						removeForm.appendChild(removeButton);
+						li.appendChild(removeForm);
+						li.appendChild(document.createTextNode(videoInfo.title));
 						queueList.appendChild(li);
 					});
 				});
 		}
-
 		setInterval(updateQueue, 1000);
 		updateQueue();
-
     </script>
 </body>
 </html>

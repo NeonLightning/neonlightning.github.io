@@ -227,6 +227,20 @@ def get_queue():
     queue_data = app.config['VIDEO_QUEUE']
     return jsonify(queue_data)
 
+@app.route('/move_up', methods=['POST'])
+def move_up():
+    index = int(request.form['index'])
+    if index > 0 and index < len(app.config['VIDEO_QUEUE']):
+        app.config['VIDEO_QUEUE'][index], app.config['VIDEO_QUEUE'][index - 1] = app.config['VIDEO_QUEUE'][index - 1], app.config['VIDEO_QUEUE'][index]
+    return redirect(url_for('index'))
+
+@app.route('/move_down', methods=['POST'])
+def move_down():
+    index = int(request.form['index'])
+    if index >= 0 and index < len(app.config['VIDEO_QUEUE']) - 1:
+        app.config['VIDEO_QUEUE'][index], app.config['VIDEO_QUEUE'][index + 1] = app.config['VIDEO_QUEUE'][index + 1], app.config['VIDEO_QUEUE'][index]
+    return redirect(url_for('index'))
+
 @app.route('/play', methods=['POST', 'GET'])
 def play():
     if not app.config.get('is_playing', False):
