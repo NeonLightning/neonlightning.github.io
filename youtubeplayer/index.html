@@ -35,11 +35,11 @@
         }
 
         input {
-            margin-bottom: 10px;
+            margin-bottom: 3px;
         }
 
         button {
-            margin-top: 10px;
+            margin-top: 3px;
         }
 
         .centered {
@@ -88,9 +88,11 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        <form action="/play" method="post">
-            <button type="submit">Play</button>
-        </form>
+		{% if app.config['VIDEO_QUEUE'] %}
+		<form action="/play" method="post">
+			<button type="submit">Play</button>
+		</form>
+		{% endif %}
         <form action="/skip" method="post">
             <button type="submit">Skip</button>
         </form>
@@ -131,7 +133,7 @@
         }
 
         setInterval(updateQueue, 300);
-        updateQueue(); // Initial call to populate the queue list
+        updateQueue();
     </script>
 </body>
 </html>
