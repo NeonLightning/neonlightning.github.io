@@ -37,7 +37,7 @@ def setup():
     config.read('config.ini')
     is_setup_done = config.getboolean('app', 'is_setup_done')
     if not is_setup_done:
-        if not check_and_install_package('pygame', 'python3-pygame'):
+        if not check_and_install_package('tk', 'python3-tk'):
             print("Failed to install Pygame.")
             sys.exit(1)
         if not check_and_install_package('flask', 'python3-flask'):
@@ -59,7 +59,9 @@ from pytube import Search, YouTube
 from pytube.innertube import _default_clients
 from pytube.exceptions import AgeRestrictedError
 from pytube import innertube
-import time, threading, pygame, pytube
+import tkinter as tk
+import time, threading, pytube
+
 innertube._cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
 innertube._token_file = os.path.join(innertube._cache_dir, 'tokens.json')
 _default_clients["ANDROID"]["context"]["client"]["clientVersion"] = "19.08.35"
@@ -71,38 +73,25 @@ _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 os.environ['DISPLAY'] = ':0'
 app = Flask(__name__)
 app.config['VIDEO_QUEUE'] = []
-#cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
-#sys.path.append(cache_dir)
 
 def display_black_screen():
-    pygame.init()
-    pygame.mixer.quit()
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-    clock = pygame.time.Clock()
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    running = False
-        screen.fill((0, 0, 0))
-        font = pygame.font.Font(None, 48)
+    global root
+    root = tk.Tk()
+    root.attributes('-fullscreen', True)
+    root.configure(background='black')
+    font = ('Helvetica', 24)
+    label = tk.Label(root, text="No video playing", fg="white", bg="black", font=font)
+    label.pack(expand=True)
 
+    def update_text():
         if app.config.get('next_video_title'):
             next_video_title = app.config['next_video_title']
-            text_surface = font.render(next_video_title, True, (255, 255, 255))
+            label.config(text=next_video_title)
         else:
-            text_surface = font.render("No video playing", True, (255, 255, 255))
-
-        text_rect = text_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
-        screen.blit(text_surface, text_rect)
-        pygame.display.flip()
-        clock.tick(30)
-
-    pygame.quit()
-    sys.exit()
+            label.config(text="No video playing")
+        root.after(200, update_text)
+    update_text()
+    root.mainloop()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -141,21 +130,22 @@ def play_video_from_queue():
             video_url = f'https://www.youtube.com/watch?v={video_info["video_id"]}'
             videopath = "/tmp/ytvid.mp4"
             try:
-                stream = YouTube(video_url, use_oauth=True).streams.get_highest_resolution()
+                if 'age_restricted' in video_info and video_info['age_restricted']:
+                    stream = YouTube(video_url, use_oauth=True).streams.get_highest_resolution()
+                else:
+                    stream = YouTube(video_url).streams.get_highest_resolution()
                 stream.download(output_path="/tmp", filename="ytvid.mp4")
             except AgeRestrictedError as e:
                 print(f"Age restricted video '{video_info['title']}': {e}")
                 app.config['next_video_title'] = None
                 continue
-            
-            user = os.getenv('SUDO_USER') or os.getenv('USER')
-            process = subprocess.Popen(["sudo", "-u", user, "vlc", "-f", "--play-and-exit", "--extraintf", "--no-embedded-video", "--no-mouse-events", "--video-on-top", "--intf", "dummy", "--no-video-title-show", "--mouse-hide-timeout", "0", videopath])
+            process = subprocess.Popen(["vlc", "-f", "--play-and-exit", "--extraintf", "--no-embedded-video", "--no-mouse-events", "--video-on-top", "--intf", "dummy", "--no-video-title-show", "--mouse-hide-timeout", "0", videopath])
             while True:
                 if process.poll() is not None:
                     break
                 time.sleep(1)
             app.config['next_video_title'] = None
-            subprocess.Popen(["sudo", "rm", "-rf", videopath])
+            subprocess.Popen(["rm", "-rf", videopath])
         else:
             break
 
@@ -186,7 +176,14 @@ def remove():
             app.config['next_video_title'] = None
     return redirect(url_for('index'))
 
+@app.route('/close', methods=['POST'])
+def close():
+    if os.path.exists("/tmp/ytdl.mp4"):
+        subprocess.Popen(["rm", "-rf", "/tmp/ytdl.mp4"])
+    subprocess.run(["pkill", "vlc"])
+    os.system('kill %d' % os.getpid())
+
 if __name__ == '__main__':
-    threading.Thread(target=display_black_screen).start()
-    #app.run(host='0.0.0.0', port=5000, debug=True)
-    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+    gui_thread = threading.Thread(target=display_black_screen)
+    gui_thread.start()
+    app.run(host='0.0.0.0', port=5000, use_reloader=False)
