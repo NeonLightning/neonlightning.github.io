@@ -14,14 +14,10 @@
             background-color: black;
             color: #aaffaa;
             cursor: pointer;
+            margin-top: 3px;
         }
         button:hover {
             background-color: #330033;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
         }
         form {
             display: flex;
@@ -29,24 +25,30 @@
             align-items: flex-start;
             margin-bottom: 10px;
         }
-
-        label {
-            margin-bottom: 5px;
-        }
-
         input {
             margin-bottom: 3px;
         }
-
-        button {
-            margin-top: 3px;
+        label {
+            margin-bottom: 5px;
         }
-
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
         .centered {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+		#controlButtons {
+			display: flex;
+			justify-content: center;
+			margin-top: 10px;
+		}
+		#controlButtons form {
+			margin: 0 5px;
+		}
     </style>
 </head>
 <body>
@@ -70,15 +72,15 @@
         </form>
         <h2>Queue</h2>
         <ul id="queueList">
-            {% for video_info in app.config['VIDEO_QUEUE'] %}
-                <li>
-                    {{ video_info['title'] }} 
-                    <form action="/remove" method="post" style="display:inline;">
-                        <input type="hidden" name="index" value="{{ loop.index0 }}">
-                        <button type="submit">Remove</button>
-                    </form>
-                </li>
-            {% endfor %}
+			{% for video_info in app.config['VIDEO_QUEUE'] %}
+				<li>
+					{{ video_info['title'] }} 
+					<form action="/remove" method="post" style="display:inline;">
+						<input type="hidden" name="index" value="{{ loop.index0 }}">
+						<button type="submit">Remove</button>
+					</form>
+				</li>
+			{% endfor %}
         </ul>
         {% if results %}
             <h2>Search Results</h2>
@@ -88,52 +90,61 @@
                 {% endfor %}
             </ul>
         {% endif %}
-		{% if app.config['VIDEO_QUEUE'] %}
-		<form action="/play" method="post">
-			<button type="submit">Play</button>
-		</form>
-		{% endif %}
-        <form action="/skip" method="post">
-            <button type="submit">Skip</button>
-        </form>
+		<div id="controlButtons">
+			{% if app.config['VIDEO_QUEUE'] %}
+			<form action="/play" method="post">
+				<button type="submit">Play</button>
+			</form>
+			<form action="/shuffle_queue" method="get">
+				<button type="submit">Shuffle</button>
+			</form>
+			<form action="/clear" method="post">
+				<button type="submit">Clear</button>
+			</form>
+			{% endif %}
+			<form action="/skip" method="post">
+				<button type="submit">Skip</button>
+			</form>
+		</div>
     </div>
 
     <script>
-        function updateQueue() {
-            fetch('/get_queue')
-                .then(response => response.json())
-                .then(data => {
-                    const queueList = document.getElementById('queueList');
-                    queueList.innerHTML = '';
-                    data.forEach(videoInfo => {
-                        const li = document.createElement('li');
-                        li.textContent = videoInfo.title;
+		function updateQueue() {
+			fetch('/get_queue')
+				.then(response => response.json())
+				.then(data => {
+					const queueList = document.getElementById('queueList');
+					queueList.innerHTML = '';
+					data.forEach((videoInfo, index) => { // Use index provided by forEach
+						const li = document.createElement('li');
+						li.textContent = videoInfo.title;
 
-                        const form = document.createElement('form');
-                        form.setAttribute('action', '/remove');
-                        form.setAttribute('method', 'post');
-                        form.setAttribute('style', 'display:inline;');
+						const form = document.createElement('form');
+						form.setAttribute('action', '/remove');
+						form.setAttribute('method', 'post');
+						form.setAttribute('style', 'display:inline;');
 
-                        const input = document.createElement('input');
-                        input.setAttribute('type', 'hidden');
-                        input.setAttribute('name', 'index');
-                        input.setAttribute('value', videoInfo.index);
+						const input = document.createElement('input');
+						input.setAttribute('type', 'hidden');
+						input.setAttribute('name', 'index');
+						input.setAttribute('value', index); // Use the index value from forEach
 
-                        const button = document.createElement('button');
-                        button.setAttribute('type', 'submit');
-                        button.textContent = 'Remove';
+						const button = document.createElement('button');
+						button.setAttribute('type', 'submit');
+						button.textContent = 'Remove';
 
-                        form.appendChild(input);
-                        form.appendChild(button);
+						form.appendChild(input);
+						form.appendChild(button);
 
-                        li.appendChild(form);
-                        queueList.appendChild(li);
-                    });
-                });
-        }
+						li.appendChild(form);
+						queueList.appendChild(li);
+					});
+				});
+		}
 
-        setInterval(updateQueue, 300);
-        updateQueue();
+		setInterval(updateQueue, 300);
+		updateQueue();
+
     </script>
 </body>
 </html>

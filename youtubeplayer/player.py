@@ -1,4 +1,4 @@
-import configparser, subprocess, pkg_resources, sys, os, logging, time, threading
+import configparser, subprocess, pkg_resources, sys, os, logging, time, threading, random
 
 def check_and_install_package(package_name, apt_name=None):
     try:
@@ -111,6 +111,15 @@ def display_black_screen():
     subprocess.run(['xset', 's', 'off'])
     subprocess.run(['xset', '-dpms'])    
     root.mainloop()
+    
+def extract_playlist_id(url):
+    query = url.split('?')[1]
+    params = query.split('&')
+    for param in params:
+        key, value = param.split('=')
+        if key == 'list':
+            return value
+    return None
 
 def get_ip_address(interface):
     try:
@@ -165,16 +174,6 @@ def index():
             return render_template('index.html', message='No search results found.', app=app)
     return render_template('index.html', app=app)
 
-def extract_playlist_id(url):
-    query = url.split('?')[1]
-    params = query.split('&')
-    for param in params:
-        key, value = param.split('=')
-        print(f'{key}, {value}')
-        if key == 'list':
-            return value
-    return None
-
 @app.route('/add_to_queue', methods=['POST'])
 def add_to_queue():
     video_url = request.form['video_url']
@@ -217,6 +216,10 @@ def close():
     subprocess.run(["pkill", "vlc"])
     os.system('kill %d' % os.getpid())
     
+@app.route('/clear', methods=['POST'])
+def clear():
+    app.config['VIDEO_QUEUE'] = []
+    return redirect(url_for('index'))
 
 @app.route('/get_queue')
 def get_queue():
@@ -254,6 +257,11 @@ def remove():
         removed_video = app.config['VIDEO_QUEUE'].pop(index)
         if app.config.get('next_video_title') == removed_video['title']:
             app.config['next_video_title'] = None
+    return redirect(url_for('index'))
+
+@app.route('/shuffle_queue', methods=['GET'])
+def shuffle_queue():
+    random.shuffle(app.config['VIDEO_QUEUE'])
     return redirect(url_for('index'))
 
 @app.route('/skip', methods=['POST'])
