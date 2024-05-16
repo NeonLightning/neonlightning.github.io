@@ -63,12 +63,12 @@ import pytube
 
 innertube._cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
 innertube._token_file = os.path.join(innertube._cache_dir, 'tokens.json')
-_default_clients["ANDROID"]["context"]["client"]["clientVersion"] = "19.08.35"
-_default_clients["IOS"]["context"]["client"]["clientVersion"] = "19.08.35"
-_default_clients["ANDROID_EMBED"]["context"]["client"]["clientVersion"] = "19.08.35"
-_default_clients["IOS_EMBED"]["context"]["client"]["clientVersion"] = "19.08.35"
-_default_clients["IOS_MUSIC"]["context"]["client"]["clientVersion"] = "6.41"
-_default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
+innertube._default_clients["ANDROID"]["context"]["client"]["clientVersion"] = "19.08.35"
+innertube._default_clients["IOS"]["context"]["client"]["clientVersion"] = "19.08.35"
+innertube._default_clients["ANDROID_EMBED"]["context"]["client"]["clientVersion"] = "19.08.35"
+innertube._default_clients["IOS_EMBED"]["context"]["client"]["clientVersion"] = "19.08.35"
+innertube._default_clients["IOS_MUSIC"]["context"]["client"]["clientVersion"] = "6.41"
+innertube._default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 os.environ['DISPLAY'] = ':0'
 app = Flask(__name__)
 log = logging.getLogger('werkzeug')
