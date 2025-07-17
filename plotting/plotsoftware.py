@@ -684,10 +684,10 @@ class ImageGrid:
                 color: #dcdcdc;
                 font-family: Arial, sans-serif;
                 margin: 0;
-                padding: 20px;
+                padding: 10px;
             }}
             h1 {{
-                margin-bottom: 20px;
+                margin-bottom: 10px;
             }}
             .grid {{
                 display: grid;
@@ -697,19 +697,21 @@ class ImageGrid:
             }}
             .cell {{
                 background-color: #3c3c3c;
-                padding: 5px;
+                padding: 1px;
                 overflow: hidden;
                 text-align: center;
                 border: 1px solid #646464;
+                position: relative;
             }}
             .header {{
                 background-color: #323246;
-                font-weight: bold;
+                word-break: break-all;
+                font-size: 0.5em;
             }}
             .filename {{
                 background-color: #323246;
-                text-align: left;
                 word-break: break-all;
+                font-size: 0.5em;
             }}
             .placeholder {{
                 background-color: #502828;
@@ -719,8 +721,22 @@ class ImageGrid:
                 max-height: 100%;
                 object-fit: contain;
             }}
-            img:hover {{
-                outline: 2px solid #4CAF50;
+            .cell:hover::after {{
+                content: attr(title);
+                position: absolute;
+                left: 50%;
+                bottom: 100%;
+                transform: translateX(-50%);
+                background: rgba(0,0,0,0.9);
+                color: white;
+                padding: 1px 1px;
+                border-radius: 0px;
+                white-space: pre-line;
+                z-index: 100;
+                pointer-events: none;
+                min-width: 200px;
+                max-width: 300px;
+                text-align: center;
             }}
             .info {{
                 margin-bottom: 20px;
@@ -769,41 +785,45 @@ class ImageGrid:
                     self.current_progress = processed / total_work
                     value = self.grid[row_idx][col_idx]
                     cell_classes = ["cell"]
-                    if row_idx == 0 or col_idx == 0:
-                        cell_classes.append("header")
-                    if col_idx == 0:
-                        cell_classes.append("filename")
-                    content = ""
                     title_attr = ""
-                    if row_idx > 1 and col_idx > 0:
-                        title_attr = f"Row: {row_name} --- Column: {column_headers[col_idx]}"
-                    if isinstance(value, str):
-                        if value.startswith("PLACEHOLDER:"):
+                    content = ""
+                    if row_idx == 0:
+                        cell_classes.append("header")
+                        title_attr = f"Column: {value}"
+                        content = value
+                    elif col_idx == 0:
+                        cell_classes.append("filename")
+                        cell_classes.append("header")
+                        title_attr = f"Filename: {value}"
+                        content = value
+                    elif isinstance(value, str) and value.startswith("PLACEHOLDER:"):
+                        cell_classes.append("placeholder")
+                        placeholder_text = ""
+                        title_attr = f"Missing Image\nColumn: {column_headers[col_idx]}\nRow: {row_name}\n{placeholder_text}"
+                        content = placeholder_text
+                    elif isinstance(value, str):  # Image cells
+                        title_attr = f"Column: {column_headers[col_idx]}\nRow: {row_name}"
+                        try:
+                            img = Image.open(value)
+                            img_filename = f"img_{image_counter}.webp"
+                            img_path = os.path.join(images_dir, img_filename)
+                            target_size = cell_size - 2 * CELL_PADDING
+                            width, height = img.size
+                            ratio = min(target_size/width, target_size/height)
+                            new_size = (int(width * ratio), int(height * ratio))
+                            img = img.resize(new_size, Image.Resampling.LANCZOS)
+                            img.save(img_path, "WEBP", quality=85)
+                            img.close()
+                            content = f'<img src="images/{img_filename}" alt="{os.path.basename(value)}">'
+                            image_counter += 1
+                            processed += 1
+                            self.current_progress = processed / total_work
+                        except Exception as e:
+                            print(f"Error processing image {value}: {e}")
                             cell_classes.append("placeholder")
-                            content = value.split(":", 1)[1].split(" at ")[0]
-                        elif row_idx == 0 or col_idx == 0:
-                            content = value
-                        else:
-                            try:
-                                img = Image.open(value)
-                                img_filename = f"img_{image_counter}.webp"
-                                img_path = os.path.join(images_dir, img_filename)
-                                target_size = cell_size - 2 * CELL_PADDING
-                                width, height = img.size
-                                ratio = min(target_size/width, target_size/height)
-                                new_size = (int(width * ratio), int(height * ratio))
-                                img = img.resize(new_size, Image.Resampling.LANCZOS)
-                                img.save(img_path, "WEBP", quality=85)
-                                img.close()
-                                content = f'<img src="images/{img_filename}" alt="{os.path.basename(value)}" title="{title_attr}">'
-                                image_counter += 1
-                                processed += 1
-                                self.current_progress = processed / total_work
-                            except Exception as e:
-                                print(f"Error processing image {value}: {e}")
-                                cell_classes.append("placeholder")
-                                content = "Image Error"
-                    cell_html = f'<div class="{" ".join(cell_classes)}">{content}</div>'
+                            title_attr = f"Error loading image\n{title_attr}"
+                            content = "Image Error"
+                    cell_html = f'<div class="{" ".join(cell_classes)}" title="{title_attr}">{content}</div>'
                     grid_content.append(cell_html)
             html_file = os.path.join(output_folder, "index.html")
             with open(html_file, "w", encoding="utf-8") as f:
