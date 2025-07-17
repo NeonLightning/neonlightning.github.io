@@ -2,6 +2,8 @@ import pygame
 import os
 import sys
 import argparse
+import threading
+import queue
 import tkinter as tk
 from tkinter import filedialog
 from collections import defaultdict
@@ -56,6 +58,10 @@ MIN_TEXT_CELL_HEIGHT = 1
 
 class ImageGrid:
     def __init__(self, base_folder, subfolders_dir):
+        self.export_queue = queue.Queue()
+        self.export_in_progress = False
+        self.current_progress = 0
+        self.current_message = ""
         self.subfolders_dir = subfolders_dir
         self.base_folder = base_folder
         self.grid = self.build_grid()
@@ -379,6 +385,16 @@ class ImageGrid:
             screen.blit(text2, text2_rect)
         self.draw_scrollbars(screen, screen_width, screen_height)
         self.unload_distant_images(visible_cells)
+        try:
+            export_type, result = self.export_queue.get_nowait()
+            if export_type == "grid" and result:
+                print(f"Grid exported to {result}")
+            elif export_type == "html" and result:
+                print(f"HTML exported to {result}")
+        except queue.Empty:
+            pass
+        if self.export_in_progress:
+            self.draw_progress_bar(screen)
         return export_button_rect, html_button_rect
 
     def draw_fullscreen(self, screen):
@@ -489,7 +505,52 @@ class ImageGrid:
                 self.fullscreen_image = None
                 self.fullscreen_original = None
 
-    def export_grid(self, filename=None):
+    def draw_progress_bar(self, screen):
+        if not self.export_in_progress:
+            return
+        screen_width, screen_height = screen.get_size()
+        bar_width = 400
+        bar_height = 30
+        bar_x = (screen_width - bar_width) // 2
+        bar_y = (screen_height - bar_height) // 2
+        overlay = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 180))
+        screen.blit(overlay, (0, 0))
+        pygame.draw.rect(screen, (60, 60, 60), (bar_x, bar_y, bar_width, bar_height))
+        pygame.draw.rect(screen, (100, 200, 100), 
+                    (bar_x, bar_y, int(bar_width * self.current_progress), bar_height))
+        pygame.draw.rect(screen, (200, 200, 200), (bar_x, bar_y, bar_width, bar_height), 2)
+        font = pygame.font.SysFont(None, 24)
+        progress_text = f"{int(self.current_progress * 100)}%"
+        text_surf = font.render(progress_text, True, (255, 255, 255))
+        text_rect = text_surf.get_rect(center=(bar_x + bar_width // 2, bar_y + bar_height // 2))
+        screen.blit(text_surf, text_rect)
+        if self.current_message:
+            msg_surf = font.render(self.current_message, True, (255, 255, 255))
+            msg_rect = msg_surf.get_rect(center=(bar_x + bar_width // 2, bar_y - 30))
+            screen.blit(msg_surf, msg_rect)
+
+    def start_export_grid(self, filename=None):
+        if self.export_in_progress:
+            return None
+        self.export_in_progress = True
+        self.current_progress = 0
+        self.current_message = "Exporting PNG..."
+        if not filename:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"grid_export_{timestamp}.png"
+
+        def export_thread():
+            try:
+                result = self._export_grid(filename)
+                self.export_queue.put(("grid", result))
+            finally:
+                self.export_in_progress = False
+
+        threading.Thread(target=export_thread, daemon=True).start()
+        return filename
+
+    def _export_grid(self, filename):
         def draw_wrapped_text_pil(draw, text, font, box, fill):
             x1, y1, x2, y2 = box
             max_width = x2 - x1 - 10
@@ -529,10 +590,15 @@ class ImageGrid:
             draw = ImageDraw.Draw(image)
             font = ImageFont.truetype("arial.ttf", FONT_SIZE)
             small_font = ImageFont.truetype("arial.ttf", RESOLUTION_FONT_SIZE)
+            total_cells = sum(len(row) for row in self.grid.values())
+            processed_cells = 0
             for row in range(self.max_rows):
                 if row not in self.grid:
                     continue
                 for col in range(len(self.grid[row])):
+                    # Update progress
+                    processed_cells += 1
+                    self.current_progress = processed_cells / total_cells
                     x = col * self.cell_size
                     y = row * self.cell_size
                     box = (x, y, x + self.cell_size, y + self.cell_size)
@@ -563,10 +629,10 @@ class ImageGrid:
                                 y_start = y + (self.cell_size - total_height) // 2
                                 x_center1 = x + (self.cell_size - text1_width) // 2
                                 draw.text((x_center1, y_start), self.base_resolution, 
-                                         font=small_font, fill=TEXT_COLOR)
+                                        font=small_font, fill=TEXT_COLOR)
                                 x_center2 = x + (self.cell_size - text2_width) // 2
                                 draw.text((x_center2, y_start + text1_height), f"{current_size}px", 
-                                         font=small_font, fill=TEXT_COLOR)
+                                        font=small_font, fill=TEXT_COLOR)
                             continue
                         text = "Base Images" if row == 1 and col == 0 else value
                         box = (x, y, x + self.cell_size, y + self.cell_size)
@@ -585,14 +651,29 @@ class ImageGrid:
         except Exception as e:
             print(f"Error exporting large grid: {e}")
             return None
-        
-    def export_html(self, output_folder="html_export"):
+
+    def start_export_html(self, output_folder="html_export"):
+        if self.export_in_progress:
+            return None
+        self.export_in_progress = True
+        self.current_progress = 0
+        self.current_message = "Exporting HTML..."
+
+        def export_thread():
+            try:
+                result = self._export_html(output_folder)
+                self.export_queue.put(("html", result))
+            finally:
+                self.export_in_progress = False
+
+        threading.Thread(target=export_thread, daemon=True).start()
+        return os.path.join(output_folder, "index.html")
+
+    def _export_html(self, output_folder="html_export"):
         try:
             os.makedirs(output_folder, exist_ok=True)
             images_dir = os.path.join(output_folder, "images")
             os.makedirs(images_dir, exist_ok=True)
-            
-            # Updated HTML template with tooltip styles and JavaScript
             html_template = """<!DOCTYPE html>
     <html>
     <head>
@@ -620,7 +701,6 @@ class ImageGrid:
                 overflow: hidden;
                 text-align: center;
                 border: 1px solid #646464;
-                position: relative;
             }}
             .header {{
                 background-color: #323246;
@@ -639,31 +719,14 @@ class ImageGrid:
                 max-height: 100%;
                 object-fit: contain;
             }}
+            img:hover {{
+                outline: 2px solid #4CAF50;
+            }}
             .info {{
                 margin-bottom: 20px;
                 padding: 10px;
                 background-color: #282828;
                 border-radius: 5px;
-            }}
-            .tooltip {{
-                visibility: hidden;
-                width: 200px;
-                background-color: #555;
-                color: #fff;
-                text-align: center;
-                border-radius: 6px;
-                padding: 5px;
-                position: absolute;
-                z-index: 1;
-                bottom: 125%;
-                left: 50%;
-                margin-left: -100px;
-                opacity: 0;
-                transition: opacity 0.3s;
-            }}
-            .cell:hover .tooltip {{
-                visibility: visible;
-                opacity: 1;
             }}
         </style>
     </head>
@@ -685,86 +748,63 @@ class ImageGrid:
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             cell_size = int(DEFAULT_CELL_SIZE * self.zoom_level)
             filename_width = max(MIN_FILENAME_WIDTH, min(MAX_FILENAME_WIDTH, cell_size))
-            
+            total_cells = sum(len(row) for row in self.grid.values())
+            total_images = sum(
+                1 for row_idx, row in self.grid.items()
+                for col_idx, cell in enumerate(row)
+                if isinstance(cell, str) and not cell.startswith("PLACEHOLDER:") 
+                and row_idx > 1 and col_idx > 0
+            )
+            total_work = total_cells + total_images
+            processed = 0
             grid_content = []
             image_counter = 0
-            
-            # First pass to collect all row and column names
-            row_names = {}
-            col_names = {}
-            
-            for row in range(self.max_rows):
-                if row not in self.grid:
+            column_headers = self.grid.get(0, [""] * self.max_cols)
+            for row_idx in range(self.max_rows):
+                if row_idx not in self.grid:
                     continue
-                if row >= 1 and len(self.grid[row]) > 0:
-                    row_names[row] = self.grid[row][0]  # Column 0 contains row names
-                    
-            if 0 in self.grid:  # Row 0 contains column names
-                for col, name in enumerate(self.grid[0]):
-                    col_names[col] = name
-            
-            for row in range(self.max_rows):
-                if row not in self.grid:
-                    continue
-                    
-                for col in range(len(self.grid[row])):
-                    value = self.grid[row][col]
+                row_name = self.grid[row_idx][0] if row_idx > 1 else ""
+                for col_idx in range(len(self.grid[row_idx])):
+                    processed += 1
+                    self.current_progress = processed / total_work
+                    value = self.grid[row_idx][col_idx]
                     cell_classes = ["cell"]
-                    
-                    if row == 0 or col == 0:
+                    if row_idx == 0 or col_idx == 0:
                         cell_classes.append("header")
-                    if col == 0:
+                    if col_idx == 0:
                         cell_classes.append("filename")
-                    
                     content = ""
-                    tooltip_content = ""
-                    
-                    # Set tooltip content based on position
-                    if row == 0 and col == 0:
-                        tooltip_content = "Grid Corner"
-                    elif row == 0:
-                        tooltip_content = f"Column: {col_names.get(col, '')}"
-                    elif col == 0:
-                        tooltip_content = f"Row: {row_names.get(row, '')}"
-                    else:
-                        tooltip_content = f"Row: {row_names.get(row, '')}<br>Column: {col_names.get(col, '')}"
-                    
+                    title_attr = ""
+                    if row_idx > 1 and col_idx > 0:
+                        title_attr = f"Row: {row_name} --- Column: {column_headers[col_idx]}"
                     if isinstance(value, str):
                         if value.startswith("PLACEHOLDER:"):
                             cell_classes.append("placeholder")
                             content = value.split(":", 1)[1].split(" at ")[0]
-                        elif row == 0 or col == 0:
+                        elif row_idx == 0 or col_idx == 0:
                             content = value
                         else:
                             try:
                                 img = Image.open(value)
                                 img_filename = f"img_{image_counter}.webp"
                                 img_path = os.path.join(images_dir, img_filename)
-                                
                                 target_size = cell_size - 2 * CELL_PADDING
                                 width, height = img.size
                                 ratio = min(target_size/width, target_size/height)
-                                new_size = (int(width * ratio), (int(height * ratio)))
-                                
+                                new_size = (int(width * ratio), int(height * ratio))
                                 img = img.resize(new_size, Image.Resampling.LANCZOS)
                                 img.save(img_path, "WEBP", quality=85)
                                 img.close()
-                                
-                                content = f'<img src="images/{img_filename}" alt="{os.path.basename(value)}">'
+                                content = f'<img src="images/{img_filename}" alt="{os.path.basename(value)}" title="{title_attr}">'
                                 image_counter += 1
+                                processed += 1
+                                self.current_progress = processed / total_work
                             except Exception as e:
                                 print(f"Error processing image {value}: {e}")
                                 cell_classes.append("placeholder")
                                 content = "Image Error"
-                    
-                    cell_html = f'''
-                    <div class="{" ".join(cell_classes)}">
-                        {content}
-                        <span class="tooltip">{tooltip_content}</span>
-                    </div>
-                    '''
+                    cell_html = f'<div class="{" ".join(cell_classes)}">{content}</div>'
                     grid_content.append(cell_html)
-            
             html_file = os.path.join(output_folder, "index.html")
             with open(html_file, "w", encoding="utf-8") as f:
                 f.write(html_template.format(
@@ -777,9 +817,7 @@ class ImageGrid:
                     num_cols=self.max_cols - 1,
                     grid_content="\n".join(grid_content)
                 ))
-            
             return html_file
-        
         except Exception as e:
             print(f"Error exporting HTML: {e}")
             return None
@@ -793,7 +831,6 @@ def select_folder(title="Select Folder"):
 
 def main():
     global screen, DEFAULT_CELL_SIZE
-
     parser = argparse.ArgumentParser(description='Image Grid Viewer')
     parser.add_argument('base_folder', nargs='?', help='Base folder containing images')
     parser.add_argument('subfolders_dir', nargs='?', help='Directory containing subfolders with comparison images')
@@ -839,13 +876,13 @@ def main():
                         grid.toggle_fullscreen(None)
                     else:
                         if export_button_rect and export_button_rect.collidepoint(event.pos):
-                            filename = grid.export_grid()
+                            filename = grid.start_export_grid()
                             if filename:
-                                print(f"Grid exported to {filename}")
+                                print(f"Starting export to {filename}")
                         elif html_button_rect and html_button_rect.collidepoint(event.pos):
-                            html_file = grid.export_html()
+                            html_file = grid.start_export_html()
                             if html_file:
-                                print(f"HTML exported to {html_file}")
+                                print(f"Starting export to {html_file}")
                         else:
                             drag_start_pos = event.pos
                             dragging = True
@@ -905,9 +942,9 @@ def main():
                 elif event.key == pygame.K_MINUS:
                     grid.zoom(-1)
                 elif event.key == pygame.K_h:
-                    html_file = grid.export_html()
+                    html_file = grid.start_export_html()
                     if html_file:
-                        print(f"HTML exported to {html_file}")
+                        print(f"Starting HTML export to {html_file}")
                 elif event.key == pygame.K_0:
                     grid.reset_viewport()
                     grid.enforce_scroll_bounds(screen.get_size())
@@ -920,9 +957,9 @@ def main():
                 elif event.key == pygame.K_r:
                     grid = ImageGrid(base_folder)
                 elif event.key == pygame.K_e:
-                    filename = grid.export_grid()
+                    filename = grid.start_export_grid()
                     if filename:
-                        print(f"Grid exported to {filename}")
+                        print(f"Starting PNG export to {filename}")
             elif event.type == pygame.VIDEORESIZE:
                 screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
                 grid.enforce_scroll_bounds((event.w, event.h))
