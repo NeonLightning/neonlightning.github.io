@@ -667,6 +667,7 @@ class ImageGrid:
             image = Image.new("RGB", (total_width, total_height), BACKGROUND_COLOR)
             draw = ImageDraw.Draw(image)
             small_font = ImageFont.truetype("arial.ttf", RESOLUTION_FONT_SIZE)
+            total_cells = (self.max_cols * self.max_rows)
             processed_cells = 0
             for row in range(self.max_rows):
                 if row not in self.grid:
