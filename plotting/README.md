@@ -19,7 +19,6 @@ A powerful Python application for visually comparing sets of images in a zoomabl
   - Each subfolder contains variants of the base image using identical filenames.
 
 Example:
-```
 project/
 ├── base/
 │   ├── image1.png

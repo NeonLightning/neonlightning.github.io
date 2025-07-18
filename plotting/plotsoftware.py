@@ -15,7 +15,6 @@ pygame.init()
 def get_max_image_resolution(folder):
     max_res = 0
     supported_exts = ('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp')
-
     for filename in os.listdir(folder):
         if filename.lower().endswith(supported_exts):
             path = os.path.join(folder, filename)
@@ -30,6 +29,10 @@ def get_max_image_resolution(folder):
 
 MAX_HEADER_HEIGHT = 200
 MAX_FILENAME_WIDTH = 200
+MIN_COLUMN_0_WIDTH = 128
+MAX_COLUMN_0_WIDTH = 256
+MIN_ROW_0_HEIGHT = 256
+MAX_ROW_0_HEIGHT = 128 
 MIN_HEADER_HEIGHT = 1
 MIN_FILENAME_WIDTH = 1
 BACKGROUND_COLOR = (30, 30, 30)
@@ -46,6 +49,8 @@ MIN_START_ZOOM = 0.5
 MIN_ZOOM = 0.05
 MAX_ZOOM = 3.0
 SCROLL_SPEED = 30
+KEY_REPEAT_DELAY = 300
+KEY_REPEAT_INTERVAL = 50
 BUFFER_ROWS = 2
 BUFFER_COLS = 2
 INFO_HEIGHT = 30
@@ -80,6 +85,8 @@ class ImageGrid:
         self.update_cell_sizes()
         self.base_resolution = self.get_base_resolution()
         self.reset_viewport()
+        self.fullscreen_row = None
+        self.fullscreen_col = None
 
     def reset_viewport(self):
         self.zoom_level = 1.0
@@ -146,7 +153,7 @@ class ImageGrid:
                 if os.path.isfile(img_path):
                     grid[row_idx].append(img_path)
                 else:
-                    grid[row_idx].append(f"PLACEHOLDER:Image not found in {os.path.basename(folder_path)}")
+                    grid[row_idx].append(f"PLACEHOLDER:")
         return dict(grid)
 
     def get_visible_cells(self, screen_width, screen_height):
@@ -188,7 +195,7 @@ class ImageGrid:
         visible_paths = set()
         for row in range(start_row, end_row + 1):
             if row in self.grid:
-                for col in range(start_col, min(end_col + 1, len(self.grid[row]))): 
+                for col in range(start_col, min(end_col + 1, len(self.grid[row]))):
                     visible_paths.add(self.grid[row][col])
         for path in list(self.image_cache.keys()):
             if path not in visible_paths and path != self.fullscreen_image:
@@ -291,7 +298,7 @@ class ImageGrid:
         for row in range(max(1, start_row), end_row + 1):
             if row not in self.grid:
                 continue
-            for col in range(max(1, start_col), min(end_col + 1, len(self.grid[row]))): 
+            for col in range(max(1, start_col), min(end_col + 1, len(self.grid[row]))):
                 path = self.grid[row][col]
                 img = self.load_image(path)
                 x = col_positions[col] - self.scroll_offset[0]
@@ -411,19 +418,17 @@ class ImageGrid:
             y = (screen_height - new_height) // 2
             scaled_img = pygame.transform.scale(self.fullscreen_original, (new_width, new_height))
             screen.blit(scaled_img, (x, y))
+            row = self.fullscreen_row
+            col = self.fullscreen_col
             row_name = "Unknown"
             col_name = "Unknown"
-            for row_idx, row_data in self.grid.items():
-                for col_idx, cell_value in enumerate(row_data):
-                    if cell_value == self.fullscreen_image:
-                        if row_idx in self.grid and len(self.grid[row_idx]) > 0:
-                            row_name = self.grid[row_idx][0]
-                        if 0 in self.grid and col_idx < len(self.grid[0]):
-                            col_name = self.grid[0][col_idx]
-                        break
+            if row is not None and row in self.grid and len(self.grid[row]) > 0:
+                row_name = self.grid[row][0]
+            if col is not None and 0 in self.grid and col < len(self.grid[0]):
+                col_name = self.grid[0][col]
             row_text = self.font.render(f"Row: {row_name}", True, (255, 255, 255))
             col_text = self.font.render(f"Column: {col_name}", True, (255, 255, 255))
-            help_text = self.font.render("Click to exit fullscreen", True, (200, 200, 200))
+            help_text = self.font.render("Click to exit fullscreen | Arrows: Navigate | ESC: Exit", True, (200, 200, 200))
             padding = 10
             box_width = max(row_text.get_width(), col_text.get_width()) + 2*padding
             box_height = row_text.get_height() + col_text.get_height() + 3*padding
@@ -493,17 +498,67 @@ class ImageGrid:
         self.scroll_offset[1] += dy
         self.enforce_scroll_bounds(screen.get_size())
 
-    def toggle_fullscreen(self, path):
-        if self.fullscreen_image == path:
+    def toggle_fullscreen(self, row, col):
+        if self.fullscreen_row == row and self.fullscreen_col == col:
             self.fullscreen_image = None
             self.fullscreen_original = None
+            self.fullscreen_row = None
+            self.fullscreen_col = None
         else:
+            path = self.grid[row][col]
             self.fullscreen_image = path
-            try:
-                self.fullscreen_original = pygame.image.load(path)
-            except:
-                self.fullscreen_image = None
-                self.fullscreen_original = None
+            self.fullscreen_row = row
+            self.fullscreen_col = col
+            if isinstance(path, str) and path.startswith("PLACEHOLDER:"):
+                placeholder = pygame.Surface((800, 600))
+                placeholder.fill(PLACEHOLDER_COLOR)
+                font = pygame.font.SysFont(None, 36)
+                text = font.render(path.split(":", 1)[1].split(" at ")[0], True, (255, 255, 255))
+                text_rect = text.get_rect(center=(400, 300))
+                placeholder.blit(text, text_rect)
+                self.fullscreen_original = placeholder
+            else:
+                try:
+                    self.fullscreen_original = pygame.image.load(path)
+                except:
+                    placeholder = pygame.Surface((800, 600))
+                    placeholder.fill((120, 40, 40))
+                    font = pygame.font.SysFont(None, 36)
+                    text = font.render("Error loading image", True, (255, 255, 255))
+                    text_rect = text.get_rect(center=(400, 300))
+                    placeholder.blit(text, text_rect)
+                    self.fullscreen_original = placeholder
+
+    def navigate_fullscreen(self, direction):
+        if not self.fullscreen_image or self.fullscreen_row is None or self.fullscreen_col is None:
+            return
+        row = self.fullscreen_row
+        col = self.fullscreen_col
+        if direction == 'left':
+            new_col = max(1, col - 1)
+            new_row = row
+        elif direction == 'right':
+            if col + 1 < len(self.grid[row]):
+                new_col = col + 1
+                new_row = row
+            else:
+                return
+        elif direction == 'up':
+            new_row = max(1, row - 1)
+            new_col = col
+        elif direction == 'down':
+            if row + 1 < self.max_rows:
+                new_row = row + 1
+                new_col = col
+            else:
+                return
+        else:
+            return
+        if new_row == row and new_col == col:
+            return
+        if new_row not in self.grid or new_col >= len(self.grid[new_row]):
+            return
+        self.toggle_fullscreen(new_row, new_col)
 
     def draw_progress_bar(self, screen):
         if not self.export_in_progress:
@@ -551,7 +606,7 @@ class ImageGrid:
         return filename
 
     def _export_grid(self, filename):
-        def draw_wrapped_text_pil(draw, text, font, box, fill):
+        def draw_wrapped_text_pil(draw, text, font, box, fill, max_lines=None):
             x1, y1, x2, y2 = box
             max_width = x2 - x1 - 10
             max_height = y2 - y1 - 10
@@ -575,36 +630,57 @@ class ImageGrid:
             bbox = font.getbbox('A')
             line_height = bbox[3] - bbox[1]
             y_text = y1 + 5
+            lines_drawn = 0
             for line in lines:
-                if y_text + line_height > y2:
+                if y_text + line_height > y2 or (max_lines and lines_drawn >= max_lines):
                     break
                 draw.text((x1 + 5, y_text), line, font=font, fill=fill)
                 y_text += line_height
+                lines_drawn += 1
         if not filename:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"grid_export_{timestamp}.png"
         try:
-            total_width = self.max_cols * self.cell_size
-            total_height = self.max_rows * self.cell_size
+            column_0_width = MIN_COLUMN_0_WIDTH
+            font = ImageFont.truetype("arial.ttf", FONT_SIZE)
+            for row in range(self.max_rows):
+                if row in self.grid and len(self.grid[row]) > 0:
+                    text = self.grid[row][0] if row > 0 else ""
+                    if text:
+                        bbox = font.getbbox(text)
+                        text_width = bbox[2] - bbox[0] + 20
+                        column_0_width = max(column_0_width, min(text_width, MAX_COLUMN_0_WIDTH))
+            row_0_height = MIN_ROW_0_HEIGHT
+            if 0 in self.grid:
+                for col in range(len(self.grid[0])):
+                    text = self.grid[0][col]
+                    if text:
+                        box = (0, 0, self.cell_size - 10, MAX_ROW_0_HEIGHT - 10)
+                        bbox = font.getbbox('A')
+                        line_height = bbox[3] - bbox[1]
+                        max_lines = (MAX_ROW_0_HEIGHT - 10) // line_height
+                        lines = text.split('\n')
+                        row_0_height = max(row_0_height,
+                                        min(MIN_ROW_0_HEIGHT + (len(lines) * line_height), MAX_ROW_0_HEIGHT))
+            total_width = column_0_width + (self.max_cols - 1) * self.cell_size
+            total_height = row_0_height + (self.max_rows - 1) * self.cell_size
             image = Image.new("RGB", (total_width, total_height), BACKGROUND_COLOR)
             draw = ImageDraw.Draw(image)
-            font = ImageFont.truetype("arial.ttf", FONT_SIZE)
             small_font = ImageFont.truetype("arial.ttf", RESOLUTION_FONT_SIZE)
-            total_cells = sum(len(row) for row in self.grid.values())
             processed_cells = 0
             for row in range(self.max_rows):
                 if row not in self.grid:
                     continue
                 for col in range(len(self.grid[row])):
-                    # Update progress
                     processed_cells += 1
                     self.current_progress = processed_cells / total_cells
-                    x = col * self.cell_size
-                    y = row * self.cell_size
-                    box = (x, y, x + self.cell_size, y + self.cell_size)
+                    cell_width = column_0_width if col == 0 else self.cell_size
+                    cell_height = row_0_height if row == 0 else self.cell_size
+                    x = sum(column_0_width if c == 0 else self.cell_size for c in range(col))
+                    y = sum(row_0_height if r == 0 else self.cell_size for r in range(row))
+                    box = (x, y, x + cell_width, y + cell_height)
                     value = self.grid[row][col]
                     is_top = row == 0
-                    is_base = row == 1
                     is_left = col == 0
                     if row == 0 and col == 0:
                         draw.rectangle(box, fill=BACKGROUND_COLOR)
@@ -625,23 +701,26 @@ class ImageGrid:
                                 text1_height = bbox1[3] - bbox1[1]
                                 text2_width = bbox2[2] - bbox2[0]
                                 text2_height = bbox2[3] - bbox2[1]
-                                total_height = text1_height + text2_height
-                                y_start = y + (self.cell_size - total_height) // 2
-                                x_center1 = x + (self.cell_size - text1_width) // 2
+                                total_text_height = text1_height + text2_height
+                                y_start = y + (cell_height - total_text_height) // 2
+                                x_center1 = x + (cell_width - text1_width) // 2
                                 draw.text((x_center1, y_start), self.base_resolution, 
                                         font=small_font, fill=TEXT_COLOR)
-                                x_center2 = x + (self.cell_size - text2_width) // 2
+                                x_center2 = x + (cell_width - text2_width) // 2
                                 draw.text((x_center2, y_start + text1_height), f"{current_size}px", 
                                         font=small_font, fill=TEXT_COLOR)
                             continue
                         text = "Base Images" if row == 1 and col == 0 else value
-                        box = (x, y, x + self.cell_size, y + self.cell_size)
-                        draw_wrapped_text_pil(draw, text, font, box, TEXT_COLOR)
+                        if row == 0:
+                            max_lines = (MAX_ROW_0_HEIGHT - 10) // (font.getbbox('A')[3] - font.getbbox('A')[1])
+                            draw_wrapped_text_pil(draw, text, font, box, TEXT_COLOR, max_lines)
+                        else:
+                            draw_wrapped_text_pil(draw, text, font, box, TEXT_COLOR)
                     elif isinstance(value, str) and not value.startswith("PLACEHOLDER:"):
                         try:
                             img = Image.open(value)
-                            img = img.resize((self.cell_size - 2 * CELL_PADDING,
-                                            self.cell_size - 2 * CELL_PADDING))
+                            img = img.resize((cell_width - 2 * CELL_PADDING,
+                                            cell_height - 2 * CELL_PADDING))
                             image.paste(img, (x + CELL_PADDING, y + CELL_PADDING))
                             img.close()
                         except Exception as e:
@@ -702,7 +781,12 @@ class ImageGrid:
                 text-align: center;
                 border: 1px solid #646464;
                 position: relative;
-                height: {cell_size}px; /* Ensure consistent height */
+                height: {cell_size}px;
+            }}
+            .header-row {{
+                max-height: 256px !important;
+                min-height: 128px !important;
+                height: auto;
             }}
             .header {{
                 background-color: #323246;
@@ -713,6 +797,11 @@ class ImageGrid:
                 background-color: #323246;
                 word-break: break-all;
                 font-size: 0.5em;
+            }}
+            .filename-column {{
+                max-width: 256px !important;
+                min-width: 128px !important;
+                width: auto;
             }}
             .placeholder {{
                 background-color: #502828;
@@ -773,7 +862,6 @@ class ImageGrid:
                         const container = entry.target;
                         const imgSrc = container.dataset.src;
                         if (entry.isIntersecting) {{
-                            // Load the image if it's visible
                             if (!container.querySelector("img")) {{
                                 const img = new Image();
                                 img.src = imgSrc;
@@ -785,7 +873,7 @@ class ImageGrid:
                         }} else {{
                             // Unload the image if it's out of view
                             if (container.querySelector("img")) {{
-                                container.innerHTML = ""; // Removes the <img> element
+                                container.innerHTML = "";
                             }}
                         }}
                     }});
@@ -824,11 +912,13 @@ class ImageGrid:
                     content = ""
                     if row_idx == 0:
                         cell_classes.append("header")
+                        cell_classes.append("header-row")
                         title_attr = f"Column: {value}"
                         content = value
                     elif col_idx == 0:
                         cell_classes.append("filename")
                         cell_classes.append("header")
+                        cell_classes.append("filename-column")
                         title_attr = f"Filename: {value}"
                         content = value
                     elif isinstance(value, str) and value.startswith("PLACEHOLDER:"):
@@ -836,7 +926,7 @@ class ImageGrid:
                         placeholder_text = ""
                         title_attr = f"Missing Image\nColumn: {column_headers[col_idx]}\nRow: {row_name}\n{placeholder_text}"
                         content = placeholder_text
-                    elif isinstance(value, str):  # Image cells
+                    elif isinstance(value, str):
                         title_attr = f"Column: {column_headers[col_idx]}\nRow: {row_name}"
                         try:
                             img = Image.open(value)
@@ -851,8 +941,7 @@ class ImageGrid:
                             img.close()
                             content = f'''
                                 <div class="image-container" 
-                                    data-src="images/{img_filename}" 
-                                    title="{os.path.basename(value)}">
+                                    data-src="images/{img_filename}">
                                 </div>
                             '''
                             image_counter += 1
@@ -919,6 +1008,7 @@ def main():
     pygame.event.post(pygame.event.Event(pygame.VIDEORESIZE, 
                                        {'w': screen.get_width(), 
                                         'h': screen.get_height()}))
+    pygame.key.set_repeat(300, 50)
     dragging = False
     last_mouse_pos = (0, 0)
     export_button_rect = None
@@ -933,7 +1023,7 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if grid.fullscreen_image:
-                        grid.toggle_fullscreen(None)
+                        grid.toggle_fullscreen(grid.fullscreen_row, grid.fullscreen_col)
                     else:
                         if export_button_rect and export_button_rect.collidepoint(event.pos):
                             filename = grid.start_export_grid()
@@ -977,9 +1067,7 @@ def main():
                             col_index < len(grid.grid[row_index]) and 
                             row_index >= 1 and
                             col_index >= 1):
-                            path = grid.grid[row_index][col_index]
-                            if not path.startswith("PLACEHOLDER:"):
-                                grid.toggle_fullscreen(path)
+                            grid.toggle_fullscreen(row_index, col_index)
                     dragging = False
                     drag_start_pos = None
             elif event.type == pygame.MOUSEMOTION:
@@ -989,7 +1077,21 @@ def main():
                     grid.scroll(dx, dy)
                     last_mouse_pos = event.pos
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
+                if grid.fullscreen_image:
+                    if event.key == pygame.K_ESCAPE:
+                        grid.fullscreen_image = None
+                        grid.fullscreen_original = None
+                        grid.fullscreen_row = None
+                        grid.fullscreen_col = None
+                    elif event.key == pygame.K_LEFT:
+                        grid.navigate_fullscreen('left')
+                    elif event.key == pygame.K_RIGHT:
+                        grid.navigate_fullscreen('right')
+                    elif event.key == pygame.K_UP:
+                        grid.navigate_fullscreen('up')
+                    elif event.key == pygame.K_DOWN:
+                        grid.navigate_fullscreen('down')
+                elif event.key == pygame.K_UP:
                     grid.scroll(0, SCROLL_SPEED)
                 elif event.key == pygame.K_DOWN:
                     grid.scroll(0, -SCROLL_SPEED)
@@ -1010,12 +1112,12 @@ def main():
                     grid.enforce_scroll_bounds(screen.get_size())
                 elif event.key == pygame.K_ESCAPE:
                     if grid.fullscreen_image:
-                        grid.toggle_fullscreen(None)
+                        grid.toggle_fullscreen(grid.fullscreen_row, grid.fullscreen_col)
                     else:
                         pygame.quit()
                         sys.exit()
                 elif event.key == pygame.K_r:
-                    grid = ImageGrid(base_folder)
+                    grid = ImageGrid(base_folder, subfolders_dir)
                 elif event.key == pygame.K_e:
                     filename = grid.start_export_grid()
                     if filename:
