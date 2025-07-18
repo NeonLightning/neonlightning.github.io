@@ -702,6 +702,7 @@ class ImageGrid:
                 text-align: center;
                 border: 1px solid #646464;
                 position: relative;
+                height: {cell_size}px; /* Ensure consistent height */
             }}
             .header {{
                 background-color: #323246;
@@ -715,6 +716,13 @@ class ImageGrid:
             }}
             .placeholder {{
                 background-color: #502828;
+            }}
+            .image-container {{
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }}
             img {{
                 max-width: 100%;
@@ -754,10 +762,37 @@ class ImageGrid:
             <p>Grid size: {rows} rows × {cols} columns</p>
             <p>Cell size: {cell_size}px</p>
         </div>
-        
         <div class="grid">
             {grid_content}
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {{
+                const lazyContainers = document.querySelectorAll(".image-container[data-src]");
+                const observer = new IntersectionObserver((entries) => {{
+                    entries.forEach((entry) => {{
+                        const container = entry.target;
+                        const imgSrc = container.dataset.src;
+                        if (entry.isIntersecting) {{
+                            // Load the image if it's visible
+                            if (!container.querySelector("img")) {{
+                                const img = new Image();
+                                img.src = imgSrc;
+                                img.onload = () => {{
+                                    container.innerHTML = "";
+                                    container.appendChild(img);
+                                }};
+                            }}
+                        }} else {{
+                            // Unload the image if it's out of view
+                            if (container.querySelector("img")) {{
+                                container.innerHTML = ""; // Removes the <img> element
+                            }}
+                        }}
+                    }});
+                }}, {{ threshold: 0.1 }});
+                lazyContainers.forEach((container) => observer.observe(container));
+            }});
+        </script>
     </body>
     </html>
     """
@@ -814,7 +849,12 @@ class ImageGrid:
                             img = img.resize(new_size, Image.Resampling.LANCZOS)
                             img.save(img_path, "WEBP", quality=85)
                             img.close()
-                            content = f'<img src="images/{img_filename}" alt="{os.path.basename(value)}">'
+                            content = f'''
+                                <div class="image-container" 
+                                    data-src="images/{img_filename}" 
+                                    title="{os.path.basename(value)}">
+                                </div>
+                            '''
                             image_counter += 1
                             processed += 1
                             self.current_progress = processed / total_work
