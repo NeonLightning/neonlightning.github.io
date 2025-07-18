@@ -7,3 +7,4 @@ lora strength 1.4
 flux guidance 7.0
 clip1 ViT-L-14-GmP-ft-TE-only-HF-format
 clip2 t5xxl_fp16
+prompt beautiful dark and scary clowngirl with exaggerated clown makeup, she is wearing a checkered leotard.
